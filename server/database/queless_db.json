@@ -1,0 +1,223 @@
+{
+  "USERS": [
+    {
+      "USER_ID": "usr_alex_customer_gmail_com",
+      "EMAIL": "alex.customer@gmail.com",
+      "DISPLAY_NAME": "Alex (Customer)",
+      "PHONE": "",
+      "PHOTO_URL": "https://api.dicebear.com/7.x/avataaars/svg?seed=alex.customer@gmail.com",
+      "PROFILE_COMPLETE": 0,
+      "ROLE": "CUSTOMER",
+      "CREATED_AT": "2026-08-27T08:15:01.778Z",
+      "UPDATED_AT": "2026-08-27T08:15:01.778Z"
+    },
+    {
+      "USER_ID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "EMAIL": "pawannkalyann12345678910@gmail.com",
+      "DISPLAY_NAME": "Pawan Kalyan.N (Pk)",
+      "PHONE": "8747087477",
+      "PHOTO_URL": "https://lh3.googleusercontent.com/a/ACg8ocIlaryZW00_JQvwQ7HySP0cve5RStvaZsJTjWLexdHFAzqc8p_L=s96-c",
+      "PROFILE_COMPLETE": 1,
+      "ROLE": "ADMIN",
+      "CREATED_AT": "2026-08-27T08:15:22.786Z",
+      "UPDATED_AT": "2026-08-27T08:31:42.802Z"
+    },
+    {
+      "USER_ID": "usr_admin_cityhealth_com",
+      "EMAIL": "admin@cityhealth.com",
+      "DISPLAY_NAME": "Dr. Adams (Admin)",
+      "PHONE": "",
+      "PHOTO_URL": "https://api.dicebear.com/7.x/avataaars/svg?seed=admin@cityhealth.com",
+      "PROFILE_COMPLETE": 0,
+      "ROLE": "ADMIN",
+      "CREATED_AT": "2026-08-27T08:15:26.632Z",
+      "UPDATED_AT": "2026-08-27T08:15:26.632Z"
+    },
+    {
+      "USER_ID": "usr_nurse_clara_cityhealth_com",
+      "EMAIL": "nurse.clara@cityhealth.com",
+      "DISPLAY_NAME": "Clara (Staff)",
+      "PHONE": "8747087477",
+      "PHOTO_URL": "https://api.dicebear.com/7.x/avataaars/svg?seed=nurse.clara@cityhealth.com",
+      "PROFILE_COMPLETE": 1,
+      "ROLE": "CUSTOMER",
+      "CREATED_AT": "2026-08-27T08:15:36.367Z",
+      "UPDATED_AT": "2026-08-27T08:18:33.516Z"
+    },
+    {
+      "USER_ID": "U76iJ0iM14TH8yAdknOrx0k9KRl2",
+      "EMAIL": "manojnbhs530@gmail.com",
+      "DISPLAY_NAME": "Manoj Kumar",
+      "PHONE": "8747087477",
+      "PHOTO_URL": "https://lh3.googleusercontent.com/a/ACg8ocJ_12048c-KBOvZVSKSjFU8knorVB2rg793QHKgTaIReq8Vc3pw=s96-c",
+      "PROFILE_COMPLETE": 1,
+      "ROLE": "CUSTOMER",
+      "CREATED_AT": "2026-08-27T08:35:57.695Z",
+      "UPDATED_AT": "2026-08-27T08:36:04.837Z"
+    }
+  ],
+  "ORGANIZATIONS": [
+    {
+      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
+      "NAME": "ABBS",
+      "CATEGORY": "University",
+      "DESCRIPTION": "KJFBOSBVO",
+      "LOGO_URL": "",
+      "BANNER_URL": "",
+      "ADMIN_UID": "usr_admin_cityhealth_com",
+      "ADMIN_EMAIL": "admin@cityhealth.com",
+      "SUBSCRIPTION_TIER": "STARTER",
+      "ADDRESS": "BLANBAL ABLA",
+      "CITY": "HEROHALLI",
+      "IS_ACTIVE": 1,
+      "CREATED_AT": "2026-08-27T08:16:22.053Z",
+      "UPDATED_AT": "2026-08-27T08:16:22.053Z"
+    },
+    {
+      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
+      "NAME": "abbs",
+      "CATEGORY": "University",
+      "DESCRIPTION": "kfjbvifv",
+      "LOGO_URL": "",
+      "BANNER_URL": "",
+      "ADMIN_UID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ADMIN_EMAIL": "pawannkalyann12345678910@gmail.com",
+      "SUBSCRIPTION_TIER": "ENTERPRISE",
+      "ADDRESS": "bla bla bla",
+      "CITY": "bangalore",
+      "IS_ACTIVE": 1,
+      "CREATED_AT": "2026-08-27T08:32:16.060Z",
+      "UPDATED_AT": "2026-08-27T08:32:16.060Z"
+    }
+  ],
+  "QUEUES": [
+    {
+      "QUEUE_ID": "fb2c2590-f207-457d-968f-c34188c84617",
+      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
+      "NAME": "ABCOUNTER1",
+      "PREFIX": "DOC-123-",
+      "COUNTER_LABEL": "Counter 1",
+      "AVG_SERVICE_MINS": 10,
+      "MAX_DAILY_TOKENS": 100,
+      "CURRENT_TOKEN_SEQ": 1,
+      "IS_ACTIVE": 1,
+      "IS_PAUSED": 0,
+      "OPERATING_HOURS": "09:00 - 17:00",
+      "CREATED_AT": "2026-08-27T08:17:30.851Z"
+    },
+    {
+      "QUEUE_ID": "62d8aa7b-cb2a-4c90-89d4-db1a2e839044",
+      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
+      "NAME": "q1",
+      "PREFIX": "DOC-12-",
+      "COUNTER_LABEL": "",
+      "AVG_SERVICE_MINS": 4,
+      "MAX_DAILY_TOKENS": 0,
+      "CURRENT_TOKEN_SEQ": 0,
+      "IS_ACTIVE": 1,
+      "IS_PAUSED": 0,
+      "OPERATING_HOURS": "09:00 - 17:00",
+      "CREATED_AT": "2026-08-27T08:34:01.539Z"
+    }
+  ],
+  "STAFF_ASSIGNMENTS": [
+    {
+      "ASSIGNMENT_ID": "2c747b73-e815-4d90-b89d-32a9cd4e58df",
+      "QUEUE_ID": "62d8aa7b-cb2a-4c90-89d4-db1a2e839044",
+      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
+      "STAFF_EMAIL": "manojbhs530@gmail.com",
+      "STAFF_NAME": "manojbhs530",
+      "ROLE": "OPERATOR",
+      "CREATED_AT": "2026-08-27T08:34:47.271Z"
+    }
+  ],
+  "TOKENS": [
+    {
+      "TOKEN_ID": "ab41f030-12ee-4430-84d8-709386147378",
+      "QUEUE_ID": "fb2c2590-f207-457d-968f-c34188c84617",
+      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
+      "USER_ID": "usr_nurse_clara_cityhealth_com",
+      "TOKEN_NUMBER": "DOC-123-001",
+      "TOKEN_SEQ": 1,
+      "CUSTOMER_NAME": "Clara (Staff)",
+      "CUSTOMER_PHONE": "8747087477",
+      "SERVICE_NOTE": "booking an aminitation",
+      "STATUS": "WAITING",
+      "DELAY_STATUS": "NONE",
+      "POSITION_IN_QUEUE": 1,
+      "ESTIMATED_WAIT_MINS": 10,
+      "BOOKING_DATE": "2026-08-27",
+      "CREATED_AT": "2026-08-27T08:18:33.519Z"
+    }
+  ],
+  "AUDIT_LOGS": [
+    {
+      "LOG_ID": "e74986ac-a0c8-420b-8fcc-65925759de2f",
+      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
+      "QUEUE_ID": "usr_admin_cityhealth_com",
+      "TOKEN_ID": "Registered org: ABBS (University)",
+      "ACTOR_UID": "",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-27T08:16:22.056Z"
+    },
+    {
+      "LOG_ID": "3958d249-77c6-40d3-b803-d8cace324f38",
+      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
+      "QUEUE_ID": "fb2c2590-f207-457d-968f-c34188c84617",
+      "TOKEN_ID": "usr_admin_cityhealth_com",
+      "ACTION": "Created queue: ABCOUNTER1",
+      "ACTOR_UID": "",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-27T08:17:30.851Z"
+    },
+    {
+      "LOG_ID": "cdbfb452-ddc4-4588-a36e-3fdccb98ded9",
+      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
+      "QUEUE_ID": "fb2c2590-f207-457d-968f-c34188c84617",
+      "TOKEN_ID": "ab41f030-12ee-4430-84d8-709386147378",
+      "ACTION": "usr_nurse_clara_cityhealth_com",
+      "ACTOR_UID": "Booked token: DOC-123-001",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-27T08:18:33.524Z"
+    },
+    {
+      "LOG_ID": "467512cb-b775-4e40-922f-7aab1916f289",
+      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
+      "QUEUE_ID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "TOKEN_ID": "Registered org: abbs (University)",
+      "ACTOR_UID": "",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-27T08:32:16.066Z"
+    },
+    {
+      "LOG_ID": "67140114-1bd4-4493-9e0a-4288819294ff",
+      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
+      "QUEUE_ID": "62d8aa7b-cb2a-4c90-89d4-db1a2e839044",
+      "TOKEN_ID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTION": "Created queue: q1",
+      "ACTOR_UID": "",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-27T08:34:01.540Z"
+    },
+    {
+      "LOG_ID": "c4692ca2-42fc-4cfe-a489-51550dfd64b5",
+      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
+      "QUEUE_ID": "62d8aa7b-cb2a-4c90-89d4-db1a2e839044",
+      "TOKEN_ID": "QUEUE_PAUSED",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Staff paused online bookings",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-27T08:34:29.926Z"
+    },
+    {
+      "LOG_ID": "ca723735-234b-42fa-aa4b-44431faa5998",
+      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
+      "QUEUE_ID": "62d8aa7b-cb2a-4c90-89d4-db1a2e839044",
+      "TOKEN_ID": "QUEUE_RESUMED",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Staff resumed online bookings",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-27T08:34:30.374Z"
+    }
+  ]
+}
