@@ -59,10 +59,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         serviceNote: serviceNote.trim()
       });
 
-      // Trigger celebratory confetti
       confetti({
-        particleCount: 80,
-        spread: 70,
+        particleCount: 70,
+        spread: 60,
         origin: { y: 0.6 }
       });
 
@@ -80,38 +79,38 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Book Digital Token Pass`}
+      title="Book Digital Token Pass"
       subtitle={`${queue.NAME} (${queue.COUNTER_LABEL || 'Counter 1'})`}
       maxWidth="md"
     >
-      <form onSubmit={handleBook} className="space-y-4 pt-2">
+      <form onSubmit={handleBook} className="space-y-4 pt-1">
         {error && (
-          <div className="p-3.5 bg-rose-500/15 border border-rose-500/30 rounded-2xl text-xs text-rose-300 font-medium">
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 font-bold">
             {error}
           </div>
         )}
 
-        <div className="p-4 bg-indigo-950/40 border border-indigo-500/30 rounded-2xl flex items-center justify-between">
+        <div className="p-3.5 bg-zinc-50 border border-zinc-200 rounded-lg flex items-center justify-between">
           <div>
-            <span className="text-[10px] uppercase font-bold text-indigo-300 block">Queue Prefix</span>
-            <span className="text-xl font-black font-mono text-white">{queue.PREFIX}</span>
+            <span className="text-[10px] uppercase font-bold text-zinc-500 block">Queue Prefix</span>
+            <span className="text-lg font-black font-mono text-black">{queue.PREFIX}</span>
           </div>
           <div className="text-right">
-            <span className="text-[10px] uppercase font-bold text-indigo-300 block">Est. Wait Speed</span>
-            <span className="text-sm font-bold text-amber-400 font-mono">~{queue.AVG_SERVICE_MINS}m / person</span>
+            <span className="text-[10px] uppercase font-bold text-zinc-500 block">Est. Wait Speed</span>
+            <span className="text-xs font-bold text-amber-700 font-mono">~{queue.AVG_SERVICE_MINS}m / person</span>
           </div>
         </div>
 
         {!user ? (
           <div className="text-center py-4 space-y-3">
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-zinc-600">
               Sign in with your Google account to secure your live digital turn pass.
             </p>
             <Button
               type="button"
               variant="primary"
               size="md"
-              className="w-full font-bold"
+              className="w-full font-bold bg-black text-white"
               onClick={() => signInWithGoogle()}
             >
               Sign In with Google to Book
@@ -124,7 +123,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
               placeholder="e.g. Sarah Jenkins"
-              leftIcon={<User size={18} />}
+              leftIcon={<User size={16} />}
               required
             />
 
@@ -134,29 +133,29 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               value={customerPhone}
               onChange={(e) => setCustomerPhone(e.target.value)}
               placeholder="e.g. +1 (555) 019-2834"
-              leftIcon={<Phone size={18} />}
+              leftIcon={<Phone size={16} />}
               required
             />
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                Service Purpose / Consultation Note (Optional)
+              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">
+                Service Purpose / Note (Optional)
               </label>
-              <div className="relative rounded-xl">
-                <div className="absolute top-3 left-3.5 text-slate-400 pointer-events-none">
-                  <FileText size={18} />
+              <div className="relative">
+                <div className="absolute top-2.5 left-3 text-zinc-400 pointer-events-none">
+                  <FileText size={16} />
                 </div>
                 <textarea
                   rows={2}
                   value={serviceNote}
                   onChange={(e) => setServiceNote(e.target.value)}
                   placeholder="e.g. Fever & consultation, Account opening..."
-                  className="block w-full rounded-xl bg-slate-900/80 border border-white/10 pl-10 pr-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="block w-full rounded-lg bg-white border border-zinc-300 pl-9 pr-3 py-2 text-sm text-black placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-black"
                 />
               </div>
             </div>
 
-            <div className="pt-3 flex items-center gap-3">
+            <div className="pt-2 flex items-center gap-3">
               <Button type="button" variant="secondary" size="md" className="flex-1" onClick={onClose}>
                 Cancel
               </Button>
@@ -164,11 +163,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 type="submit"
                 variant="emerald"
                 size="md"
-                className="flex-1 font-bold shadow-emerald-500/20"
+                className="flex-1 font-bold"
                 isLoading={loading}
-                leftIcon={<Sparkles size={16} />}
+                leftIcon={<Sparkles size={15} />}
               >
-                Confirm & Issue Token
+                Confirm & Issue Pass
               </Button>
             </div>
           </>

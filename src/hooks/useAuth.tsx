@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [staffAssignments, setStaffAssignments] = useState<StaffAssignment[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Sync auth state with backend
+  // Sync auth state with backend — does NOT touch localStorage on its own
   const syncWithBackend = async (firebaseUser?: any): Promise<{ role: UserRole; user: User } | null> => {
     try {
       const res = await api.verifyAuth();
@@ -42,6 +42,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setRole(resolvedRole);
       setAdminOrgs(res.adminOrgs || []);
       setStaffAssignments(res.staffAssignments || []);
+
+      // Persist the FULL, complete user object (with PROFILE_COMPLETE, PHONE, etc.)
+      localStorage.setItem('queless_user_session', JSON.stringify(res.user));
+
       return { role: resolvedRole, user: res.user };
     } catch (err) {
       console.error('Backend auth sync error:', err);
@@ -63,13 +67,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // 1. Check persistent browser session on boot
+    // 1. Restore session from localStorage immediately (avoids flash)
     const saved = localStorage.getItem('queless_user_session');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         setUser(parsed);
         setRole(parsed.ROLE || 'CUSTOMER');
+        // Re-sync with backend to get latest role/profile data
         syncWithBackend(parsed);
       } catch {
         setLoading(false);
@@ -78,18 +83,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
 
-    // 2. Listen to real Firebase auth state changes
+    // 2. Listen for Firebase auth state changes
+    // Only sync if there's a Firebase user AND no existing local session
+    // (avoids re-wiping PROFILE_COMPLETE on every page refresh)
     if (auth) {
       const unsubscribe = onAuthStateChanged(auth, async (fbUser: FirebaseUser | null) => {
         if (fbUser) {
-          const sessionUser: Partial<User> = {
-            USER_ID: fbUser.uid,
-            EMAIL: fbUser.email || '',
-            DISPLAY_NAME: fbUser.displayName || 'User',
-            PHOTO_URL: fbUser.photoURL || ''
-          };
-          localStorage.setItem('queless_user_session', JSON.stringify(sessionUser));
-          await syncWithBackend(fbUser);
+          const existingSession = localStorage.getItem('queless_user_session');
+          if (!existingSession) {
+            // Fresh sign-in or session was cleared — sync from backend
+            await syncWithBackend(fbUser);
+          }
+          // If session already exists, syncWithBackend was already called above
+          // from the localStorage restore path — no need to call again
         }
       });
       return () => unsubscribe();
@@ -105,6 +111,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const result = await signInWithPopup(auth, googleProvider);
       const fbUser = result.user;
+
+      // Write a minimal placeholder so the Bearer token can be sent
       const sessionUser: Partial<User> = {
         USER_ID: fbUser.uid,
         EMAIL: fbUser.email || '',
@@ -112,6 +120,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         PHOTO_URL: fbUser.photoURL || ''
       };
       localStorage.setItem('queless_user_session', JSON.stringify(sessionUser));
+
+      // Sync and overwrite with full profile (PROFILE_COMPLETE, PHONE, ROLE, etc.)
       const syncResult = await syncWithBackend(fbUser);
       return syncResult ? syncResult.role : 'CUSTOMER';
     } catch (err: any) {
@@ -139,6 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateProfile = async (displayName: string, phone: string) => {
     const res = await api.updateProfile(displayName, phone);
     setUser(res.user);
+    // Persist the full updated user so PROFILE_COMPLETE=1 is saved
     const updatedSession = { ...user, ...res.user, PROFILE_COMPLETE: 1 };
     localStorage.setItem('queless_user_session', JSON.stringify(updatedSession));
   };
@@ -147,6 +158,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await syncWithBackend(user);
   };
 
+  // Only show profile modal if user is logged in AND profile is genuinely incomplete
   const needsProfileCompletion = !!user && (user.PROFILE_COMPLETE === 0 || !user.PHONE || user.PHONE.trim() === '');
 
   return (

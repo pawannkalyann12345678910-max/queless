@@ -1,17 +1,6 @@
 {
   "USERS": [
     {
-      "USER_ID": "usr_alex_customer_gmail_com",
-      "EMAIL": "alex.customer@gmail.com",
-      "DISPLAY_NAME": "Alex (Customer)",
-      "PHONE": "",
-      "PHOTO_URL": "https://api.dicebear.com/7.x/avataaars/svg?seed=alex.customer@gmail.com",
-      "PROFILE_COMPLETE": 0,
-      "ROLE": "CUSTOMER",
-      "CREATED_AT": "2026-08-27T08:15:01.778Z",
-      "UPDATED_AT": "2026-08-27T08:15:01.778Z"
-    },
-    {
       "USER_ID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
       "EMAIL": "pawannkalyann12345678910@gmail.com",
       "DISPLAY_NAME": "Pawan Kalyan.N (Pk)",
@@ -19,205 +8,437 @@
       "PHOTO_URL": "https://lh3.googleusercontent.com/a/ACg8ocIlaryZW00_JQvwQ7HySP0cve5RStvaZsJTjWLexdHFAzqc8p_L=s96-c",
       "PROFILE_COMPLETE": 1,
       "ROLE": "ADMIN",
-      "CREATED_AT": "2026-08-27T08:15:22.786Z",
-      "UPDATED_AT": "2026-08-27T08:31:42.802Z"
+      "CREATED_AT": "2026-08-29T06:01:08.509Z",
+      "UPDATED_AT": "2026-08-29T06:01:14.237Z"
     },
     {
-      "USER_ID": "usr_admin_cityhealth_com",
-      "EMAIL": "admin@cityhealth.com",
-      "DISPLAY_NAME": "Dr. Adams (Admin)",
+      "USER_ID": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "EMAIL": "pavann206kalyann@gmail.com",
+      "DISPLAY_NAME": "Pavan Kalyan N",
       "PHONE": "",
-      "PHOTO_URL": "https://api.dicebear.com/7.x/avataaars/svg?seed=admin@cityhealth.com",
+      "PHOTO_URL": "https://lh3.googleusercontent.com/a/ACg8ocIyqTb3SCYUCnPywpKCPXVaWkKGfuq5SMiOWuwK-tTorS3pAA=s96-c",
       "PROFILE_COMPLETE": 0,
-      "ROLE": "ADMIN",
-      "CREATED_AT": "2026-08-27T08:15:26.632Z",
-      "UPDATED_AT": "2026-08-27T08:15:26.632Z"
+      "ROLE": "CUSTOMER",
+      "CREATED_AT": "2026-08-29T06:21:56.820Z",
+      "UPDATED_AT": "2026-08-29T06:21:56.820Z"
     },
     {
-      "USER_ID": "usr_nurse_clara_cityhealth_com",
-      "EMAIL": "nurse.clara@cityhealth.com",
-      "DISPLAY_NAME": "Clara (Staff)",
+      "USER_ID": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "EMAIL": "ab25bca125@abbs.edu.in",
+      "DISPLAY_NAME": "mahesh raaj vs",
       "PHONE": "8747087477",
-      "PHOTO_URL": "https://api.dicebear.com/7.x/avataaars/svg?seed=nurse.clara@cityhealth.com",
+      "PHOTO_URL": "https://lh3.googleusercontent.com/a/ACg8ocLfA2Zp3KWsubKal01fHB1xn5fvpHf9WGLOH_ACCx_d-rP_FQ=s96-c",
       "PROFILE_COMPLETE": 1,
       "ROLE": "CUSTOMER",
-      "CREATED_AT": "2026-08-27T08:15:36.367Z",
-      "UPDATED_AT": "2026-08-27T08:18:33.516Z"
-    },
-    {
-      "USER_ID": "U76iJ0iM14TH8yAdknOrx0k9KRl2",
-      "EMAIL": "manojnbhs530@gmail.com",
-      "DISPLAY_NAME": "Manoj Kumar",
-      "PHONE": "8747087477",
-      "PHOTO_URL": "https://lh3.googleusercontent.com/a/ACg8ocJ_12048c-KBOvZVSKSjFU8knorVB2rg793QHKgTaIReq8Vc3pw=s96-c",
-      "PROFILE_COMPLETE": 1,
-      "ROLE": "CUSTOMER",
-      "CREATED_AT": "2026-08-27T08:35:57.695Z",
-      "UPDATED_AT": "2026-08-27T08:36:04.837Z"
+      "CREATED_AT": "2026-08-29T07:26:50.276Z",
+      "UPDATED_AT": "2026-08-29T07:27:02.864Z"
     }
   ],
   "ORGANIZATIONS": [
     {
-      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
-      "NAME": "ABBS",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "NAME": "ohalli",
       "CATEGORY": "University",
-      "DESCRIPTION": "KJFBOSBVO",
-      "LOGO_URL": "",
-      "BANNER_URL": "",
-      "ADMIN_UID": "usr_admin_cityhealth_com",
-      "ADMIN_EMAIL": "admin@cityhealth.com",
-      "SUBSCRIPTION_TIER": "STARTER",
-      "ADDRESS": "BLANBAL ABLA",
-      "CITY": "HEROHALLI",
-      "IS_ACTIVE": 1,
-      "CREATED_AT": "2026-08-27T08:16:22.053Z",
-      "UPDATED_AT": "2026-08-27T08:16:22.053Z"
-    },
-    {
-      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
-      "NAME": "abbs",
-      "CATEGORY": "University",
-      "DESCRIPTION": "kfjbvifv",
+      "DESCRIPTION": "hii th==nothin here",
       "LOGO_URL": "",
       "BANNER_URL": "",
       "ADMIN_UID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
       "ADMIN_EMAIL": "pawannkalyann12345678910@gmail.com",
-      "SUBSCRIPTION_TIER": "ENTERPRISE",
-      "ADDRESS": "bla bla bla",
-      "CITY": "bangalore",
+      "SUBSCRIPTION_TIER": "STARTER",
+      "ADDRESS": "herohalli",
+      "CITY": "herohalli",
       "IS_ACTIVE": 1,
-      "CREATED_AT": "2026-08-27T08:32:16.060Z",
-      "UPDATED_AT": "2026-08-27T08:32:16.060Z"
+      "CREATED_AT": "2026-08-29T06:02:04.470Z",
+      "UPDATED_AT": "2026-08-29T06:02:04.470Z",
+      "VAPI_API_KEY": "b49c2757-fd5e-47c5-8654-d3cd31976f8c",
+      "VAPI_PHONE_NUMBER_ID": "7fb945cb-4b99-4f46-8546-84a93990fc3e",
+      "VAPI_PHONE_NUMBER": "+14057169512",
+      "VAPI_ASSISTANT_ID": ""
     }
   ],
   "QUEUES": [
     {
-      "QUEUE_ID": "fb2c2590-f207-457d-968f-c34188c84617",
-      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
-      "NAME": "ABCOUNTER1",
-      "PREFIX": "DOC-123-",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "NAME": "abbs",
+      "PREFIX": "DOC-ABC123-",
       "COUNTER_LABEL": "Counter 1",
       "AVG_SERVICE_MINS": 10,
-      "MAX_DAILY_TOKENS": 100,
-      "CURRENT_TOKEN_SEQ": 1,
-      "IS_ACTIVE": 1,
-      "IS_PAUSED": 0,
-      "OPERATING_HOURS": "09:00 - 17:00",
-      "CREATED_AT": "2026-08-27T08:17:30.851Z"
-    },
-    {
-      "QUEUE_ID": "62d8aa7b-cb2a-4c90-89d4-db1a2e839044",
-      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
-      "NAME": "q1",
-      "PREFIX": "DOC-12-",
-      "COUNTER_LABEL": "",
-      "AVG_SERVICE_MINS": 4,
       "MAX_DAILY_TOKENS": 0,
-      "CURRENT_TOKEN_SEQ": 0,
-      "IS_ACTIVE": 1,
+      "CURRENT_TOKEN_SEQ": 4,
+      "IS_ACTIVE": 0,
       "IS_PAUSED": 0,
       "OPERATING_HOURS": "09:00 - 17:00",
-      "CREATED_AT": "2026-08-27T08:34:01.539Z"
+      "CREATED_AT": "2026-08-29T06:19:00.518Z"
     }
   ],
   "STAFF_ASSIGNMENTS": [
     {
-      "ASSIGNMENT_ID": "2c747b73-e815-4d90-b89d-32a9cd4e58df",
-      "QUEUE_ID": "62d8aa7b-cb2a-4c90-89d4-db1a2e839044",
-      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
-      "STAFF_EMAIL": "manojbhs530@gmail.com",
-      "STAFF_NAME": "manojbhs530",
+      "ASSIGNMENT_ID": "b6907ce5-5584-42ee-bbf7-85484eeab5ea",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "STAFF_EMAIL": "pavann206kalyann@gmail.com",
+      "STAFF_NAME": "pavann206kalyann",
       "ROLE": "OPERATOR",
-      "CREATED_AT": "2026-08-27T08:34:47.271Z"
+      "CREATED_AT": "2026-08-29T06:19:00.518Z"
     }
   ],
   "TOKENS": [
     {
-      "TOKEN_ID": "ab41f030-12ee-4430-84d8-709386147378",
-      "QUEUE_ID": "fb2c2590-f207-457d-968f-c34188c84617",
-      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
-      "USER_ID": "usr_nurse_clara_cityhealth_com",
-      "TOKEN_NUMBER": "DOC-123-001",
+      "TOKEN_ID": "abccd282-d4f8-41f5-83f3-5f3e00d85f82",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "USER_ID": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "TOKEN_NUMBER": "DOC-ABC123-001",
       "TOKEN_SEQ": 1,
-      "CUSTOMER_NAME": "Clara (Staff)",
+      "CUSTOMER_NAME": "mahesh raaj vs",
       "CUSTOMER_PHONE": "8747087477",
-      "SERVICE_NOTE": "booking an aminitation",
-      "STATUS": "WAITING",
+      "SERVICE_NOTE": "",
+      "STATUS": "COMPLETED",
+      "DELAY_STATUS": "NONE",
+      "POSITION_IN_QUEUE": 0,
+      "ESTIMATED_WAIT_MINS": 0,
+      "BOOKING_DATE": "2026-08-29",
+      "CREATED_AT": "2026-08-29T07:28:56.998Z",
+      "CALLED_AT": "2026-08-29T07:29:13.233Z",
+      "SERVE_STARTED_AT": "2026-08-29T07:29:30.131Z",
+      "COMPLETED_AT": "2026-08-29T07:29:40.833Z"
+    },
+    {
+      "TOKEN_ID": "1a156159-e6f9-436b-9e5f-2386ad84b863",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "USER_ID": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "TOKEN_NUMBER": "DOC-ABC123-002",
+      "TOKEN_SEQ": 2,
+      "CUSTOMER_NAME": "mahesh raaj vs",
+      "CUSTOMER_PHONE": "8747087477",
+      "SERVICE_NOTE": "y",
+      "STATUS": "NO_SHOW",
+      "DELAY_STATUS": "NONE",
+      "POSITION_IN_QUEUE": 0,
+      "ESTIMATED_WAIT_MINS": 0,
+      "BOOKING_DATE": "2026-08-29",
+      "CREATED_AT": "2026-08-29T07:33:17.583Z",
+      "CALLED_AT": "2026-08-29T07:34:24.728Z"
+    },
+    {
+      "TOKEN_ID": "e5ad8b7a-ab40-4010-992a-654adb6c66b4",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "USER_ID": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "TOKEN_NUMBER": "DOC-ABC123-003",
+      "TOKEN_SEQ": 3,
+      "CUSTOMER_NAME": "mahesh raaj vs",
+      "CUSTOMER_PHONE": "8747087477",
+      "SERVICE_NOTE": "ji",
+      "STATUS": "COMPLETED",
+      "DELAY_STATUS": "NONE",
+      "POSITION_IN_QUEUE": 0,
+      "ESTIMATED_WAIT_MINS": 0,
+      "BOOKING_DATE": "2026-08-29",
+      "CREATED_AT": "2026-08-29T07:35:34.243Z",
+      "CALLED_AT": "2026-08-29T09:18:47.150Z",
+      "SERVE_STARTED_AT": "2026-08-29T10:18:29.216Z",
+      "COMPLETED_AT": "2026-08-29T10:18:31.003Z"
+    },
+    {
+      "TOKEN_ID": "8c6ff954-38fb-4d54-86a7-246aba1e3a46",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "USER_ID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "TOKEN_NUMBER": "DOC-ABC123-004",
+      "TOKEN_SEQ": 4,
+      "CUSTOMER_NAME": "Pawan Kalyan.N (Pk)",
+      "CUSTOMER_PHONE": "8747087477",
+      "SERVICE_NOTE": "kj",
+      "STATUS": "CANCELLED",
       "DELAY_STATUS": "NONE",
       "POSITION_IN_QUEUE": 1,
       "ESTIMATED_WAIT_MINS": 10,
-      "BOOKING_DATE": "2026-08-27",
-      "CREATED_AT": "2026-08-27T08:18:33.519Z"
+      "BOOKING_DATE": "2026-08-29",
+      "CREATED_AT": "2026-08-29T07:40:41.838Z"
     }
   ],
   "AUDIT_LOGS": [
     {
-      "LOG_ID": "e74986ac-a0c8-420b-8fcc-65925759de2f",
-      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
-      "QUEUE_ID": "usr_admin_cityhealth_com",
-      "TOKEN_ID": "Registered org: ABBS (University)",
-      "ACTOR_UID": "",
-      "DETAILS": "",
-      "CREATED_AT": "2026-08-27T08:16:22.056Z"
-    },
-    {
-      "LOG_ID": "3958d249-77c6-40d3-b803-d8cace324f38",
-      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
-      "QUEUE_ID": "fb2c2590-f207-457d-968f-c34188c84617",
-      "TOKEN_ID": "usr_admin_cityhealth_com",
-      "ACTION": "Created queue: ABCOUNTER1",
-      "ACTOR_UID": "",
-      "DETAILS": "",
-      "CREATED_AT": "2026-08-27T08:17:30.851Z"
-    },
-    {
-      "LOG_ID": "cdbfb452-ddc4-4588-a36e-3fdccb98ded9",
-      "ORG_ID": "2f16f504-8df6-4ccd-813b-de9578f1ed69",
-      "QUEUE_ID": "fb2c2590-f207-457d-968f-c34188c84617",
-      "TOKEN_ID": "ab41f030-12ee-4430-84d8-709386147378",
-      "ACTION": "usr_nurse_clara_cityhealth_com",
-      "ACTOR_UID": "Booked token: DOC-123-001",
-      "DETAILS": "",
-      "CREATED_AT": "2026-08-27T08:18:33.524Z"
-    },
-    {
-      "LOG_ID": "467512cb-b775-4e40-922f-7aab1916f289",
-      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
+      "LOG_ID": "7ba71015-3ee8-402c-975c-9a0b30ae65ac",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
       "QUEUE_ID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
-      "TOKEN_ID": "Registered org: abbs (University)",
+      "TOKEN_ID": "Registered org: ohalli (University)",
       "ACTOR_UID": "",
       "DETAILS": "",
-      "CREATED_AT": "2026-08-27T08:32:16.066Z"
+      "CREATED_AT": "2026-08-29T06:02:04.474Z"
     },
     {
-      "LOG_ID": "67140114-1bd4-4493-9e0a-4288819294ff",
-      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
-      "QUEUE_ID": "62d8aa7b-cb2a-4c90-89d4-db1a2e839044",
+      "LOG_ID": "18368934-10d3-4564-bb27-863b44d44b21",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "6f2d365a-6467-406c-8683-b5fb416ffcbc",
       "TOKEN_ID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
-      "ACTION": "Created queue: q1",
+      "ACTION": "Created queue: abbs",
       "ACTOR_UID": "",
       "DETAILS": "",
-      "CREATED_AT": "2026-08-27T08:34:01.540Z"
+      "CREATED_AT": "2026-08-29T06:03:13.565Z"
     },
     {
-      "LOG_ID": "c4692ca2-42fc-4cfe-a489-51550dfd64b5",
-      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
-      "QUEUE_ID": "62d8aa7b-cb2a-4c90-89d4-db1a2e839044",
+      "LOG_ID": "3a7d11e1-9530-4f13-a285-30d44cae8ca3",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "6f2d365a-6467-406c-8683-b5fb416ffcbc",
       "TOKEN_ID": "QUEUE_PAUSED",
       "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
       "ACTOR_UID": "Staff paused online bookings",
       "DETAILS": "",
-      "CREATED_AT": "2026-08-27T08:34:29.926Z"
+      "CREATED_AT": "2026-08-29T06:04:23.965Z"
     },
     {
-      "LOG_ID": "ca723735-234b-42fa-aa4b-44431faa5998",
-      "ORG_ID": "4f529961-2595-4ea1-8d09-a12434929a37",
-      "QUEUE_ID": "62d8aa7b-cb2a-4c90-89d4-db1a2e839044",
+      "LOG_ID": "e9599b63-50ac-4667-b31b-e42fbace05cb",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "6f2d365a-6467-406c-8683-b5fb416ffcbc",
       "TOKEN_ID": "QUEUE_RESUMED",
       "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
       "ACTOR_UID": "Staff resumed online bookings",
       "DETAILS": "",
-      "CREATED_AT": "2026-08-27T08:34:30.374Z"
+      "CREATED_AT": "2026-08-29T06:04:26.788Z"
+    },
+    {
+      "LOG_ID": "7d9ab34a-52f6-478c-b0ec-b57f1dc5b6ad",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTION": "Created queue: abbs",
+      "ACTOR_UID": "",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T06:19:00.519Z"
+    },
+    {
+      "LOG_ID": "d08eed94-293a-4463-9c04-2ac86089447d",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "abccd282-d4f8-41f5-83f3-5f3e00d85f82",
+      "ACTION": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "ACTOR_UID": "Booked token: DOC-ABC123-001",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:28:56.998Z"
+    },
+    {
+      "LOG_ID": "7fd0a782-6e64-4f7b-ba86-b4d70d015bc9",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "abccd282-d4f8-41f5-83f3-5f3e00d85f82",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Called token: DOC-ABC123-001",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:29:13.233Z"
+    },
+    {
+      "LOG_ID": "2337bde0-2326-4ac6-854b-fe518f4670dc",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "abccd282-d4f8-41f5-83f3-5f3e00d85f82",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Serving token: DOC-ABC123-001",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:29:30.131Z"
+    },
+    {
+      "LOG_ID": "ece937af-0755-43a9-94e9-70867bbea852",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "abccd282-d4f8-41f5-83f3-5f3e00d85f82",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Completed service for: DOC-ABC123-001",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:29:40.833Z"
+    },
+    {
+      "LOG_ID": "2c30cd93-22fb-44fa-87b3-6f351df8c0f5",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "1a156159-e6f9-436b-9e5f-2386ad84b863",
+      "ACTION": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "ACTOR_UID": "Booked token: DOC-ABC123-002",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:33:17.583Z"
+    },
+    {
+      "LOG_ID": "21d54d30-d030-4536-9d7d-c4552b5fe99d",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "1a156159-e6f9-436b-9e5f-2386ad84b863",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Called token: DOC-ABC123-002",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:34:24.728Z"
+    },
+    {
+      "LOG_ID": "2bc9d6c6-ea3c-42db-b2f0-9b785ec1b0f9",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "1a156159-e6f9-436b-9e5f-2386ad84b863",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Marked no-show: DOC-ABC123-002",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:34:59.816Z"
+    },
+    {
+      "LOG_ID": "e6db9ee6-6a66-4b42-a534-3839309c7738",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "e5ad8b7a-ab40-4010-992a-654adb6c66b4",
+      "ACTION": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "ACTOR_UID": "Booked token: DOC-ABC123-003",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:35:34.243Z"
+    },
+    {
+      "LOG_ID": "38a9ee73-18c4-4f0c-9515-b6a611b2f498",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "8c6ff954-38fb-4d54-86a7-246aba1e3a46",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Booked token: DOC-ABC123-004",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:40:41.838Z"
+    },
+    {
+      "LOG_ID": "f0eac913-c43a-4b6d-9a80-958ba3b20063",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "a8cf6ef9-6f16-4b0c-a88a-399548d0587c",
+      "TOKEN_ID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTION": "Created queue: VIP Private Room (Visible: NO)",
+      "ACTOR_UID": "",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:47:06.419Z"
+    },
+    {
+      "LOG_ID": "6c3c44e9-0ae0-43d9-98c5-843d6376788c",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "a8cf6ef9-6f16-4b0c-a88a-399548d0587c",
+      "TOKEN_ID": "QUEUE_VISIBILITY_PUBLIC",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Queue made visible to public",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:47:30.571Z"
+    },
+    {
+      "LOG_ID": "a8e5e8fd-6552-46d4-a186-9e3352a2cc38",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "a8cf6ef9-6f16-4b0c-a88a-399548d0587c",
+      "TOKEN_ID": "QUEUE_VISIBILITY_PUBLIC",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Queue made visible to public",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:48:18.314Z"
+    },
+    {
+      "LOG_ID": "35479c25-cc0f-4ce4-9c8f-ba202e707e58",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "a8cf6ef9-6f16-4b0c-a88a-399548d0587c",
+      "TOKEN_ID": "QUEUE_VISIBILITY_HIDDEN",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Queue hidden from public view",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:48:27.686Z"
+    },
+    {
+      "LOG_ID": "41150284-3e62-458f-a138-8f2fc33d269f",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "QUEUE_VISIBILITY_PUBLIC",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Queue made visible to public",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:52:05.299Z"
+    },
+    {
+      "LOG_ID": "7eab4881-cdcf-40a5-9fc3-4169b7231a90",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "QUEUE_VISIBILITY_HIDDEN",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Queue hidden from public view",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T07:52:05.307Z"
+    },
+    {
+      "LOG_ID": "71b1110d-bf23-42bf-a0ed-6bad97b9d1fe",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "QUEUE_VISIBILITY_HIDDEN",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Queue hidden from public view",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T08:09:31.990Z"
+    },
+    {
+      "LOG_ID": "ccfc55bb-7297-4099-8431-8a504373e124",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "QUEUE_VISIBILITY_PUBLIC",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Queue made visible to public",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T08:09:32.006Z"
+    },
+    {
+      "LOG_ID": "507b3367-26b6-4cff-b4b5-23f902df22e4",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "e5ad8b7a-ab40-4010-992a-654adb6c66b4",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Called token: DOC-ABC123-003",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T09:18:47.151Z"
+    },
+    {
+      "LOG_ID": "88277bc4-43b3-4d69-ab9f-85bdddf95c7b",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "QUEUE_PAUSED",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Staff paused online bookings",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T10:09:19.188Z"
+    },
+    {
+      "LOG_ID": "b2a5adbf-cd6c-4f65-9308-7285781bec54",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "8c6ff954-38fb-4d54-86a7-246aba1e3a46",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Cancelled token: DOC-ABC123-004",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T10:16:03.152Z"
+    },
+    {
+      "LOG_ID": "10f4d4ed-a117-44d9-bc44-385837ed5cef",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "e5ad8b7a-ab40-4010-992a-654adb6c66b4",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Serving token: DOC-ABC123-003",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T10:18:29.216Z"
+    },
+    {
+      "LOG_ID": "aba6e3e8-dc2c-4f0c-aa3d-832f464aa826",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "e5ad8b7a-ab40-4010-992a-654adb6c66b4",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Completed service for: DOC-ABC123-003",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T10:18:31.003Z"
+    },
+    {
+      "LOG_ID": "7aa780ce-d489-4394-baf9-01dbce6c42d8",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "QUEUE_RESUMED",
+      "ACTION": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ACTOR_UID": "Staff resumed online bookings",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T10:18:58.152Z"
     }
   ]
 }

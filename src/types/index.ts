@@ -58,7 +58,8 @@ export interface Queue {
   CURRENT_TOKEN_SEQ: number;
   IS_ACTIVE: number;
   IS_PAUSED: number;
-  OPERATING_HOURS: string;
+  ALLOW_STAFF_WHATSAPP?: number;
+  OPERATING_HOURS?: string;
   WAITING_COUNT?: number;
   COMPLETED_TODAY?: number;
   NOSHOW_TODAY?: number;

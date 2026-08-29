@@ -9,23 +9,17 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Card: React.FC<CardProps> = ({
   interactive = false,
-  glow = 'none',
   children,
   className = '',
   ...props
 }) => {
-  const glowClasses = {
-    indigo: 'glow-indigo',
-    emerald: 'glow-emerald',
-    amber: 'glow-amber',
-    none: ''
-  };
-
-  const baseClass = interactive ? 'glass-panel-interactive cursor-pointer' : 'glass-panel';
+  const baseClass = interactive 
+    ? 'bg-white rounded-xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-400 hover:shadow-md transition-all cursor-pointer' 
+    : 'bg-white rounded-xl p-5 border border-zinc-200 shadow-xs';
 
   return (
     <div
-      className={`${baseClass} rounded-2xl p-5 ${glowClasses[glow]} ${className}`}
+      className={`${baseClass} ${className}`}
       {...props}
     >
       {children}

@@ -46,40 +46,45 @@ export const OrgOverviewCard: React.FC<OrgOverviewCardProps> = ({ organization, 
   };
 
   return (
-    <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-white/10 mb-8 relative overflow-hidden">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-        <div className="flex items-start sm:items-center gap-5">
+    <div className="bg-white rounded-xl p-5 sm:p-7 border border-zinc-200 shadow-xs mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+        <div className="flex items-start sm:items-center gap-4">
           {organization.LOGO_URL ? (
             <img
               src={organization.LOGO_URL}
               alt={organization.NAME}
-              className="w-20 h-20 rounded-3xl object-cover border border-white/15 bg-slate-900 shadow-xl"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover border border-zinc-200 bg-zinc-50 shadow-xs shrink-0 aspect-square"
             />
           ) : (
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-600 to-cyan-500 border border-white/20 flex items-center justify-center font-black text-white text-3xl shadow-xl">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-black text-white flex items-center justify-center font-black text-2xl shadow-xs shrink-0 aspect-square">
               {organization.NAME.charAt(0)}
             </div>
           )}
 
           <div>
-            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <Badge variant="indigo" size="sm">{organization.CATEGORY}</Badge>
-              <Badge variant="emerald" size="sm">{organization.SUBSCRIPTION_TIER} PLAN</Badge>
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <Badge variant="neutral" size="sm">{organization.CATEGORY}</Badge>
+              <Badge variant="emerald" size="sm">
+                {organization.SUBSCRIPTION_TIER === 'ENTERPRISE' ? 'Enterprise (4 Counters)' :
+                 organization.SUBSCRIPTION_TIER === 'PROFESSIONAL' ? 'Professional (2 Counters)' :
+                 'Starter 1-Week Trial (1 Counter)'}
+              </Badge>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{organization.NAME}</h2>
-            <div className="flex items-center gap-4 text-xs text-slate-400 mt-1">
-              <span className="flex items-center gap-1"><Mail size={13} /> {organization.ADMIN_EMAIL}</span>
-              {organization.CITY && <span className="flex items-center gap-1"><MapPin size={13} /> {organization.CITY}</span>}
+            <h2 className="text-xl sm:text-2xl font-black text-black tracking-tight">{organization.NAME}</h2>
+            <div className="flex items-center gap-3 text-xs text-zinc-500 mt-1 font-medium flex-wrap">
+              <span className="flex items-center gap-1.5"><Mail size={13} className="text-zinc-400" /> {organization.ADMIN_EMAIL}</span>
+              {organization.CITY && <span className="flex items-center gap-1.5"><MapPin size={13} className="text-zinc-400" /> {organization.CITY}</span>}
             </div>
           </div>
         </div>
 
-        <div>
+        <div className="shrink-0">
           <Button
-            variant="glass"
+            variant="secondary"
             size="sm"
             onClick={() => setIsEditOpen(true)}
-            leftIcon={<Edit3 size={15} />}
+            leftIcon={<Edit3 size={14} />}
+            className="font-bold w-full sm:w-auto"
           >
             Edit Profile & Logo
           </Button>
@@ -96,7 +101,7 @@ export const OrgOverviewCard: React.FC<OrgOverviewCardProps> = ({ organization, 
         >
           <form onSubmit={handleUpdate} className="space-y-4 pt-2">
             {error && (
-              <div className="p-3 bg-rose-500/15 border border-rose-500/30 rounded-xl text-xs text-rose-300">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-600 font-medium">
                 {error}
               </div>
             )}
@@ -113,7 +118,7 @@ export const OrgOverviewCard: React.FC<OrgOverviewCardProps> = ({ organization, 
               value={logoUrl}
               onChange={(e) => setLogoUrl(e.target.value)}
               placeholder="https://... or data:image/..."
-              leftIcon={<ImageIcon size={18} />}
+              leftIcon={<ImageIcon size={16} />}
             />
 
             <Input
@@ -121,7 +126,7 @@ export const OrgOverviewCard: React.FC<OrgOverviewCardProps> = ({ organization, 
               value={city}
               onChange={(e) => setCity(e.target.value)}
               placeholder="e.g. San Francisco, CA"
-              leftIcon={<MapPin size={18} />}
+              leftIcon={<MapPin size={16} />}
             />
 
             <Input
@@ -135,7 +140,7 @@ export const OrgOverviewCard: React.FC<OrgOverviewCardProps> = ({ organization, 
               <Button type="button" variant="secondary" size="md" className="flex-1" onClick={() => setIsEditOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" variant="primary" size="md" className="flex-1 font-bold" isLoading={loading}>
+              <Button type="submit" variant="primary" size="md" className="flex-1 font-bold bg-black text-white" isLoading={loading}>
                 Save Updates
               </Button>
             </div>

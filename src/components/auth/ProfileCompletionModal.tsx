@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { Modal } from '../common/Modal';
 import { Input } from '../common/Input';
@@ -6,20 +6,28 @@ import { Button } from '../common/Button';
 import { Phone, User, ShieldCheck } from 'lucide-react';
 
 export const ProfileCompletionModal: React.FC = () => {
-  const { user, needsProfileCompletion, updateProfile } = useAuth();
-  const [displayName, setDisplayName] = useState(user?.DISPLAY_NAME || '');
-  const [phone, setPhone] = useState(user?.PHONE || '');
+  const { user, needsProfileCompletion, updateProfile, role } = useAuth();
+  
+  // Track dismissal in sessionStorage so it never pops up again during the active browsing session
+  const [isDismissed, setIsDismissed] = useState<boolean>(() => {
+    return sessionStorage.getItem('queless_profile_dismissed') === 'true';
+  });
+
+  const [displayName, setDisplayName] = useState(() => user?.DISPLAY_NAME || '');
+  const [phone, setPhone] = useState(() => user?.PHONE || '');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isDismissed, setIsDismissed] = useState(false);
 
-  useEffect(() => {
-    if (user?.DISPLAY_NAME) setDisplayName(user.DISPLAY_NAME);
-    if (user?.PHONE) setPhone(user.PHONE);
-  }, [user]);
+  const handleDismiss = () => {
+    setIsDismissed(true);
+    sessionStorage.setItem('queless_profile_dismissed', 'true');
+  };
 
-  // Only show if user is actually logged in, has incomplete profile, and hasn't dismissed
-  if (!user || !needsProfileCompletion || isDismissed) return null;
+  // Only show for logged-in CUSTOMERS who have genuinely incomplete profiles and haven't dismissed
+  // (ADMIN and STAFF roles don't need a customer booking profile forced upon them)
+  if (!user || role === 'ADMIN' || role === 'STAFF' || !needsProfileCompletion || isDismissed) {
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,17 +41,17 @@ export const ProfileCompletionModal: React.FC = () => {
 
     try {
       await updateProfile(displayName.trim() || user?.DISPLAY_NAME || 'User', phone.trim());
-      setIsDismissed(true);
+      handleDismiss();
     } catch (err: any) {
       console.error('Failed to update profile:', err);
-      // Even if offline/error, update local session to unblock user
+      // Fallback: update local session to unblock user
       if (user) {
         user.PHONE = phone.trim();
         user.DISPLAY_NAME = displayName.trim() || user.DISPLAY_NAME;
         user.PROFILE_COMPLETE = 1;
         localStorage.setItem('queless_user_session', JSON.stringify(user));
       }
-      setIsDismissed(true);
+      handleDismiss();
     } finally {
       setLoading(false);
     }
@@ -52,7 +60,7 @@ export const ProfileCompletionModal: React.FC = () => {
   return (
     <Modal
       isOpen={true}
-      onClose={() => setIsDismissed(true)}
+      onClose={handleDismiss}
       title="Complete Your Profile"
       subtitle="One-time setup for instant 1-click digital token passes"
       maxWidth="md"
@@ -86,7 +94,6 @@ export const ProfileCompletionModal: React.FC = () => {
           leftIcon={<Phone size={18} />}
           error={error}
           required
-          autoFocus
         />
 
         <div className="pt-2 flex items-center gap-3">
@@ -95,7 +102,7 @@ export const ProfileCompletionModal: React.FC = () => {
             variant="ghost"
             size="md"
             className="flex-1 text-slate-400 hover:text-white"
-            onClick={() => setIsDismissed(true)}
+            onClick={handleDismiss}
           >
             Explore First
           </Button>

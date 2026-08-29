@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>PAWMATE ® — Premium Fresh Dog Nutrition & Active Lifestyle</title>
+  <meta name="description" content="100% human-grade, vet-crafted fresh nutrition formulated for active dogs. Ride harder, live longer, wag forever. Visual Identity ©2026.">
+  
+  <!-- Favicon / Brand Icon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛹</text></svg>">
+
+  <!-- Google Fonts: Bebas Neue, Outfit, Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Background Ambient Glow -->
+  <div class="ambient-glow ambient-1" aria-hidden="true"></div>
+  <div class="ambient-glow ambient-2" aria-hidden="true"></div>
+
+  <!-- Sound Toggle & Toast Notification Area -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Navigation -->
+  <header class="site-header">
+    <nav class="nav-container" aria-label="Main Navigation">
+      <a href="#hero-story" class="brand-logo" id="nav-logo">
+        <span class="logo-icon">🐾</span>
+        <span class="logo-text">PAWMATE<span class="logo-reg">®</span></span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#hero-story" class="nav-link">The Story</a>
+        <a href="#calculator" class="nav-link">Portion Calc</a>
+        <a href="#bento-benefits" class="nav-link">Whole Foods</a>
+        <a href="#recipes" class="nav-link">Recipes</a>
+        <a href="#reviews" class="nav-link">Reviews</a>
+      </div>
+
+      <div class="nav-actions">
+        <button id="sound-toggle-btn" class="icon-btn" aria-label="Toggle Sound Effects" title="Sound FX">
+          <svg class="sound-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          <svg class="sound-off-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+        </button>
+        <button id="open-cart-btn" class="btn btn-pill btn-nav-cta" aria-label="View Cart and Build Starter Box">
+          <span>Get Starter Box</span>
+          <span class="badge-count" id="cart-badge">1</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- 1. SCROLL-SENSITIVE 30FPS CANVAS HERO STAGE -->
+    <section id="hero-story" class="scroll-hero-section">
+      <div class="canvas-sticky-wrapper">
+        
+        <!-- Preloader Progress Overlay -->
+        <div id="canvas-loader" class="canvas-loader">
+          <div class="loader-mascot">🛹🐾</div>
+          <div class="loader-spinner"></div>
+          <p class="loader-text">Loading Skatepark Animation... <span id="load-percent">0%</span></p>
+          <div class="progress-bar-bg">
+            <div id="progress-bar-fill" class="progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <!-- The Pure 30fps Frame Scrubber Canvas (100% Unobstructed Center Stage) -->
+        <canvas id="scroll-canvas" class="scroll-canvas" width="800" height="600"></canvas>
+
+        <!-- Dynamic Ambient Skate Particle Canvas -->
+        <canvas id="particles-canvas" class="particles-canvas" aria-hidden="true"></canvas>
+
+        <!-- LEFT SIDE HERO RAIL: Dynamic Story Chapter Card -->
+        <aside class="hero-side-rail rail-left" aria-label="Story Narrative">
+          <div class="rail-card story-chapter-box">
+            
+            <!-- Chapter 1 (0% - 24%) -->
+            <div class="rail-chapter-content chapter-0 active" data-range="0,0.24">
+              <div class="rail-badge">
+                <span class="pulse-dot-sm"></span> Chapter 01 / 04
+              </div>
+              <h2 class="rail-title">BRED FOR SPEED.<br><span class="highlight-yellow">FUELED BY REAL FOOD.</span></h2>
+              <p class="rail-desc">Dogs are more than pets. They are your loyal skate copilot and valued family mate.</p>
+            </div>
+
+            <!-- Chapter 2 (25% - 49%) -->
+            <div class="rail-chapter-content chapter-1" data-range="0.25,0.49">
+              <div class="rail-badge">
+                <span class="pulse-dot-sm"></span> Chapter 02 / 04
+              </div>
+              <h2 class="rail-title">ZERO FILLERS.<br><span class="highlight-yellow">PURE PERFORMANCE.</span></h2>
+              <p class="rail-desc">100% USDA whole muscle meats flash-frozen at peak freshness to power daily zoomies.</p>
+            </div>
+
+            <!-- Chapter 3 (50% - 74%) -->
+            <div class="rail-chapter-content chapter-2" data-range="0.50,0.74">
+              <div class="rail-badge">
+                <span class="pulse-dot-sm"></span> Chapter 03 / 04
+              </div>
+              <h2 class="rail-title">JOINT MOBILITY.<br><span class="highlight-yellow">RUN, JUMP & SPRINT.</span></h2>
+              <p class="rail-desc">Formulated with wild Alaskan salmon oil & glucosamine for agile joints and mirror-shiny coats.</p>
+            </div>
+
+            <!-- Chapter 4 (75% - 100%) -->
+            <div class="rail-chapter-content chapter-3" data-range="0.75,1.0">
+              <div class="rail-badge">
+                <span class="pulse-dot-sm"></span> Chapter 04 / 04
+              </div>
+              <h2 class="rail-title">FRESH DAILY BOWL.<br><span class="highlight-yellow">CUSTOM FOR BUSTER.</span></h2>
+              <p class="rail-desc">Pre-portioned to your dog's exact weight, breed, and daily calorie burn.</p>
+            </div>
+
+            <!-- Chapter Stepper Navigation Dots -->
+            <div class="rail-stepper-bar">
+              <div class="stepper-dots" aria-label="Jump to Chapter">
+                <button class="step-dot-btn active" data-target-progress="0.05" title="01 Launch">01</button>
+                <button class="step-dot-btn" data-target-progress="0.35" title="02 Energy">02</button>
+                <button class="step-dot-btn" data-target-progress="0.62" title="03 Mobility">03</button>
+                <button class="step-dot-btn" data-target-progress="0.90" title="04 Daily Bowl">04</button>
+              </div>
+              <button id="auto-ride-btn" class="auto-ride-pill-mini" aria-label="Toggle Auto-Play Animation">
+                <span class="play-icon">▶</span>
+                <span class="pause-icon hidden">⏸</span>
+                <span>Auto-Ride</span>
+              </button>
+            </div>
+
+          </div>
+        </aside>
+
+        <!-- RIGHT SIDE HERO RAIL: Real-time Performance & Nutrient Badges -->
+        <aside class="hero-side-rail rail-right" aria-label="Nutritional Highlights">
+          <div class="rail-card stats-stack-box">
+            
+            <div class="rail-kicker">🐾 Nutrition Specs</div>
+            
+            <div class="mini-spec-item">
+              <div class="spec-icon-badge">🥩</div>
+              <div>
+                <strong class="spec-lead">62% Whole Muscle Meat</strong>
+                <span class="spec-caption">High bioavailable taurine & iron</span>
+              </div>
+            </div>
+
+            <div class="mini-spec-item">
+              <div class="spec-icon-badge">🐟</div>
+              <div>
+                <strong class="spec-lead">Wild Salmon Oil</strong>
+                <span class="spec-caption">EPA & DHA active joint mobility</span>
+              </div>
+            </div>
+
+            <div class="mini-spec-item">
+              <div class="spec-icon-badge">⚡</div>
+              <div>
+                <strong class="spec-lead">0% Extruded Kibble Ash</strong>
+                <span class="spec-caption">Gentle 72°C nutrient lock</span>
+              </div>
+            </div>
+
+            <a href="#calculator" class="btn btn-primary btn-block btn-sm rail-cta-btn">
+              <span>Calculate Buster's Bowl</span>
+              <span class="arrow-icon">→</span>
+            </a>
+
+          </div>
+        </aside>
+
+        <!-- MOBILE-ONLY HERO HUD (Ultra-sleek top & bottom overlay, 100% unobstructed center canvas) -->
+        <div class="mobile-hero-hud" aria-hidden="false">
+          <!-- Top Floating Chapter & Ride Pill -->
+          <div class="mobile-top-pill">
+            <span class="mobile-ch-tag" id="mobile-ch-tag">CH 01 / 04</span>
+            <div class="mobile-stepper-dots">
+              <button class="m-dot-btn active" data-target-progress="0.05">01</button>
+              <button class="m-dot-btn" data-target-progress="0.35">02</button>
+              <button class="m-dot-btn" data-target-progress="0.62">03</button>
+              <button class="m-dot-btn" data-target-progress="0.90">04</button>
+            </div>
+            <button id="mobile-auto-ride-btn" class="mobile-ride-btn" aria-label="Auto Ride">
+              <span class="m-play-icon">▶</span>
+              <span class="m-pause-icon hidden">⏸</span>
+            </button>
+          </div>
+
+          <!-- Bottom Floating Story Beat Subtitle Banner -->
+          <div class="mobile-bottom-caption">
+            <div class="mobile-caption-inner">
+              <h2 class="mobile-caption-title" id="mobile-caption-title">
+                BRED FOR SPEED. <span class="highlight-yellow">FUELED BY REAL FOOD.</span>
+              </h2>
+              <div class="mobile-telemetry-row">
+                <span class="m-tel-chip" id="mobile-speed">0.0 KM/H</span>
+                <span class="m-tel-chip" id="mobile-frame">001 / 241</span>
+                <span class="m-swipe-tip">👆 Swipe to Scrub</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll Velocity Progress Bar at bottom edge -->
+        <div class="scroll-scrub-indicator" aria-hidden="true">
+          <div id="scrub-fill" class="scrub-fill"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- KINETIC MARQUEE DIVIDER -->
+    <div class="marquee-divider" aria-hidden="true">
+      <div class="marquee-track">
+        <span>🛹 100% HUMAN-GRADE WHOLE FOODS</span>
+        <span>🐾 ZERO DRY KIBBLE FILLERS</span>
+        <span>🔥 FLASH-FROZEN VET RECIPES</span>
+        <span>⚡ PURE CANINE ENDURANCE</span>
+        <span>🛹 100% HUMAN-GRADE WHOLE FOODS</span>
+        <span>🐾 ZERO DRY KIBBLE FILLERS</span>
+        <span>🔥 FLASH-FROZEN VET RECIPES</span>
+        <span>⚡ PURE CANINE ENDURANCE</span>
+      </div>
+    </div>
+
+    <!-- BRAND MANIFESTO SECTION (Clean, Dedicated Section with No Overlap) -->
+    <section class="section manifesto-section">
+      <div class="container container-narrow text-center">
+        <div class="section-kicker">🐾 The PAWMATE Philosophy</div>
+        <h2 class="manifesto-heading">BRED FOR SPEED.<br><span class="highlight-orange">FUELED BY REAL WHOLE FOODS.</span></h2>
+        <p class="manifesto-lead">Dogs are more than pets. They are your loyal skate copilot, your trail partner, and valued members of the family. We formulate fresh, human-grade nutrition with zero dry kibble char, zero fillers, and 100% bio-available energy.</p>
+        <div class="manifesto-stats-grid">
+          <div class="mstat-card">
+            <span class="mstat-val">62%</span>
+            <span class="mstat-lbl">Fresh Muscle Meat Protein</span>
+          </div>
+          <div class="mstat-card">
+            <span class="mstat-val">0%</span>
+            <span class="mstat-lbl">Artificial Fillers or Grains</span>
+          </div>
+          <div class="mstat-card">
+            <span class="mstat-val">100%</span>
+            <span class="mstat-lbl">USDA Human-Grade Kitchens</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. REAL-TIME PORTION & NUTRITION CALCULATOR (21st.dev Component) -->
+    <section id="calculator" class="section calculator-section">
+      <div class="container">
+        
+        <div class="section-header text-center">
+          <div class="section-kicker">🐾 Precision Canine Nutrition Engine</div>
+          <h2 class="section-heading">CALCULATE YOUR DOG'S DAILY BOWL</h2>
+          <p class="section-sub">Every dog burns energy differently. Tell us about your mate to get a vet-calibrated recipe and daily gram breakdown.</p>
+        </div>
+
+        <div class="calculator-card">
+          
+          <div class="calc-inputs-grid">
+            
+            <!-- Dog Name & Size -->
+            <div class="calc-field">
+              <label for="dog-name-input" class="calc-label">Your Dog's Name</label>
+              <div class="input-wrapper">
+                <span class="input-icon">🐶</span>
+                <input type="text" id="dog-name-input" class="text-input" value="Buster" placeholder="e.g. Charlie, Luna, Buster" maxlength="24">
+              </div>
+            </div>
+
+            <!-- Dog Weight Slider -->
+            <div class="calc-field">
+              <div class="calc-label-row">
+                <label for="weight-slider" class="calc-label">Body Weight</label>
+                <span class="badge-value" id="weight-display">18 kg (40 lbs)</span>
+              </div>
+              <input type="range" id="weight-slider" class="range-slider" min="2" max="60" value="18" step="1">
+              <div class="range-marks">
+                <span>Small (2kg)</span>
+                <span>Medium (18kg)</span>
+                <span>Large (60kg)</span>
+              </div>
+            </div>
+
+            <!-- Activity Level Selector -->
+            <div class="calc-field full-width">
+              <label class="calc-label">Daily Activity Level</label>
+              <div class="activity-chips" role="radiogroup" aria-label="Activity Level">
+                <button type="button" class="activity-chip" data-activity="low" data-multiplier="1.2">
+                  <span class="chip-icon">🛋️</span>
+                  <span class="chip-title">Couch Chiller</span>
+                  <span class="chip-desc">Casual daily strolls & naps</span>
+                </button>
+                <button type="button" class="activity-chip active" data-activity="medium" data-multiplier="1.6">
+                  <span class="chip-icon">🎾</span>
+                  <span class="chip-title">Park Runner</span>
+                  <span class="chip-desc">1-2 hours fetch & walking</span>
+                </button>
+                <button type="button" class="activity-chip" data-activity="high" data-multiplier="2.0">
+                  <span class="chip-icon">🛹</span>
+                  <span class="chip-title">Skatepark Pro</span>
+                  <span class="chip-desc">High speed agility & running</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Primary Flavor Preference -->
+            <div class="calc-field full-width">
+              <label class="calc-label">Recommended Recipe Blend</label>
+              <div class="flavor-chips" role="radiogroup" aria-label="Recipe Selection">
+                <button type="button" class="flavor-chip active" data-flavor="beef" data-price="2.80">
+                  <span class="flavor-dot beef-dot"></span>
+                  <span class="flavor-name">Skater Beef & Bone Broth</span>
+                  <span class="flavor-badge">#1 Bestseller</span>
+                </button>
+                <button type="button" class="flavor-chip" data-flavor="chicken" data-price="2.50">
+                  <span class="flavor-dot chicken-dot"></span>
+                  <span class="flavor-name">Free-Range Chicken & Pumpkin</span>
+                  <span class="flavor-badge">Gentle Digestion</span>
+                </button>
+                <button type="button" class="flavor-chip" data-flavor="salmon" data-price="3.10">
+                  <span class="flavor-dot salmon-dot"></span>
+                  <span class="flavor-name">Wild Salmon & Sweet Potato</span>
+                  <span class="flavor-badge">Joint & Coat</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Dynamic Output Card -->
+          <div class="calc-summary-panel">
+            <div class="summary-top">
+              <span class="summary-kicker">Vet-Calibrated Daily Target</span>
+              <h3 class="summary-dog-title" id="summary-dog-title">Buster's Custom Plan</h3>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-box">
+                <span class="metric-label">Daily Calories</span>
+                <span class="metric-val" id="metric-kcal">820 <small>kcal</small></span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">Fresh Portion</span>
+                <span class="metric-val" id="metric-grams">380 <small>g / day</small></span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">Crude Protein</span>
+                <span class="metric-val highlight" id="metric-protein">58 <small>g pure meat</small></span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">Starter Box Price</span>
+                <span class="metric-val" id="metric-cost">$2.65 <small>/ day</small></span>
+              </div>
+            </div>
+
+            <div class="guarantee-note">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <span>100% Clean Bowl Guarantee or Full Refund on First Box</span>
+            </div>
+
+            <button class="btn btn-primary btn-block calc-order-btn" id="calc-add-to-box">
+              <span>Claim Buster's 50% Off Starter Box</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. WHOLE FOODS BENTO GRID -->
+    <section id="bento-benefits" class="section bento-section">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-kicker">🥦 Pure Ingredient Integrity</div>
+          <h2 class="section-heading">WHAT'S INSIDE THE BOWL</h2>
+          <p class="section-sub">We don't hide behind Latin chemical names. Every ingredient is fit for human consumption and sourced from verified farms.</p>
+        </div>
+
+        <div class="bento-grid">
+          
+          <!-- Bento 1: Fresh Real Meat -->
+          <div class="bento-card bento-large card-orange">
+            <div class="bento-badge">Core Foundation</div>
+            <div class="bento-icon-lg">🥩</div>
+            <h3 class="bento-title">USDA Whole Muscle Meats & Organs</h3>
+            <p class="bento-desc">Rich in essential bioavailable taurine, amino acids, and natural iron for lean athletic muscle tissue. Gently cooked at 72°C to lock in nutrients without denaturing proteins.</p>
+            <div class="macro-pill-wrap">
+              <span class="pill-dark">Zero Rendered Meal</span>
+              <span class="pill-dark">High Bioavailability</span>
+            </div>
+          </div>
+
+          <!-- Bento 2: Joint & Agility -->
+          <div class="bento-card bento-medium card-cream">
+            <div class="bento-badge badge-green">Joint Mobility</div>
+            <div class="bento-icon-lg">🐟</div>
+            <h3 class="bento-title">Cold-Pressed Wild Alaskan Salmon Oil</h3>
+            <p class="bento-desc">Loaded with EPA & DHA fatty acids to soothe stiff joints from intense skatepark jumps and keep the coat mirror-glossy.</p>
+          </div>
+
+          <!-- Bento 3: Gut Health & Digestion -->
+          <div class="bento-card bento-medium card-cream">
+            <div class="bento-badge badge-purple">Microbiome</div>
+            <div class="bento-icon-lg">🎃</div>
+            <h3 class="bento-title">Organic Pumpkin & Chicory Root</h3>
+            <p class="bento-desc">Natural prebiotic dietary fiber ensuring firm, easy-to-scoop stools and maximum digestive comfort for sensitive bellies.</p>
+          </div>
+
+          <!-- Bento 4: Antioxidants -->
+          <div class="bento-card bento-large card-dark">
+            <div class="bento-badge badge-yellow">Cellular Defense</div>
+            <div class="bento-icon-lg">🫐</div>
+            <h3 class="bento-title">Superfood Antioxidant Matrix</h3>
+            <p class="bento-desc">Whole wild blueberries, organic spinach, and sea kelp deliver bio-active vitamins A, C, and E to protect cellular longevity and immune health.</p>
+            <div class="macro-pill-wrap">
+              <span class="pill-orange">Non-GMO Certified</span>
+              <span class="pill-orange">Zero Grain Fillers</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. TASTING FLIGHT & PRODUCT RECIPES -->
+    <section id="recipes" class="section recipes-section">
+      <div class="container">
+        
+        <div class="section-header text-center">
+          <div class="section-kicker">🍲 The Tasting Flight</div>
+          <h2 class="section-heading">THREE CHEF-CRAFTED RECIPES</h2>
+          <p class="section-sub">Cooked gently in small batches, pre-sealed, and delivered frozen. Just thaw, tear, and pour into their bowl.</p>
+        </div>
+
+        <div class="product-cards-grid">
+          
+          <!-- Recipe 1 -->
+          <div class="recipe-card" data-recipe-id="beef">
+            <div class="recipe-ribbon ribbon-orange">Most Popular</div>
+            <div class="recipe-visual">
+              <span class="recipe-emoji">🥩</span>
+              <div class="recipe-tag">Active Dog Blend</div>
+            </div>
+            <div class="recipe-body">
+              <h3 class="recipe-title">Skater Beef & Bone Broth</h3>
+              <p class="recipe-desc">USDA Lean Ground Beef, Beef Liver, Carrots, Green Beans, Bone Broth Collagen, and Wild Blueberries.</p>
+              
+              <div class="recipe-specs">
+                <div class="spec-col">
+                  <span class="spec-num">14.5%</span>
+                  <span class="spec-lbl">Crude Protein</span>
+                </div>
+                <div class="spec-col">
+                  <span class="spec-num">8.2%</span>
+                  <span class="spec-lbl">Healthy Fats</span>
+                </div>
+                <div class="spec-col">
+                  <span class="spec-num">1,420</span>
+                  <span class="spec-lbl">kcal / kg</span>
+                </div>
+              </div>
+
+              <div class="recipe-footer">
+                <div class="recipe-price">
+                  <span class="price-val">$2.80</span>
+                  <span class="price-period">/ meal avg</span>
+                </div>
+                <button class="btn btn-primary btn-sm add-recipe-btn" data-name="Skater Beef & Bone Broth" data-price="2.80">
+                  <span>Add to Box</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recipe 2 -->
+          <div class="recipe-card" data-recipe-id="chicken">
+            <div class="recipe-ribbon ribbon-green">Gentle Digestion</div>
+            <div class="recipe-visual">
+              <span class="recipe-emoji">🍗</span>
+              <div class="recipe-tag">Sensitive Stomach</div>
+            </div>
+            <div class="recipe-body">
+              <h3 class="recipe-title">Free-Range Chicken & Pumpkin</h3>
+              <p class="recipe-desc">Farm-Raised Chicken Breast, Gizzards, Organic Sweet Potato, Pureed Pumpkin, Spinach, and Flaxseed.</p>
+              
+              <div class="recipe-specs">
+                <div class="spec-col">
+                  <span class="spec-num">13.8%</span>
+                  <span class="spec-lbl">Crude Protein</span>
+                </div>
+                <div class="spec-col">
+                  <span class="spec-num">6.5%</span>
+                  <span class="spec-lbl">Healthy Fats</span>
+                </div>
+                <div class="spec-col">
+                  <span class="spec-num">1,310</span>
+                  <span class="spec-lbl">kcal / kg</span>
+                </div>
+              </div>
+
+              <div class="recipe-footer">
+                <div class="recipe-price">
+                  <span class="price-val">$2.50</span>
+                  <span class="price-period">/ meal avg</span>
+                </div>
+                <button class="btn btn-primary btn-sm add-recipe-btn" data-name="Free-Range Chicken & Pumpkin" data-price="2.50">
+                  <span>Add to Box</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recipe 3 -->
+          <div class="recipe-card" data-recipe-id="salmon">
+            <div class="recipe-ribbon ribbon-blue">Skin & Coat Care</div>
+            <div class="recipe-visual">
+              <span class="recipe-emoji">🐟</span>
+              <div class="recipe-tag">Omega-3 Powerhouse</div>
+            </div>
+            <div class="recipe-body">
+              <h3 class="recipe-title">Wild Salmon & Sweet Potato</h3>
+              <p class="recipe-desc">Wild Alaskan Salmon, White Fish Fillets, Green Peas, Pumpkin, Chia Seeds, and Kelp Mineral Blend.</p>
+              
+              <div class="recipe-specs">
+                <div class="spec-col">
+                  <span class="spec-num">15.2%</span>
+                  <span class="spec-lbl">Crude Protein</span>
+                </div>
+                <div class="spec-col">
+                  <span class="spec-num">9.0%</span>
+                  <span class="spec-lbl">Healthy Fats</span>
+                </div>
+                <div class="spec-col">
+                  <span class="spec-num">1,480</span>
+                  <span class="spec-lbl">kcal / kg</span>
+                </div>
+              </div>
+
+              <div class="recipe-footer">
+                <div class="recipe-price">
+                  <span class="price-val">$3.10</span>
+                  <span class="price-period">/ meal avg</span>
+                </div>
+                <button class="btn btn-primary btn-sm add-recipe-btn" data-name="Wild Salmon & Sweet Potato" data-price="3.10">
+                  <span>Add to Box</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5. VERIFIED CANINE & OWNER REVIEWS -->
+    <section id="reviews" class="section reviews-section">
+      <div class="container">
+        
+        <div class="section-header text-center">
+          <div class="section-kicker">⭐ 4.97 / 5 Rating Across 8,400+ Dogs</div>
+          <h2 class="section-heading">HEAR FROM THE PACK</h2>
+          <p class="section-sub">Real stories from skateparks, agility tracks, and mountain trails.</p>
+        </div>
+
+        <div class="reviews-grid">
+          
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-quote">"My Australian Shepherd used to leave half his dry kibble untouched. With PAWMATE Beef, he licks the bowl clean in 45 seconds and his endurance on trail rides is unbelievable."</p>
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">🐕</div>
+              <div>
+                <strong class="reviewer-name">Marcus T. & 'Ziggy'</strong>
+                <span class="reviewer-meta">Verified Customer • Aussie Shepherd (3 yrs)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-quote">"The portion calculator was dead-on. Lola lost her excess 4 pounds without losing her bounce, and her itchy skin completely cleared up within 3 weeks of the Salmon blend."</p>
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">🐶</div>
+              <div>
+                <strong class="reviewer-name">Elena R. & 'Lola'</strong>
+                <span class="reviewer-meta">Verified Customer • French Bulldog (4 yrs)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-quote">"As someone who skates with my Pitbull mix daily, finding high-protein food that doesn't upset his sensitive stomach was tough. PAWMATE is a game-changer."</p>
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">🐕‍🦺</div>
+              <div>
+                <strong class="reviewer-name">Devon K. & 'Koda'</strong>
+                <span class="reviewer-meta">Verified Customer • Pitbull Mix (2 yrs)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6. FAQ ACCORDION -->
+    <section class="section faq-section">
+      <div class="container container-narrow">
+        
+        <div class="section-header text-center">
+          <div class="section-kicker">💡 Common Questions</div>
+          <h2 class="section-heading">FREQUENTLY ASKED QUESTIONS</h2>
+        </div>
+
+        <div class="faq-list">
+          
+          <details class="faq-item" open>
+            <summary class="faq-question">
+              <span>How does delivery and storage work?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Your PAWMATE meals arrive frozen in 100% recyclable insulated thermal boxes. Pop the packs into your freezer. Move 2–3 packs to the fridge 24 hours prior to feeding to thaw smoothly.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>How do I transition my dog from dry kibble to fresh food?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>We include a step-by-step 7-day transition guide in your starter box: Days 1–3: 25% PAWMATE / 75% old food. Days 4–6: 50% / 50%. Day 7+: 100% pure PAWMATE fresh meals.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>Can I pause, adjust, or cancel anytime?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Absolutely. You have 100% flexible control over delivery dates, portion sizing, recipe mixes, or cancellation with zero fees directly in your account dashboard.</p>
+            </div>
+          </details>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7. FINAL CLIMAX CTA -->
+    <section class="section climax-cta-section">
+      <div class="container text-center">
+        <div class="climax-box">
+          <div class="climax-icon">🛹🐾🔥</div>
+          <h2 class="climax-heading">READY TO UNLEASH THEIR BEST RUN?</h2>
+          <p class="climax-sub">Join over 8,000+ active dogs enjoying fresh, whole-food nutrition tailored to their exact daily stride.</p>
+          <div class="climax-actions">
+            <button class="btn btn-primary btn-large quick-order-trigger" id="climax-starter-btn">
+              <span>Claim Your 50% Off Starter Box</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+          <div class="climax-badge-row">
+            <span>✓ No Commitments</span>
+            <span>✓ Free Cold-Chain Delivery</span>
+            <span>✓ Clean Bowl Guarantee</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- CART & STARTER BOX MODAL DRAWER -->
+  <div id="cart-drawer" class="cart-drawer-overlay" aria-hidden="true">
+    <div class="cart-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+      
+      <div class="drawer-header">
+        <h3 id="drawer-title" class="drawer-title">Your Custom Starter Box</h3>
+        <button id="close-drawer-btn" class="drawer-close-btn" aria-label="Close Drawer">&times;</button>
+      </div>
+
+      <div class="drawer-body">
+        
+        <div class="drawer-discount-banner">
+          <span class="discount-icon">🎉</span>
+          <div>
+            <strong>50% First-Box Discount Applied!</strong>
+            <p>Freshly packed for <span id="drawer-dog-name">Buster</span> (18 kg • Park Runner)</p>
+          </div>
+        </div>
+
+        <div class="drawer-items-list" id="drawer-items">
+          <!-- Dynamic Cart Items -->
+          <div class="drawer-item">
+            <div class="item-icon">🥩</div>
+            <div class="item-details">
+              <strong class="item-title">Skater Beef & Bone Broth (14-Pack)</strong>
+              <span class="item-sub">Daily 380g portion packs</span>
+            </div>
+            <div class="item-pricing">
+              <span class="item-old-price">$78.00</span>
+              <span class="item-price">$39.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-addon-section">
+          <span class="addon-title">Add Active Performance Booster:</span>
+          <div class="addon-card">
+            <span>🐟 Wild Salmon Oil Pump (250ml)</span>
+            <button class="btn btn-secondary btn-xs" id="add-salmon-oil-btn">+ $8.00</button>
+          </div>
+        </div>
+
+        <div class="drawer-total-box">
+          <div class="total-row">
+            <span>Subtotal (14 Days Fresh Food)</span>
+            <span id="drawer-subtotal">$78.00</span>
+          </div>
+          <div class="total-row highlight-row">
+            <span>Starter Discount (50% Off)</span>
+            <span id="drawer-discount">-$39.00</span>
+          </div>
+          <div class="total-row">
+            <span>Cold-Chain Insulated Shipping</span>
+            <span class="free-shipping">FREE</span>
+          </div>
+          <div class="total-row grand-total">
+            <span>Total Today</span>
+            <span class="grand-price" id="drawer-total">$39.00</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="drawer-footer">
+        <button class="btn btn-primary btn-block btn-checkout" id="checkout-btn">
+          <span>Proceed to Secure Checkout</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <p class="drawer-secure-note">🔒 256-Bit Encrypted • 100% Money-Back Clean Bowl Guarantee</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        
+        <div class="footer-brand">
+          <div class="brand-logo footer-logo">
+            <span class="logo-icon">🐾</span>
+            <span class="logo-text">PAWMATE<span class="logo-reg">®</span></span>
+          </div>
+          <p class="footer-tagline">Premium human-grade canine nutrition built on love, speed, and real whole foods. Visual Identity ©2026.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Instagram">📸</a>
+            <a href="#" class="social-link" aria-label="TikTok">🎵</a>
+            <a href="#" class="social-link" aria-label="YouTube">▶️</a>
+          </div>
+        </div>
+
+        <div class="footer-nav-col">
+          <h4 class="footer-nav-title">Fresh Recipes</h4>
+          <ul class="footer-links">
+            <li><a href="#recipes">Skater Beef & Bone Broth</a></li>
+            <li><a href="#recipes">Free-Range Chicken & Pumpkin</a></li>
+            <li><a href="#recipes">Wild Salmon & Sweet Potato</a></li>
+            <li><a href="#bento-benefits">Ingredient Directory</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-nav-col">
+          <h4 class="footer-nav-title">Science & Vets</h4>
+          <ul class="footer-links">
+            <li><a href="#calculator">Portion Calculator</a></li>
+            <li><a href="#bento-benefits">AAFCO Complete Standards</a></li>
+            <li><a href="#">Veterinary Board</a></li>
+            <li><a href="#">Clinical Trials</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-nav-col">
+          <h4 class="footer-nav-title">Company</h4>
+          <ul class="footer-links">
+            <li><a href="#hero-story">The PAWMATE Story</a></li>
+            <li><a href="#reviews">Pack Reviews</a></li>
+            <li><a href="#">Sustainability & Packaging</a></li>
+            <li><a href="#">Contact Pack Support</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 PAWMATE Inc. All Rights Reserved. Crafted for high-speed canine companions everywhere.</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Security</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Main JavaScript Engine -->
+  <script src="app.js"></script>
+</body>
+</html>

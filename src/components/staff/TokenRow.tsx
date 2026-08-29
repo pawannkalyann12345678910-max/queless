@@ -12,7 +12,8 @@ import {
   ArrowRightLeft, 
   Phone, 
   Check,
-  X
+  X,
+  MessageSquare
 } from 'lucide-react';
 
 interface TokenRowProps {
@@ -29,23 +30,62 @@ export const TokenRow: React.FC<TokenRowProps> = ({
   onTransferClick
 }) => {
   const [loading, setLoading] = useState(false);
+  const [notifyLoading, setNotifyLoading] = useState(false);
+  const [notifySuccess, setNotifySuccess] = useState(false);
 
   // Button 1: Call Next / Re-Chime
   const handleCall = async () => {
     setLoading(true);
     try {
       if (token.STATUS === 'CALLED') {
-        // Re-chime
         audioService.announceToken(token.TOKEN_NUMBER, counterLabel);
       } else {
         await api.callToken(token.TOKEN_ID);
         audioService.announceToken(token.TOKEN_NUMBER, counterLabel);
+        
+        // Auto-send WhatsApp turn alert if phone is present
+        if (token.CUSTOMER_PHONE) {
+          api.sendTokenWhatsAppAlert({
+            tokenId: token.TOKEN_ID,
+            queueId: token.QUEUE_ID,
+            messageType: 'CALL'
+          }).catch(err => console.warn('Auto WhatsApp notice:', err));
+        }
+
         onRefresh();
       }
     } catch (err: any) {
       alert(err.message || 'Call failed');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Dedicated WhatsApp Notify Button (Sends via Background Bot)
+  const handleNotifyWhatsApp = async () => {
+    if (!token.CUSTOMER_PHONE) {
+      alert('This customer did not provide a mobile phone number.');
+      return;
+    }
+
+    setNotifyLoading(true);
+    try {
+      const res = await api.sendTokenWhatsAppAlert({
+        tokenId: token.TOKEN_ID,
+        queueId: token.QUEUE_ID,
+        messageType: isCalled ? 'CALL' : isWaiting ? 'ADVANCE_5M' : 'CALL'
+      });
+
+      if (res.connected && res.success) {
+        setNotifySuccess(true);
+        setTimeout(() => setNotifySuccess(false), 3500);
+      } else {
+        alert(res.message || 'WhatsApp is not connected yet. Please click "Connect WhatsApp" at the top of the desk to scan the QR code and link your WhatsApp number.');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Could not send WhatsApp alert. Please make sure WhatsApp is connected.');
+    } finally {
+      setNotifyLoading(false);
     }
   };
 
@@ -121,18 +161,18 @@ export const TokenRow: React.FC<TokenRowProps> = ({
   const hasDelayRequest = token.DELAY_STATUS === 'REQUESTED_5M';
 
   return (
-    <tr className={`border-b border-white/5 transition-colors ${
-      isCalled ? 'bg-indigo-950/40 border-indigo-500/30' :
-      isServing ? 'bg-emerald-950/30 border-emerald-500/30' :
-      hasDelayRequest ? 'bg-amber-950/30 border-amber-500/30' : 'hover:bg-white/[0.02]'
+    <tr className={`border-b border-zinc-100 transition-colors ${
+      isCalled ? 'bg-blue-50/50' :
+      isServing ? 'bg-emerald-50/40' :
+      hasDelayRequest ? 'bg-amber-50/50' : 'hover:bg-zinc-50/60'
     }`}>
       {/* Token Number */}
-      <td className="py-4 px-4 font-mono font-black text-lg text-white">
+      <td className="py-4 px-4 font-mono font-black text-base text-black">
         <div className="flex items-center gap-2">
           <span>{token.TOKEN_NUMBER}</span>
           {hasDelayRequest && (
-            <span className="text-[10px] bg-amber-500 text-slate-950 font-bold px-1.5 py-0.5 rounded uppercase">
-              +5m Req
+            <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 font-bold px-1.5 py-0.5 rounded">
+              +5m Request
             </span>
           )}
         </div>
@@ -140,13 +180,13 @@ export const TokenRow: React.FC<TokenRowProps> = ({
 
       {/* Customer Info */}
       <td className="py-4 px-4">
-        <div className="font-semibold text-white text-sm">{token.CUSTOMER_NAME}</div>
-        <div className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
-          <Phone size={12} className="text-slate-500" />
+        <div className="font-bold text-black text-sm">{token.CUSTOMER_NAME}</div>
+        <div className="text-xs text-zinc-500 flex items-center gap-1.5 mt-0.5 font-medium">
+          <Phone size={12} className="text-zinc-400" />
           <span>{token.CUSTOMER_PHONE}</span>
         </div>
         {token.SERVICE_NOTE && (
-          <div className="text-[11px] text-slate-400 italic mt-0.5 truncate max-w-xs">
+          <div className="text-xs text-zinc-500 italic mt-0.5 truncate max-w-xs">
             "{token.SERVICE_NOTE}"
           </div>
         )}
@@ -158,14 +198,14 @@ export const TokenRow: React.FC<TokenRowProps> = ({
       </td>
 
       {/* Wait Time / Position */}
-      <td className="py-4 px-4 text-xs font-mono text-slate-300">
+      <td className="py-4 px-4 text-xs font-mono text-zinc-700">
         {isWaiting ? (
           <div>
-            <span className="font-bold text-white">#{token.POSITION_IN_QUEUE} in line</span>
-            <span className="text-slate-400 block">~{token.ESTIMATED_WAIT_MINS}m ETA</span>
+            <span className="font-bold text-black">#{token.POSITION_IN_QUEUE} in line</span>
+            <span className="text-zinc-500 block font-normal">~{token.ESTIMATED_WAIT_MINS}m ETA</span>
           </div>
         ) : (
-          <span className="text-slate-400">-</span>
+          <span className="text-zinc-400">-</span>
         )}
       </td>
 
@@ -174,37 +214,52 @@ export const TokenRow: React.FC<TokenRowProps> = ({
         <div className="flex items-center justify-end gap-1.5 flex-wrap">
           {/* Delay Request Review Buttons */}
           {hasDelayRequest && (
-            <div className="flex items-center gap-1 bg-amber-500/20 p-1 rounded-xl border border-amber-500/30 mr-1">
+            <div className="flex items-center gap-1 bg-amber-50 p-1 rounded-lg border border-amber-200 mr-1">
               <button
                 onClick={handleApproveDelay}
                 disabled={loading}
                 title="Approve +5m Delay"
-                className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors text-xs flex items-center gap-1 font-bold"
+                className="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white transition-colors text-xs flex items-center gap-1 font-bold cursor-pointer"
               >
-                <Check size={14} /> Accept +5m
+                <Check size={13} /> Accept
               </button>
               <button
                 onClick={handleRejectDelay}
                 disabled={loading}
                 title="Reject +5m Delay"
-                className="p-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white transition-colors text-xs flex items-center gap-1 font-bold"
+                className="px-2 py-1 rounded bg-red-600 hover:bg-red-700 text-white transition-colors text-xs flex items-center gap-1 font-bold cursor-pointer"
               >
-                <X size={14} /> Reject
+                <X size={13} /> Reject
               </button>
             </div>
+          )}
+
+          {/* WhatsApp Notify Button */}
+          {(isWaiting || isCalled) && (
+            <Button
+              variant={notifySuccess ? "emerald" : "secondary"}
+              size="sm"
+              isLoading={notifyLoading}
+              onClick={handleNotifyWhatsApp}
+              leftIcon={<MessageSquare size={13} className={notifySuccess ? "text-white" : "text-emerald-600"} />}
+              title="Notify customer on WhatsApp"
+              className="text-xs px-2.5 font-bold"
+            >
+              {notifySuccess ? "Notified!" : "Notify"}
+            </Button>
           )}
 
           {/* 1. Call / Re-Chime Button */}
           {(isWaiting || isCalled) && (
             <Button
-              variant={isCalled ? "glass" : "primary"}
+              variant={isCalled ? "secondary" : "primary"}
               size="sm"
               isLoading={loading}
               onClick={handleCall}
-              leftIcon={<Volume2 size={14} />}
-              className={isCalled ? "border-indigo-400 text-indigo-300" : ""}
+              leftIcon={<Volume2 size={13} />}
+              className="text-xs px-2.5 font-bold"
             >
-              {isCalled ? "Re-Chime 🔔" : "Call Next 📢"}
+              {isCalled ? "Re-Chime" : "Call Next"}
             </Button>
           )}
 
@@ -215,9 +270,10 @@ export const TokenRow: React.FC<TokenRowProps> = ({
               size="sm"
               isLoading={loading}
               onClick={handleServe}
-              leftIcon={<Play size={14} />}
+              leftIcon={<Play size={13} />}
+              className="text-xs px-2.5 font-bold"
             >
-              Start Serving ▶️
+              Start Serving
             </Button>
           )}
 
@@ -228,9 +284,10 @@ export const TokenRow: React.FC<TokenRowProps> = ({
               size="sm"
               isLoading={loading}
               onClick={handleComplete}
-              leftIcon={<CheckCircle size={14} />}
+              leftIcon={<CheckCircle size={13} />}
+              className="text-xs px-2.5 font-bold"
             >
-              Complete ✅
+              Complete
             </Button>
           )}
 
@@ -242,7 +299,7 @@ export const TokenRow: React.FC<TokenRowProps> = ({
               isLoading={loading}
               onClick={handleNoShow}
               title="Mark No-Show"
-              className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+              className="text-zinc-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg"
             >
               <AlertOctagon size={15} />
             </Button>
@@ -255,7 +312,7 @@ export const TokenRow: React.FC<TokenRowProps> = ({
               size="sm"
               onClick={() => onTransferClick(token)}
               title="Transfer to another counter"
-              className="text-slate-400 hover:text-white"
+              className="text-zinc-400 hover:text-black hover:bg-zinc-100 p-1.5 rounded-lg"
             >
               <ArrowRightLeft size={15} />
             </Button>

@@ -27,21 +27,20 @@ export const MyTokensPage: React.FC = () => {
     }
   };
 
-  // Poll active tokens every 4 seconds
   usePolling(loadTokens, 4000, !!user);
 
   if (!user) {
     return (
-      <div className="text-center py-24 glass-panel rounded-3xl p-8 max-w-lg mx-auto border border-white/10">
-        <div className="w-16 h-16 rounded-3xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mx-auto text-indigo-400 mb-4">
-          <Ticket size={32} />
+      <div className="text-center py-20 bg-white rounded-xl p-8 max-w-md mx-auto border border-zinc-200 shadow-xs">
+        <div className="w-12 h-12 rounded-lg bg-zinc-100 border border-zinc-200 flex items-center justify-center mx-auto text-black mb-3">
+          <Ticket size={24} />
         </div>
-        <h3 className="text-xl font-bold text-white">Sign In to View Your Passes</h3>
-        <p className="text-xs text-slate-400 mt-2 mb-6">
+        <h3 className="text-lg font-black text-black">Sign In to View Your Passes</h3>
+        <p className="text-xs text-zinc-500 mt-1 mb-5">
           Sign in with your Google account to view active passes, live queue countdowns, and ticket history.
         </p>
         <Link to="/">
-          <Button variant="primary" size="md">
+          <Button variant="primary" size="md" className="bg-black text-white">
             Explore Queues
           </Button>
         </Link>
@@ -57,21 +56,21 @@ export const MyTokensPage: React.FC = () => {
   const pastTokens = tokens.filter(t => ['COMPLETED', 'NO_SHOW', 'CANCELLED'].includes(t.STATUS));
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-2.5">
-            <Ticket className="text-indigo-400" size={28} />
+          <h1 className="text-2xl sm:text-3xl font-black text-black flex items-center gap-2.5">
+            <Ticket className="text-blue-600" size={24} />
             My Digital Passes
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-zinc-500 mt-0.5">
             Real-time live queue tracking with turn countdowns and proximity alerts.
           </p>
         </div>
 
         <Link to="/">
-          <Button variant="glass" size="sm" leftIcon={<Compass size={16} />}>
+          <Button variant="secondary" size="sm" leftIcon={<Compass size={14} />}>
             Explore More Queues
           </Button>
         </Link>
@@ -80,23 +79,23 @@ export const MyTokensPage: React.FC = () => {
       {/* Active Passes Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+          <h2 className="text-base font-black text-black flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Active Passes in Progress ({activeTokens.length})
           </h2>
         </div>
 
         {activeTokens.length === 0 ? (
-          <div className="text-center py-16 glass-panel rounded-3xl p-8 border border-white/10">
-            <div className="w-14 h-14 rounded-2xl bg-slate-900 border border-white/10 flex items-center justify-center mx-auto text-slate-500 mb-3">
-              <Ticket size={28} />
+          <div className="text-center py-14 bg-white rounded-xl p-6 border border-zinc-200 shadow-xs">
+            <div className="w-12 h-12 rounded-lg bg-zinc-100 border border-zinc-200 flex items-center justify-center mx-auto text-zinc-400 mb-2">
+              <Ticket size={24} />
             </div>
-            <h4 className="text-base font-bold text-white">No Active Digital Passes</h4>
-            <p className="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-6">
+            <h4 className="text-sm font-bold text-black">No Active Digital Passes</h4>
+            <p className="text-xs text-zinc-500 max-w-sm mx-auto mt-1 mb-5">
               You are not currently in any waiting lines. Discover clinics, banks, or counters to book a pass.
             </p>
             <Link to="/">
-              <Button variant="emerald" size="md" rightIcon={<ArrowRight size={16} />}>
+              <Button variant="primary" size="md" className="bg-black text-white" rightIcon={<ArrowRight size={14} />}>
                 Browse Queues
               </Button>
             </Link>
@@ -112,10 +111,10 @@ export const MyTokensPage: React.FC = () => {
 
       {/* History Section */}
       {pastTokens.length > 0 && (
-        <div className="pt-8 border-t border-white/10">
-          <div className="flex items-center gap-2 mb-6">
-            <History className="text-slate-400" size={20} />
-            <h3 className="text-lg font-bold text-white">Past Passes History ({pastTokens.length})</h3>
+        <div className="pt-6 border-t border-zinc-200">
+          <div className="flex items-center gap-2 mb-4">
+            <History className="text-zinc-400" size={18} />
+            <h3 className="text-base font-bold text-black">Past Passes History ({pastTokens.length})</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

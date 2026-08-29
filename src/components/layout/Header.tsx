@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { LoginButton } from '../auth/LoginButton';
@@ -7,57 +7,60 @@ import {
   LogOut, 
   Building2, 
   Users, 
-  Compass
+  Compass,
+  Menu,
+  X
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const { user, role, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
+    setMobileMenuOpen(false);
     navigate('/');
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-slate-950/85 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-40 w-full border-b border-zinc-200 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform">
-            <Ticket className="text-white transform -rotate-12" size={22} />
+        <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2.5 shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-bold">
+            <Ticket size={18} className="transform -rotate-12" />
           </div>
-          <div>
-            <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-200 bg-clip-text text-transparent">
-              Queless
-            </span>
-            <span className="hidden sm:inline-block ml-2 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              Live Token
-            </span>
-          </div>
+          <span className="text-lg font-black tracking-tight text-black">
+            Queless
+          </span>
         </Link>
 
-        {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
+        {/* Desktop Navigation Links */}
+        <nav className="hidden md:flex items-center gap-1.5 text-xs font-semibold">
           <Link
             to="/"
-            className={`px-3.5 py-2 rounded-xl transition-colors flex items-center gap-1.5 ${
-              location.pathname === '/' ? 'bg-white/10 text-white font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+            className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 ${
+              location.pathname === '/' 
+                ? 'bg-black text-white font-bold' 
+                : 'text-zinc-600 hover:text-black hover:bg-zinc-100'
             }`}
           >
-            <Compass size={16} />
-            Explore Queues
+            <Compass size={14} />
+            Explore
           </Link>
 
           {user && (
             <Link
               to="/my-tokens"
-              className={`px-3.5 py-2 rounded-xl transition-colors flex items-center gap-1.5 ${
-                location.pathname === '/my-tokens' ? 'bg-white/10 text-white font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+              className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 ${
+                location.pathname === '/my-tokens' 
+                  ? 'bg-black text-white font-bold' 
+                  : 'text-zinc-600 hover:text-black hover:bg-zinc-100'
               }`}
             >
-              <Ticket size={16} />
+              <Ticket size={14} />
               My Passes
             </Link>
           )}
@@ -65,63 +68,168 @@ export const Header: React.FC = () => {
           {user && (role === 'STAFF' || role === 'ADMIN') && (
             <Link
               to="/staff"
-              className={`px-3.5 py-2 rounded-xl transition-colors flex items-center gap-1.5 ${
-                location.pathname.startsWith('/staff') ? 'bg-indigo-600/30 text-indigo-300 font-semibold border border-indigo-500/30' : 'text-indigo-400 hover:text-indigo-200 hover:bg-indigo-500/10'
+              className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 ${
+                location.pathname.startsWith('/staff') 
+                  ? 'bg-black text-white font-bold' 
+                  : 'text-zinc-600 hover:text-black hover:bg-zinc-100'
               }`}
             >
-              <Users size={16} />
-              Staff Control
+              <Users size={14} />
+              Staff Desk
             </Link>
           )}
 
           {user && role === 'ADMIN' && (
             <Link
               to="/admin"
-              className={`px-3.5 py-2 rounded-xl transition-colors flex items-center gap-1.5 ${
-                location.pathname.startsWith('/admin') ? 'bg-emerald-600/30 text-emerald-300 font-semibold border border-emerald-500/30' : 'text-emerald-400 hover:text-emerald-200 hover:bg-emerald-500/10'
+              className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 ${
+                location.pathname.startsWith('/admin') 
+                  ? 'bg-black text-white font-bold' 
+                  : 'text-zinc-600 hover:text-black hover:bg-zinc-100'
               }`}
             >
-              <Building2 size={16} />
+              <Building2 size={14} />
               Admin Portal
             </Link>
           )}
         </nav>
 
-        {/* User Profile / Google Sign-In Actions */}
-        <div className="flex items-center gap-3">
+        {/* User Actions / Hamburger */}
+        <div className="flex items-center gap-2">
           {!user ? (
             <LoginButton />
           ) : (
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2.5 bg-slate-900/80 border border-white/10 rounded-2xl px-3 py-1.5">
+            <div className="hidden sm:flex items-center gap-2.5">
+              <div className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-1">
                 {user.PHOTO_URL ? (
                   <img
                     src={user.PHOTO_URL}
                     alt={user.DISPLAY_NAME}
-                    className="w-7 h-7 rounded-full border border-white/20 object-cover"
+                    className="w-5 h-5 rounded-full object-cover shrink-0"
                   />
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">
+                  <div className="w-5 h-5 rounded-full bg-black text-white font-bold text-[10px] flex items-center justify-center shrink-0">
                     {user.DISPLAY_NAME ? user.DISPLAY_NAME.charAt(0) : 'U'}
                   </div>
                 )}
-                <div className="text-left leading-tight">
-                  <p className="text-xs font-bold text-white truncate max-w-[130px]">{user.DISPLAY_NAME}</p>
-                  <p className="text-[10px] text-indigo-400 font-mono uppercase tracking-wider">{role}</p>
-                </div>
+                <span className="text-xs font-bold text-black truncate max-w-[110px]">
+                  {user.DISPLAY_NAME}
+                </span>
+                <span className="text-[10px] font-medium text-zinc-500 font-mono">
+                  {role.toLowerCase()}
+                </span>
               </div>
 
               <button
                 onClick={handleSignOut}
                 title="Sign Out"
-                className="p-2.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl border border-white/5 transition-colors"
+                className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
               >
                 <LogOut size={16} />
               </button>
             </div>
           )}
+
+          {/* Mobile Hamburger Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-lg text-zinc-700 hover:bg-zinc-100 transition-colors"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Drawer Dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-zinc-200 bg-white px-4 py-4 space-y-3 shadow-lg animate-in slide-in-from-top-2 duration-150">
+          {user && (
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
+              <div className="flex items-center gap-2.5">
+                {user.PHOTO_URL ? (
+                  <img
+                    src={user.PHOTO_URL}
+                    alt={user.DISPLAY_NAME}
+                    className="w-8 h-8 rounded-full object-cover shrink-0"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-black text-white font-bold text-xs flex items-center justify-center shrink-0">
+                    {user.DISPLAY_NAME ? user.DISPLAY_NAME.charAt(0) : 'U'}
+                  </div>
+                )}
+                <div>
+                  <span className="text-xs font-bold text-black block">{user.DISPLAY_NAME}</span>
+                  <span className="text-[10px] text-zinc-500 font-mono">{user.EMAIL}</span>
+                </div>
+              </div>
+
+              <span className="text-[10px] font-bold text-zinc-600 uppercase px-2 py-0.5 rounded bg-zinc-100">
+                {role}
+              </span>
+            </div>
+          )}
+
+          <nav className="space-y-1 text-sm font-semibold">
+            <Link
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg ${
+                location.pathname === '/' ? 'bg-black text-white' : 'text-zinc-700 hover:bg-zinc-100'
+              }`}
+            >
+              <Compass size={16} /> Explore Directory
+            </Link>
+
+            {user && (
+              <Link
+                to="/my-tokens"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg ${
+                  location.pathname === '/my-tokens' ? 'bg-black text-white' : 'text-zinc-700 hover:bg-zinc-100'
+                }`}
+              >
+                <Ticket size={16} /> My Active Passes
+              </Link>
+            )}
+
+            {user && (role === 'STAFF' || role === 'ADMIN') && (
+              <Link
+                to="/staff"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg ${
+                  location.pathname.startsWith('/staff') ? 'bg-black text-white' : 'text-zinc-700 hover:bg-zinc-100'
+                }`}
+              >
+                <Users size={16} /> Staff Desk
+              </Link>
+            )}
+
+            {user && role === 'ADMIN' && (
+              <Link
+                to="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg ${
+                  location.pathname.startsWith('/admin') ? 'bg-black text-white' : 'text-zinc-700 hover:bg-zinc-100'
+                }`}
+              >
+                <Building2 size={16} /> Admin Portal
+              </Link>
+            )}
+          </nav>
+
+          {user && (
+            <div className="pt-3 border-t border-zinc-100">
+              <button
+                onClick={handleSignOut}
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-colors cursor-pointer"
+              >
+                <LogOut size={14} /> Sign Out
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </header>
   );
 };

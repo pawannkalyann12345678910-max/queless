@@ -11,7 +11,7 @@ import {
   MapPin, 
   ArrowLeft, 
   ShieldCheck, 
-  CheckCircle,
+  Check,
   Image as ImageIcon
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -32,21 +32,41 @@ const CATEGORY_OPTIONS = [
 const SUBSCRIPTION_TIERS = [
   {
     id: 'STARTER',
-    name: 'Starter Plan',
-    price: 'Free',
-    features: ['Up to 3 Active Counters', 'Unlimited Daily Tokens', 'Public HDMI Screen Mode', 'Basic Analytics']
+    name: 'Starter Trial',
+    price: '1-Week Free Trial',
+    features: [
+      '1 Active Service Counter',
+      '7-Day Full Access Trial',
+      'Digital Mobile Passes',
+      'Public HDMI Waiting Screen',
+      'Basic Live Analytics'
+    ]
   },
   {
     id: 'PROFESSIONAL',
-    name: 'Professional Plan',
-    price: '$29/mo',
-    features: ['Up to 15 Counters', 'SMS & WhatsApp Notifications', 'Voice Chime Broadcaster', 'Hourly Traffic Heatmaps', 'CSV Data Export']
+    name: 'Professional',
+    price: '₹2,000 / mo',
+    features: [
+      'Up to 2 Active Counters',
+      'Automated WhatsApp Bot Alerts',
+      'Voice Chime Broadcaster',
+      'Staff Desk Auto-Routing',
+      'Hourly Flow & Heatmaps',
+      'CSV Data Export'
+    ]
   },
   {
     id: 'ENTERPRISE',
-    name: 'Enterprise Plan',
-    price: '$99/mo',
-    features: ['Unlimited Counters & Campuses', 'Multi-Department Transfer', 'Custom White-Label Branding', 'Dedicated Account Manager']
+    name: 'Enterprise',
+    price: '₹5,000 / mo',
+    features: [
+      'Up to 4 Active Counters',
+      'Multi-Department Transfer',
+      'WhatsApp Bot & Auto-Routing',
+      'Unlimited Daily Visitor Passes',
+      'Full Analytics & Reporting',
+      'Priority Support'
+    ]
   }
 ];
 
@@ -107,48 +127,42 @@ export const RegisterOrgPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-6 px-4 py-4">
       {/* Back Button */}
-      <Link to="/" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+      <Link to="/" className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-500 hover:text-black transition-colors">
         <ArrowLeft size={16} /> Back to Directory
       </Link>
 
-      <div className="glass-panel rounded-3xl p-8 sm:p-12 border border-white/10 relative overflow-hidden">
+      <div className="bg-white rounded-2xl p-8 sm:p-10 border border-zinc-200 shadow-xs">
         <div className="max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-4">
-            <Building2 size={14} className="text-emerald-400" />
-            Enterprise Self-Service Onboarding
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            Register Your Business on Queless
+          <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
+            Register Your Organization
           </h1>
-
-          <p className="text-sm text-slate-400 mt-2">
-            Create your organization profile, select your category, and start creating service queues in under 2 minutes.
+          <p className="text-xs sm:text-sm text-zinc-500 mt-1">
+            Create your organization profile, select your category, and set up your live queue counters.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8 mt-10 pt-8 border-t border-white/10">
+        <form onSubmit={handleSubmit} className="space-y-8 mt-8 pt-6 border-t border-zinc-100">
           {error && (
-            <div className="p-4 bg-rose-500/15 border border-rose-500/30 rounded-2xl text-xs text-rose-300 font-medium">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-600 font-medium">
               {error}
             </div>
           )}
 
           {/* Section 1: Business Profile */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300">
-              1. Business Details & Category
+            <h3 className="text-xs font-bold uppercase tracking-wider text-black">
+              1. Organization Details
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
-                label="Organization / Business Name"
+                label="Organization Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. City Health Clinic, Stanford Admissions"
-                leftIcon={<Building2 size={18} />}
+                placeholder="e.g. City Health Clinic"
+                leftIcon={<Building2 size={16} />}
                 required
                 autoFocus
               />
@@ -167,8 +181,8 @@ export const RegisterOrgPage: React.FC = () => {
                 label="City / Region"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                placeholder="e.g. New York, London, Bangalore"
-                leftIcon={<MapPin size={18} />}
+                placeholder="e.g. New York, London, Tokyo"
+                leftIcon={<MapPin size={16} />}
                 required
               />
 
@@ -176,8 +190,8 @@ export const RegisterOrgPage: React.FC = () => {
                 label="Logo Image URL (Optional)"
                 value={logoUrl}
                 onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="https://... (or leave blank for initial icon)"
-                leftIcon={<ImageIcon size={18} />}
+                placeholder="https://..."
+                leftIcon={<ImageIcon size={16} />}
               />
             </div>
 
@@ -189,7 +203,7 @@ export const RegisterOrgPage: React.FC = () => {
             />
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">
                 Description / About Organization
               </label>
               <textarea
@@ -197,15 +211,15 @@ export const RegisterOrgPage: React.FC = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe your clinic, services offered, special counter instructions..."
-                className="w-full rounded-xl bg-slate-900/80 border border-white/10 p-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full rounded-lg bg-white border border-zinc-300 p-3 text-sm text-black placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
               />
             </div>
           </div>
 
           {/* Section 2: Subscription Tier */}
-          <div className="space-y-4 pt-4 border-t border-white/10">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300">
-              2. Select Your Subscription Plan
+          <div className="space-y-4 pt-4 border-t border-zinc-100">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-black">
+              2. Subscription Plan
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -215,23 +229,23 @@ export const RegisterOrgPage: React.FC = () => {
                   <div
                     key={tier.id}
                     onClick={() => setSelectedTier(tier.id)}
-                    className={`cursor-pointer rounded-2xl p-5 border transition-all ${
+                    className={`cursor-pointer rounded-xl p-5 border transition-all ${
                       isSelected
-                        ? 'bg-indigo-950/60 border-indigo-500 ring-2 ring-indigo-500/40 shadow-xl shadow-indigo-600/20'
-                        : 'bg-slate-900/60 border-white/10 hover:border-white/20'
+                        ? 'bg-zinc-50 border-2 border-black shadow-sm'
+                        : 'bg-white border-zinc-200 hover:border-zinc-300 shadow-xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-bold text-white text-base">{tier.name}</h4>
-                      <span className="text-xs font-black font-mono text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">
+                      <h4 className="font-bold text-black text-sm">{tier.name}</h4>
+                      <span className="text-xs font-bold font-mono text-black bg-zinc-100 px-2 py-0.5 rounded">
                         {tier.price}
                       </span>
                     </div>
 
-                    <ul className="space-y-1.5 text-[11px] text-slate-400 mt-4">
+                    <ul className="space-y-1.5 text-xs text-zinc-600 mt-3">
                       {tier.features.map((feat, i) => (
                         <li key={i} className="flex items-center gap-1.5">
-                          <CheckCircle size={12} className="text-emerald-400 shrink-0" />
+                          <Check size={13} className="text-emerald-600 shrink-0" />
                           <span>{feat}</span>
                         </li>
                       ))}
@@ -243,21 +257,21 @@ export const RegisterOrgPage: React.FC = () => {
           </div>
 
           {/* Action button */}
-          <div className="pt-6 border-t border-white/10 flex items-center justify-between">
-            <span className="text-xs text-slate-400 flex items-center gap-1.5">
-              <ShieldCheck size={16} className="text-emerald-400" />
-              Secured with Firebase Google Authentication
+          <div className="pt-6 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-xs text-zinc-500 flex items-center gap-1.5">
+              <ShieldCheck size={15} className="text-emerald-600" />
+              Secured with Google Authentication
             </span>
 
             <Button
               type="submit"
-              variant="emerald"
+              variant="primary"
               size="lg"
-              className="font-black px-8 shadow-emerald-500/20"
+              className="font-bold px-8 bg-black hover:bg-zinc-800 text-white rounded-lg w-full sm:w-auto"
               isLoading={loading}
-              leftIcon={<Sparkles size={18} />}
+              leftIcon={<Sparkles size={16} />}
             >
-              Complete Registration & Open Dashboard
+              Complete Registration
             </Button>
           </div>
         </form>

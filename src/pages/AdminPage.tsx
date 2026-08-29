@@ -19,8 +19,10 @@ import {
   Layers,
   ShieldAlert,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  MessageSquare
 } from 'lucide-react';
+import { AdminWhatsAppModal } from '../components/admin/AdminWhatsAppModal';
 
 export const AdminPage: React.FC = () => {
   const { user, adminOrgs, loading: authLoading, refreshAuth } = useAuth();
@@ -28,6 +30,7 @@ export const AdminPage: React.FC = () => {
   const [queues, setQueues] = useState<Queue[]>([]);
   const [loadingQueues, setLoadingQueues] = useState(false);
   const [isCreateQueueOpen, setIsCreateQueueOpen] = useState(false);
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'queues' | 'analytics'>('queues');
 
   // When adminOrgs loads, auto-select first org
@@ -59,12 +62,12 @@ export const AdminPage: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="text-center py-24 glass-panel rounded-3xl p-10 max-w-lg mx-auto border border-white/10">
-        <div className="w-16 h-16 rounded-3xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400 mb-4">
-          <ShieldAlert size={32} />
+      <div className="text-center py-24 bg-white rounded-2xl p-10 max-w-lg mx-auto border border-zinc-200 shadow-xs">
+        <div className="w-14 h-14 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto text-emerald-600 mb-4 font-bold">
+          <ShieldAlert size={28} />
         </div>
-        <h3 className="text-xl font-bold text-white">Admin Sign-In Required</h3>
-        <p className="text-xs text-slate-400 mt-2 mb-6">
+        <h3 className="text-xl font-black text-black">Admin Sign-In Required</h3>
+        <p className="text-xs text-zinc-500 mt-2 mb-6">
           Please sign in with your organization admin Google account to access the Admin Portal.
         </p>
       </div>
@@ -74,19 +77,19 @@ export const AdminPage: React.FC = () => {
   // ─── No admin orgs yet ───────────────────────────────────────────────────────
   if (!authLoading && adminOrgs.length === 0) {
     return (
-      <div className="space-y-10">
-        <div className="text-center py-16 glass-panel rounded-3xl p-10 border border-indigo-500/20 max-w-2xl mx-auto">
-          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-600 to-cyan-500 border border-indigo-400/30 flex items-center justify-center mx-auto text-white mb-5 shadow-xl shadow-indigo-600/20">
-            <Building2 size={36} />
+      <div className="space-y-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center py-16 bg-white rounded-2xl p-10 border border-zinc-200 max-w-2xl mx-auto shadow-xs">
+          <div className="w-16 h-16 rounded-2xl bg-black text-white flex items-center justify-center mx-auto mb-4 font-black text-2xl shadow-sm">
+            <Building2 size={30} />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-3">
-            Welcome to Queless Admin Portal
+          <h2 className="text-2xl sm:text-3xl font-black text-black tracking-tight mb-2">
+            Welcome to Queless Admin Console
           </h2>
-          <p className="text-sm text-slate-400 max-w-md mx-auto mb-8 leading-relaxed">
+          <p className="text-sm text-zinc-600 max-w-md mx-auto mb-8 leading-relaxed">
             You don't have any registered organizations yet. Register your clinic, bank, university, or enterprise to start issuing digital token passes.
           </p>
           <Link to="/admin/register">
-            <Button variant="emerald" size="lg" leftIcon={<Sparkles size={18} />} rightIcon={<ArrowRight size={18} />} className="font-bold shadow-emerald-500/20">
+            <Button variant="primary" size="lg" leftIcon={<Sparkles size={16} />} rightIcon={<ArrowRight size={16} />} className="font-bold bg-black text-white px-8">
               Register Your Organization
             </Button>
           </Link>
@@ -97,24 +100,37 @@ export const AdminPage: React.FC = () => {
 
   // ─── Main Admin Dashboard ────────────────────────────────────────────────────
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <Badge variant="emerald" size="sm" dot>Admin Portal</Badge>
-            {selectedOrg && <Badge variant="indigo" size="sm">{selectedOrg.SUBSCRIPTION_TIER} PLAN</Badge>}
+          <div className="flex items-center gap-2 mb-1">
+            <Badge variant="emerald" size="sm" dot>Admin Console</Badge>
+            {selectedOrg && <Badge variant="neutral" size="sm">{selectedOrg.SUBSCRIPTION_TIER.toLowerCase()} plan</Badge>}
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-2.5">
-            <Building2 className="text-emerald-400" size={28} />
-            {selectedOrg?.NAME || 'Admin Dashboard'}
+          <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight flex items-center gap-2.5">
+            <Building2 className="text-black shrink-0" size={26} />
+            <span className="truncate">{selectedOrg?.NAME || 'Admin Dashboard'}</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-zinc-500 mt-0.5">
             Manage service counters, assign staff, view analytics, and broadcast HDMI queue screens.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto shrink-0">
+          {/* WhatsApp Gateway Button */}
+          {selectedOrg && (
+            <Button
+              variant="secondary"
+              size="sm"
+              leftIcon={<MessageSquare size={14} className="text-emerald-600" />}
+              onClick={() => setIsWhatsAppModalOpen(true)}
+              className="font-bold shrink-0 border-emerald-300 hover:bg-emerald-50 text-emerald-950"
+            >
+              WhatsApp Bot
+            </Button>
+          )}
+
           {/* HDMI Cast for first active queue */}
           {queues.length > 0 && (
             <HDMICastButton
@@ -123,36 +139,41 @@ export const AdminPage: React.FC = () => {
             />
           )}
 
-          <Link to="/admin/register">
-            <Button variant="glass" size="sm" leftIcon={<Building2 size={15} />}>
-              Add Organization
+          <Link to="/admin/register" className="shrink-0">
+            <Button variant="secondary" size="sm" leftIcon={<Building2 size={14} />}>
+              Add Org
             </Button>
           </Link>
 
-          <Button
-            variant="emerald"
-            size="sm"
-            leftIcon={<Plus size={16} />}
-            onClick={() => setIsCreateQueueOpen(true)}
-            className="font-bold"
-          >
-            New Service Counter
-          </Button>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-xs font-mono font-bold text-zinc-700 bg-zinc-100 px-2.5 py-1.5 rounded-lg border border-zinc-200">
+              {queues.length} / {selectedOrg?.SUBSCRIPTION_TIER === 'ENTERPRISE' ? 4 : selectedOrg?.SUBSCRIPTION_TIER === 'PROFESSIONAL' ? 2 : 1} Counters
+            </span>
+            <Button
+              variant="emerald"
+              size="sm"
+              leftIcon={<Plus size={15} />}
+              onClick={() => setIsCreateQueueOpen(true)}
+              className="font-bold shrink-0"
+            >
+              New Counter
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Multi-org switcher if admin manages more than one org */}
+      {/* Multi-org switcher */}
       {adminOrgs.length > 1 && (
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-          <span className="text-xs text-slate-400 font-bold uppercase tracking-wider shrink-0 mr-1">Organization:</span>
+          <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider shrink-0 mr-1">Organization:</span>
           {adminOrgs.map((org) => (
             <button
               key={org.ORG_ID}
               onClick={() => { setSelectedOrgId(org.ORG_ID); setQueues([]); }}
-              className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 ${
                 selectedOrgId === org.ORG_ID
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20'
-                  : 'bg-slate-900 text-slate-400 hover:text-white border border-white/10'
+                  ? 'bg-black text-white shadow-xs'
+                  : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
               }`}
             >
               {org.NAME}
@@ -167,26 +188,26 @@ export const AdminPage: React.FC = () => {
       )}
 
       {/* Tab switcher */}
-      <div className="flex items-center gap-1 bg-slate-900/80 rounded-2xl p-1 border border-white/10 w-fit">
+      <div className="flex items-center gap-1.5 bg-zinc-100 rounded-xl p-1 border border-zinc-200 w-fit">
         <button
           onClick={() => setActiveTab('queues')}
-          className={`px-5 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
+          className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === 'queues'
-              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-black text-white shadow-xs'
+              : 'text-zinc-600 hover:text-black hover:bg-zinc-200'
           }`}
         >
-          <Layers size={16} /> Service Counters ({queues.length})
+          <Layers size={14} /> Service Counters ({queues.length})
         </button>
         <button
           onClick={() => setActiveTab('analytics')}
-          className={`px-5 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
+          className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === 'analytics'
-              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-black text-white shadow-xs'
+              : 'text-zinc-600 hover:text-black hover:bg-zinc-200'
           }`}
         >
-          <BarChart3 size={16} /> Analytics
+          <BarChart3 size={14} /> Analytics & Flow
         </button>
       </div>
 
@@ -207,6 +228,16 @@ export const AdminPage: React.FC = () => {
 
       {activeTab === 'analytics' && selectedOrgId && (
         <AnalyticsDashboard orgId={selectedOrgId} />
+      )}
+
+      {/* WhatsApp Gateway Modal */}
+      {isWhatsAppModalOpen && selectedOrg && (
+        <AdminWhatsAppModal
+          orgId={selectedOrg.ORG_ID}
+          orgName={selectedOrg.NAME}
+          isOpen={isWhatsAppModalOpen}
+          onClose={() => setIsWhatsAppModalOpen(false)}
+        />
       )}
 
       {/* Create Queue Modal */}

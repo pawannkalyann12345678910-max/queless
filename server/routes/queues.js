@@ -27,22 +27,54 @@ router.post('/org/:orgId', authenticate, (req, res) => {
     avgServiceMins = 10,
     maxDailyTokens = 0,
     operatingHours = '09:00 - 17:00',
-    staffEmails = [] // Optional staff emails to assign right upon creation
+    staffEmails = [], // Optional staff emails to assign right upon creation
+    isActive = true // Public visibility toggle (true: visible to all, false: hidden from public)
   } = req.body;
 
   if (!name || name.trim() === '') {
     return res.status(400).json({ error: 'Queue name is required' });
   }
 
+  // Enforce Subscription Plan Queue Limits
+  const org = db.prepare('SELECT * FROM ORGANIZATIONS WHERE ORG_ID = ?').get(orgId);
+  const tier = (org?.SUBSCRIPTION_TIER || 'STARTER').toUpperCase();
+  
+  // Starter = 1, Professional = 2, Enterprise = 4
+  const planLimits = {
+    FREE: 1,
+    STARTER: 1,
+    PROFESSIONAL: 2,
+    ENTERPRISE: 4
+  };
+  const maxAllowed = planLimits[tier] || 1;
+
+  const existingQueues = db.prepare('SELECT * FROM QUEUES WHERE ORG_ID = ?').all(orgId);
+  if (existingQueues.length >= maxAllowed) {
+    if (tier === 'STARTER' || tier === 'FREE') {
+      return res.status(403).json({
+        error: `Plan Limit Reached: Your Starter 1-Week Free Trial includes 1 active counter. Please upgrade to Professional (₹2,000/mo for 2 counters) or Enterprise (₹5,000/mo for 4 counters).`
+      });
+    } else if (tier === 'PROFESSIONAL') {
+      return res.status(403).json({
+        error: `Plan Limit Reached: The Professional plan (₹2,000/mo) includes up to 2 active counters. Please upgrade to the Enterprise plan (₹5,000/mo) to unlock 4 counters.`
+      });
+    } else {
+      return res.status(403).json({
+        error: `Plan Limit Reached: The Enterprise plan includes up to 4 active service counters.`
+      });
+    }
+  }
+
   const queueId = uuidv4();
   const formattedPrefix = prefix.trim().endsWith('-') ? prefix.trim().toUpperCase() : `${prefix.trim().toUpperCase()}-`;
+  const activeValue = (isActive === false || isActive === 0 || isActive === '0' || isActive === 'false') ? 0 : 1;
 
   db.prepare(`
     INSERT INTO QUEUES (
       QUEUE_ID, ORG_ID, NAME, PREFIX, COUNTER_LABEL,
       AVG_SERVICE_MINS, MAX_DAILY_TOKENS, CURRENT_TOKEN_SEQ,
       IS_ACTIVE, IS_PAUSED, OPERATING_HOURS
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 1, 0, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, 0, ?)
   `).run(
     queueId,
     orgId,
@@ -51,6 +83,7 @@ router.post('/org/:orgId', authenticate, (req, res) => {
     counterLabel.trim(),
     parseInt(avgServiceMins) || 10,
     parseInt(maxDailyTokens) || 0,
+    activeValue,
     operatingHours.trim()
   );
 
@@ -71,7 +104,7 @@ router.post('/org/:orgId', authenticate, (req, res) => {
   db.prepare(`
     INSERT INTO AUDIT_LOGS (LOG_ID, ORG_ID, QUEUE_ID, ACTION, ACTOR_UID, DETAILS)
     VALUES (?, ?, ?, 'QUEUE_CREATED', ?, ?)
-  `).run(uuidv4(), orgId, queueId, req.user.USER_ID, `Created queue: ${name}`);
+  `).run(uuidv4(), orgId, queueId, req.user.USER_ID, `Created queue: ${name} (Visible: ${activeValue === 1 ? 'YES' : 'NO'})`);
 
   const createdQueue = db.prepare('SELECT * FROM QUEUES WHERE QUEUE_ID = ?').get(queueId);
   const assignedStaff = db.prepare('SELECT * FROM STAFF_ASSIGNMENTS WHERE QUEUE_ID = ?').all(queueId);
@@ -104,6 +137,11 @@ router.put('/:id', authenticate, (req, res) => {
     isActive
   } = req.body;
 
+  let activeValue = null;
+  if (isActive !== undefined) {
+    activeValue = (isActive === false || isActive === 0 || isActive === '0' || isActive === 'false') ? 0 : 1;
+  }
+
   db.prepare(`
     UPDATE QUEUES
     SET NAME = COALESCE(?, NAME),
@@ -121,7 +159,7 @@ router.put('/:id', authenticate, (req, res) => {
     avgServiceMins !== undefined ? parseInt(avgServiceMins) : null,
     maxDailyTokens !== undefined ? parseInt(maxDailyTokens) : null,
     operatingHours ? operatingHours.trim() : null,
-    isActive !== undefined ? (isActive ? 1 : 0) : null,
+    activeValue,
     req.params.id
   );
 
@@ -133,7 +171,40 @@ router.put('/:id', authenticate, (req, res) => {
   });
 });
 
-// 3. Pause or Resume Queue Intake (Staff or Admin)
+// 3. Toggle Public Visibility (Admin Only)
+router.post('/:id/toggle-visibility', authenticate, (req, res) => {
+  const queue = db.prepare('SELECT * FROM QUEUES WHERE QUEUE_ID = ?').get(req.params.id);
+  if (!queue) {
+    return res.status(404).json({ error: 'Queue not found' });
+  }
+
+  if (!isOrgAdmin(req.user, queue.ORG_ID)) {
+    return res.status(403).json({ error: 'Forbidden: You are not the admin of this organization' });
+  }
+
+  const newActiveState = queue.IS_ACTIVE === 1 ? 0 : 1;
+
+  db.prepare('UPDATE QUEUES SET IS_ACTIVE = ? WHERE QUEUE_ID = ?').run(newActiveState, req.params.id);
+
+  db.prepare(`
+    INSERT INTO AUDIT_LOGS (LOG_ID, ORG_ID, QUEUE_ID, ACTION, ACTOR_UID, DETAILS)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).run(
+    uuidv4(),
+    queue.ORG_ID,
+    queue.QUEUE_ID,
+    newActiveState === 1 ? 'QUEUE_VISIBILITY_PUBLIC' : 'QUEUE_VISIBILITY_HIDDEN',
+    req.user.USER_ID,
+    newActiveState === 1 ? 'Queue made visible to public' : 'Queue hidden from public view'
+  );
+
+  res.json({
+    message: newActiveState === 1 ? 'Queue is now publicly visible' : 'Queue is now hidden from public view',
+    isActive: newActiveState === 1
+  });
+});
+
+// 4. Pause or Resume Queue Intake (Staff or Admin)
 router.post('/:id/toggle-pause', authenticate, (req, res) => {
   const queue = db.prepare('SELECT * FROM QUEUES WHERE QUEUE_ID = ?').get(req.params.id);
   if (!queue) {
@@ -172,7 +243,7 @@ router.post('/:id/toggle-pause', authenticate, (req, res) => {
   });
 });
 
-// 4. Delete a Queue (Admin Only)
+// 5. Delete a Queue (Admin Only)
 router.delete('/:id', authenticate, (req, res) => {
   const queue = db.prepare('SELECT * FROM QUEUES WHERE QUEUE_ID = ?').get(req.params.id);
   if (!queue) {

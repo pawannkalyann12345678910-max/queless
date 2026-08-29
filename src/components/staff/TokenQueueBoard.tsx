@@ -49,47 +49,47 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
   const noShowCount = tokens.filter(t => t.STATUS === 'NO_SHOW').length;
 
   return (
-    <div className="glass-panel rounded-3xl p-6 border border-white/10">
+    <div className="bg-white rounded-xl p-6 border border-zinc-200 shadow-xs">
       {/* Board Header with Tabs & Search */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-zinc-100">
         {/* Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           <button
             onClick={() => setFilterTab('ALL')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap ${
-              filterTab === 'ALL' ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors whitespace-nowrap cursor-pointer ${
+              filterTab === 'ALL' ? 'bg-black text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
             }`}
           >
             All Active ({tokens.length})
           </button>
           <button
             onClick={() => setFilterTab('WAITING')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap ${
-              filterTab === 'WAITING' ? 'bg-amber-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors whitespace-nowrap cursor-pointer ${
+              filterTab === 'WAITING' ? 'bg-black text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
             }`}
           >
             Waiting ({waitingCount})
           </button>
           <button
             onClick={() => setFilterTab('SERVING')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap ${
-              filterTab === 'SERVING' ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors whitespace-nowrap cursor-pointer ${
+              filterTab === 'SERVING' ? 'bg-black text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
             }`}
           >
             Called / Serving ({servingCount})
           </button>
           <button
             onClick={() => setFilterTab('COMPLETED')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap ${
-              filterTab === 'COMPLETED' ? 'bg-cyan-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors whitespace-nowrap cursor-pointer ${
+              filterTab === 'COMPLETED' ? 'bg-black text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
             }`}
           >
             Completed ({completedCount})
           </button>
           <button
             onClick={() => setFilterTab('NO_SHOW')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap ${
-              filterTab === 'NO_SHOW' ? 'bg-rose-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors whitespace-nowrap cursor-pointer ${
+              filterTab === 'NO_SHOW' ? 'bg-black text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
             }`}
           >
             No-Show ({noShowCount})
@@ -98,13 +98,13 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
 
         {/* Search input */}
         <div className="relative w-full md:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={14} />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search token / name / phone..."
-            className="w-full pl-9 pr-3 py-1.5 bg-slate-900/80 border border-white/10 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            placeholder="Search token, name, phone..."
+            className="w-full pl-8 pr-3 py-1.5 bg-white border border-zinc-300 rounded-lg text-xs text-black placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
           />
         </div>
       </div>
@@ -112,19 +112,19 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
       {/* Table Content */}
       {filteredTokens.length === 0 ? (
         <div className="text-center py-16">
-          <div className="w-16 h-16 rounded-3xl bg-slate-900 border border-white/10 flex items-center justify-center mx-auto text-slate-500 mb-3">
-            <Inbox size={32} />
+          <div className="w-12 h-12 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center mx-auto text-zinc-400 mb-2">
+            <Inbox size={24} />
           </div>
-          <h4 className="text-base font-bold text-slate-300">No Tokens in this View</h4>
-          <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
-            {search ? 'Try adjusting your search query' : 'New tokens booked online or issued at the counter will show up here.'}
+          <h4 className="text-sm font-bold text-black">No Tokens in this View</h4>
+          <p className="text-xs text-zinc-500 mt-0.5 max-w-xs mx-auto">
+            {search ? 'Try adjusting your search query' : 'New tokens booked online or issued at the counter will appear here.'}
           </p>
         </div>
       ) : (
         <div className="overflow-x-auto mt-2">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/10 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <tr className="border-b border-zinc-200 text-[11px] font-bold uppercase tracking-wider text-zinc-600 bg-zinc-50">
                 <th className="py-3 px-4">Token #</th>
                 <th className="py-3 px-4">Customer Details</th>
                 <th className="py-3 px-4">Status</th>
@@ -132,7 +132,7 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
                 <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-zinc-100">
               {filteredTokens.map(token => (
                 <TokenRow
                   key={token.TOKEN_ID}

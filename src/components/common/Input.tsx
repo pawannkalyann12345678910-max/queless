@@ -20,28 +20,28 @@ export const Input: React.FC<InputProps> = ({
   const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
 
   return (
-    <div className="w-full">
+    <div className="w-full text-left">
       {label && (
-        <label htmlFor={inputId} className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+        <label htmlFor={inputId} className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">
           {label}
         </label>
       )}
-      <div className="relative rounded-xl shadow-sm">
+      <div className="relative rounded-lg shadow-xs">
         {leftIcon && (
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-400">
             {leftIcon}
           </div>
         )}
         <input
           id={inputId}
-          className={`block w-full rounded-xl bg-slate-900/80 border ${
-            error ? 'border-rose-500 focus:ring-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-indigo-500 focus:ring-indigo-500'
-          } ${leftIcon ? 'pl-10' : 'pl-3.5'} pr-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 transition-all ${className}`}
+          className={`block w-full rounded-lg bg-white border ${
+            error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-zinc-300 focus:border-black focus:ring-black'
+          } ${leftIcon ? 'pl-9' : 'pl-3'} pr-3 py-2 text-sm text-black placeholder-zinc-400 focus:outline-none focus:ring-1 transition-all ${className}`}
           {...props}
         />
       </div>
-      {error && <p className="mt-1 text-xs text-rose-400 font-medium">{error}</p>}
-      {helperText && !error && <p className="mt-1 text-xs text-slate-400">{helperText}</p>}
+      {error && <p className="mt-1 text-xs text-red-600 font-medium">{error}</p>}
+      {helperText && !error && <p className="mt-1 text-xs text-zinc-500">{helperText}</p>}
     </div>
   );
 };

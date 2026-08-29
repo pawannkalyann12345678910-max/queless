@@ -63,17 +63,19 @@ export const TransferTokenModal: React.FC<TransferTokenModalProps> = ({
     >
       <form onSubmit={handleTransfer} className="space-y-4 pt-2">
         {error && (
-          <div className="p-3 bg-rose-500/15 border border-rose-500/30 rounded-xl text-xs text-rose-300 font-medium">
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-600 font-medium">
             {error}
           </div>
         )}
 
-        <p className="text-xs text-slate-300">
+        <p className="text-xs text-zinc-600">
           Transferring this customer will move their token into the waiting line of the target counter while preserving their customer profile.
         </p>
 
         {filteredQueues.length === 0 ? (
-          <p className="text-xs text-amber-300">No other active counters available under this organization.</p>
+          <p className="text-xs text-amber-700 font-medium bg-amber-50 p-3 rounded-lg border border-amber-200">
+            No other active counters available under this organization.
+          </p>
         ) : (
           <Select
             label="Destination Counter / Queue"
@@ -84,7 +86,7 @@ export const TransferTokenModal: React.FC<TransferTokenModalProps> = ({
           />
         )}
 
-        <div className="pt-3 flex items-center gap-3">
+        <div className="pt-3 flex items-center gap-3 border-t border-zinc-100">
           <Button type="button" variant="secondary" size="md" className="flex-1" onClick={onClose}>
             Cancel
           </Button>
@@ -92,7 +94,7 @@ export const TransferTokenModal: React.FC<TransferTokenModalProps> = ({
             type="submit"
             variant="primary"
             size="md"
-            className="flex-1 font-bold"
+            className="flex-1 font-bold bg-black text-white"
             disabled={filteredQueues.length === 0}
             isLoading={loading}
             leftIcon={<ArrowRightLeft size={16} />}

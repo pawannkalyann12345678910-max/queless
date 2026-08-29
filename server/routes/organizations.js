@@ -39,7 +39,7 @@ router.get('/', (req, res) => {
   res.json({ organizations });
 });
 
-// 2. Get Organization Details with its Queues (Public)
+// 2. Get Organization Details with its Queues (Direct Link / Shared Link / QR Code View)
 router.get('/:id', (req, res) => {
   const org = db.prepare('SELECT * FROM ORGANIZATIONS WHERE ORG_ID = ?').get(req.params.id);
 
@@ -47,14 +47,17 @@ router.get('/:id', (req, res) => {
     return res.status(404).json({ error: 'Organization not found' });
   }
 
-  const queues = db.prepare(`
+  // When visiting an organization via direct link or QR code, all counters are accessible to book
+  const query = `
     SELECT q.*,
       (SELECT COUNT(*) FROM TOKENS t WHERE t.QUEUE_ID = q.QUEUE_ID AND t.STATUS = 'WAITING') as WAITING_COUNT,
       (SELECT TOKEN_NUMBER FROM TOKENS t WHERE t.QUEUE_ID = q.QUEUE_ID AND t.STATUS IN ('CALLED', 'SERVING') ORDER BY t.CALLED_AT DESC LIMIT 1) as CURRENT_SERVING_TOKEN
     FROM QUEUES q
-    WHERE q.ORG_ID = ? AND q.IS_ACTIVE = 1
+    WHERE q.ORG_ID = ?
     ORDER BY q.CREATED_AT ASC
-  `).all(req.params.id);
+  `;
+
+  const queues = db.prepare(query).all(req.params.id);
 
   res.json({ organization: org, queues });
 });

@@ -17,7 +17,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onClear
 }) => {
   return (
-    <div className="w-full glass-panel rounded-2xl p-2.5 sm:p-3 flex flex-col sm:flex-row items-center gap-2 border border-white/10 shadow-2xl">
+    <div className="w-full bg-white rounded-2xl p-2.5 sm:p-3 flex flex-col sm:flex-row items-center gap-2 border border-slate-200 shadow-md">
       {/* Search keywords */}
       <div className="relative flex-1 w-full">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -26,12 +26,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search by hospital, bank, clinic, university, service..."
-          className="w-full pl-10 pr-4 py-2.5 bg-slate-900/60 border border-white/5 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
+          className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
         />
         {search && (
           <button
             onClick={() => onSearchChange('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
           >
             <X size={16} />
           </button>
@@ -46,14 +46,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           value={city}
           onChange={(e) => onCityChange(e.target.value)}
           placeholder="City / Location"
-          className="w-full pl-10 pr-4 py-2.5 bg-slate-900/60 border border-white/5 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
+          className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
         />
       </div>
 
       {(search || city) && (
         <button
           onClick={onClear}
-          className="text-xs font-semibold text-slate-400 hover:text-white px-3 py-2 rounded-xl hover:bg-white/5 transition-colors whitespace-nowrap"
+          className="text-xs font-bold text-slate-600 hover:text-slate-900 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors whitespace-nowrap"
         >
           Reset Filters
         </button>

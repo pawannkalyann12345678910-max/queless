@@ -9,6 +9,8 @@ import staffRoutes from './routes/staff.js';
 import tokensRoutes from './routes/tokens.js';
 import displayRoutes from './routes/display.js';
 import analyticsRoutes from './routes/analytics.js';
+import whatsappRoutes from './routes/whatsapp.js';
+import vapiRoutes from './routes/vapi.js';
 
 dotenv.config();
 
@@ -41,6 +43,8 @@ app.use('/api/staff', staffRoutes);
 app.use('/api/tokens', tokensRoutes);
 app.use('/api/display', displayRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/whatsapp', whatsappRoutes);
+app.use('/api/vapi', vapiRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

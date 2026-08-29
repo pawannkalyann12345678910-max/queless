@@ -100,17 +100,21 @@ class QueryEngine {
         ...o,
         TOTAL_QUEUES: data.QUEUES.filter(q => q.ORG_ID === o.ORG_ID && q.IS_ACTIVE === 1).length,
         ACTIVE_WAITING_TOKENS: data.TOKENS.filter(t => t.ORG_ID === o.ORG_ID && t.STATUS === 'WAITING').length
-      }));
+      })).filter(o => o.TOTAL_QUEUES > 0);
     }
 
     // 3. QUEUES queries
     if (/SELECT \* FROM QUEUES WHERE QUEUE_ID = \?/i.test(s)) {
       return data.QUEUES.filter(q => q.QUEUE_ID === params[0]);
     }
+    if (/SELECT \* FROM QUEUES WHERE ORG_ID = \?/i.test(s)) {
+      return data.QUEUES.filter(q => q.ORG_ID === params[0]);
+    }
     if (/SELECT q\.\* FROM QUEUES q/i.test(s) || /FROM QUEUES q/i.test(s)) {
       if (/WHERE q\.ORG_ID = \?/i.test(s)) {
         const orgId = params[0];
-        return data.QUEUES.filter(q => q.ORG_ID === orgId && q.IS_ACTIVE === 1).map(q => {
+        const filterActiveOnly = /q\.IS_ACTIVE = 1/i.test(s);
+        return data.QUEUES.filter(q => q.ORG_ID === orgId && (!filterActiveOnly || q.IS_ACTIVE === 1)).map(q => {
           const waitingCount = data.TOKENS.filter(t => t.QUEUE_ID === q.QUEUE_ID && t.STATUS === 'WAITING').length;
           const currentServing = data.TOKENS
             .filter(t => t.QUEUE_ID === q.QUEUE_ID && (t.STATUS === 'CALLED' || t.STATUS === 'SERVING'))
@@ -412,7 +416,14 @@ class QueryEngine {
 
     // QUEUES INSERT/UPDATE/DELETE
     if (/INSERT INTO QUEUES/i.test(s)) {
-      const [qId, orgId, name, prefix, counter, avgMins, maxTokens, hours] = params;
+      let qId, orgId, name, prefix, counter, avgMins, maxTokens, active, hours;
+      if (params.length >= 9) {
+        [qId, orgId, name, prefix, counter, avgMins, maxTokens, active, hours] = params;
+      } else {
+        [qId, orgId, name, prefix, counter, avgMins, maxTokens, hours] = params;
+        active = 1;
+      }
+      const isActiveValue = (active !== undefined && active !== null) ? (Number(active) === 1 || active === true ? 1 : 0) : 1;
       data.QUEUES.push({
         QUEUE_ID: qId,
         ORG_ID: orgId,
@@ -422,7 +433,7 @@ class QueryEngine {
         AVG_SERVICE_MINS: avgMins,
         MAX_DAILY_TOKENS: maxTokens,
         CURRENT_TOKEN_SEQ: 0,
-        IS_ACTIVE: 1,
+        IS_ACTIVE: isActiveValue,
         IS_PAUSED: 0,
         OPERATING_HOURS: hours,
         CREATED_AT: new Date().toISOString()
@@ -441,6 +452,13 @@ class QueryEngine {
       const [paused, qId] = params;
       const q = data.QUEUES.find(item => item.QUEUE_ID === qId);
       if (q) q.IS_PAUSED = paused;
+      persist();
+      return { changes: 1 };
+    }
+    if (/UPDATE QUEUES SET IS_ACTIVE = \? WHERE QUEUE_ID = \?/i.test(s)) {
+      const [active, qId] = params;
+      const q = data.QUEUES.find(item => item.QUEUE_ID === qId);
+      if (q) q.IS_ACTIVE = (Number(active) === 1 || active === true) ? 1 : 0;
       persist();
       return { changes: 1 };
     }

@@ -3,7 +3,7 @@ import type { TokenStatus, DelayStatus } from '../../types';
 
 interface BadgeProps {
   children?: React.ReactNode;
-  variant?: 'emerald' | 'indigo' | 'amber' | 'rose' | 'slate' | 'cyan' | 'purple';
+  variant?: 'emerald' | 'indigo' | 'amber' | 'rose' | 'slate' | 'cyan' | 'purple' | 'neutral';
   status?: TokenStatus | DelayStatus | string;
   size?: 'sm' | 'md' | 'lg';
   dot?: boolean;
@@ -18,8 +18,7 @@ export const Badge: React.FC<BadgeProps> = ({
   dot = false,
   className = ''
 }) => {
-  // Determine variant automatically from status if not specified
-  let effectiveVariant = variant || 'slate';
+  let effectiveVariant = variant || 'neutral';
 
   if (status) {
     switch (status) {
@@ -53,37 +52,51 @@ export const Badge: React.FC<BadgeProps> = ({
   }
 
   const sizeStyles = {
-    sm: "text-[10px] px-2 py-0.5 font-medium tracking-wide",
-    md: "text-xs px-2.5 py-1 font-medium",
-    lg: "text-sm px-3.5 py-1.5 font-semibold"
+    sm: "text-[11px] px-2 py-0.5 font-medium rounded-md",
+    md: "text-xs px-2.5 py-0.5 font-medium rounded-md",
+    lg: "text-xs px-3 py-1 font-semibold rounded-md"
   };
 
   const variantStyles = {
-    emerald: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-    indigo: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
-    amber: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-    rose: "bg-rose-500/15 text-rose-300 border-rose-500/30",
-    slate: "bg-slate-700/40 text-slate-300 border-slate-600/40",
-    cyan: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
-    purple: "bg-purple-500/15 text-purple-300 border-purple-500/30"
+    neutral: "bg-zinc-100 text-zinc-800 border-zinc-200",
+    slate: "bg-zinc-100 text-zinc-800 border-zinc-200",
+    emerald: "bg-emerald-50 text-emerald-800 border-emerald-200/80",
+    indigo: "bg-blue-50 text-blue-800 border-blue-200/80",
+    amber: "bg-amber-50 text-amber-900 border-amber-200/80",
+    rose: "bg-red-50 text-red-800 border-red-200/80",
+    cyan: "bg-zinc-100 text-zinc-900 border-zinc-200",
+    purple: "bg-purple-50 text-purple-800 border-purple-200/80"
   };
 
   const dotColors = {
-    emerald: "bg-emerald-400",
-    indigo: "bg-indigo-400 animate-pulse",
-    amber: "bg-amber-400 animate-pulse",
-    rose: "bg-rose-400",
-    slate: "bg-slate-400",
-    cyan: "bg-cyan-400",
-    purple: "bg-purple-400"
+    neutral: "bg-zinc-500",
+    slate: "bg-zinc-500",
+    emerald: "bg-emerald-600",
+    indigo: "bg-blue-600",
+    amber: "bg-amber-600",
+    rose: "bg-red-600",
+    cyan: "bg-zinc-700",
+    purple: "bg-purple-600"
   };
 
+  // Convert raw status codes into human readable Title Case
+  let content = children || status;
+  if (typeof content === 'string') {
+    if (content === 'LIVE ACTIVE' || content === 'Live Active') content = 'Live Active';
+    else if (content === 'WAITING') content = 'Waiting';
+    else if (content === 'SERVING') content = 'Serving';
+    else if (content === 'CALLED') content = 'Called';
+    else if (content === 'COMPLETED') content = 'Completed';
+    else if (content === 'NO_SHOW') content = 'No Show';
+    else if (content === 'CANCELLED') content = 'Cancelled';
+  }
+
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full border ${sizeStyles[size]} ${variantStyles[effectiveVariant]} ${className}`}>
+    <span className={`inline-flex items-center gap-1.5 border leading-tight select-none ${sizeStyles[size]} ${variantStyles[effectiveVariant]} ${className}`}>
       {dot && (
         <span className={`w-1.5 h-1.5 rounded-full ${dotColors[effectiveVariant]}`} />
       )}
-      {children || status}
+      {content}
     </span>
   );
 };

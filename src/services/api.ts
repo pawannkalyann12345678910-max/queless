@@ -8,7 +8,14 @@ import type {
   HDMIDisplayPayload 
 } from '../types';
 
-const API_BASE = 'http://localhost:5000/api';
+const ENV_API_URL = import.meta.env.VITE_API_BASE_URL;
+const API_PORT = import.meta.env.VITE_API_PORT || '5000';
+
+const API_BASE = ENV_API_URL 
+  ? ENV_API_URL 
+  : typeof window !== 'undefined' 
+    ? `http://${window.location.hostname || 'localhost'}:${API_PORT}/api` 
+    : `http://localhost:${API_PORT}/api`;
 
 class ApiClient {
   private getAuthHeader(): Record<string, string> {
@@ -111,6 +118,7 @@ class ApiClient {
     maxDailyTokens?: number;
     operatingHours?: string;
     staffEmails?: string[];
+    isActive?: boolean | number;
   }): Promise<{ message: string; queue: Queue; staff: StaffAssignment[] }> {
     return this.request(`/queues/org/${orgId}`, {
       method: 'POST',
@@ -127,6 +135,10 @@ class ApiClient {
 
   async togglePauseQueue(queueId: string): Promise<{ message: string; isPaused: boolean }> {
     return this.request(`/queues/${queueId}/toggle-pause`, { method: 'POST' });
+  }
+
+  async toggleQueueVisibility(queueId: string): Promise<{ message: string; isActive: boolean }> {
+    return this.request(`/queues/${queueId}/toggle-visibility`, { method: 'POST' });
   }
 
   async deleteQueue(queueId: string): Promise<{ message: string }> {
@@ -225,12 +237,114 @@ class ApiClient {
   }
 
   // 7. Analytics
+  // 7. Analytics
   async getAnalytics(orgId: string): Promise<AnalyticsSummary> {
     return this.request(`/analytics/org/${orgId}`);
   }
 
   getExportCsvUrl(orgId: string): string {
     return `${API_BASE}/analytics/org/${orgId}/export`;
+  }
+
+  // 8. WhatsApp Integration
+  async getWhatsAppStatus(sessionId: string): Promise<{
+    sessionId: string;
+    status: 'DISCONNECTED' | 'QR_READY' | 'CONNECTING' | 'CONNECTED';
+    qrCodeUrl: string | null;
+    userNumber: string | null;
+    userName?: string | null;
+  }> {
+    return this.request(`/whatsapp/status/${sessionId}`);
+  }
+
+  async connectWhatsApp(sessionId: string): Promise<any> {
+    return this.request(`/whatsapp/connect/${sessionId}`, { method: 'POST' });
+  }
+
+  async disconnectWhatsApp(sessionId: string): Promise<any> {
+    return this.request(`/whatsapp/disconnect/${sessionId}`, { method: 'POST' });
+  }
+
+  async sendTokenWhatsAppAlert(payload: {
+    orgId?: string;
+    queueId?: string;
+    tokenId: string;
+    phone?: string;
+    messageType?: 'CALL' | 'ADVANCE_5M' | 'CUSTOM';
+    customText?: string;
+  }): Promise<{
+    success: boolean;
+    connected: boolean;
+    message?: string;
+    senderType?: 'STAFF' | 'ADMIN';
+    sender?: string;
+    recipient?: string;
+    directWaLink?: string;
+    messageBody?: string;
+  }> {
+    return this.request('/whatsapp/send-token-alert', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async toggleQueueStaffWhatsApp(queueId: string, allowStaffWhatsApp: boolean): Promise<{ success: boolean; allowStaffWhatsApp: number }> {
+    return this.request(`/whatsapp/queue/${queueId}/toggle-staff-whatsapp`, {
+      method: 'PUT',
+      body: JSON.stringify({ allowStaffWhatsApp })
+    });
+  }
+
+  // 9. Vapi Voice AI Calling
+  async getVapiConfig(orgId: string): Promise<{
+    configured: boolean;
+    apiKeyMasked: string;
+    phoneNumberId: string;
+    phoneNumber: string;
+    assistantId: string;
+  }> {
+    return this.request(`/vapi/config/${orgId}`);
+  }
+
+  async saveVapiConfig(orgId: string, data: { apiKey: string; phoneNumberId?: string; assistantId?: string }): Promise<{
+    success: boolean;
+    message: string;
+    phoneNumberId: string;
+    phoneNumber: string;
+    assistantId: string;
+    availablePhoneNumbers: Array<{ id: string; number: string; name: string }>;
+    availableAssistants: Array<{ id: string; name: string }>;
+  }> {
+    return this.request(`/vapi/config/${orgId}`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async testVapiCall(orgId: string, testPhone: string): Promise<{
+    success: boolean;
+    message: string;
+    callId: string;
+    status: string;
+  }> {
+    return this.request(`/vapi/test-call/${orgId}`, {
+      method: 'POST',
+      body: JSON.stringify({ testPhone })
+    });
+  }
+
+  async callTokenViaVapi(payload: { tokenId: string; queueId?: string; orgId?: string }): Promise<{
+    success: boolean;
+    callId: string;
+    status: string;
+    recipient: string;
+    tokenNumber: string;
+    customerName: string;
+  }> {
+    return this.request('/vapi/call-token', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
   }
 }
 

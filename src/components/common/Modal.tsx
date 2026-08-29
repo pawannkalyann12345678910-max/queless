@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 interface ModalProps {
@@ -20,6 +21,12 @@ export const Modal: React.FC<ModalProps> = ({
   maxWidth = 'md',
   preventClose = false
 }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -31,7 +38,7 @@ export const Modal: React.FC<ModalProps> = ({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const maxWidthStyles = {
     sm: 'max-w-sm',
@@ -42,37 +49,43 @@ export const Modal: React.FC<ModalProps> = ({
     '3xl': 'max-w-3xl'
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
+  const modalContent = (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      {/* Clean solid dark overlay */}
       <div 
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity"
+        className="fixed inset-0 bg-black/60 transition-opacity"
         onClick={() => {
           if (!preventClose && onClose) onClose();
         }}
       />
 
-      {/* Modal Dialog */}
-      <div className={`relative w-full ${maxWidthStyles[maxWidth]} glass-panel rounded-3xl p-6 sm:p-7 shadow-2xl border border-white/15 animate-in fade-in zoom-in-95 duration-200 z-10 max-h-[90vh] overflow-y-auto`}>
-        {(title || !preventClose) && (
-          <div className="flex items-start justify-between gap-4 mb-5 pb-3 border-b border-white/10">
-            <div>
-              {title && <h3 className="text-xl font-bold text-white tracking-tight">{title}</h3>}
-              {subtitle && <p className="text-xs text-slate-400 mt-1">{subtitle}</p>}
+      {/* Centered Modal Container */}
+      <div className="flex min-h-full items-center justify-center p-4 sm:p-6 relative z-10">
+        <div className={`relative w-full ${maxWidthStyles[maxWidth]} bg-white border border-zinc-200 rounded-xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col`}>
+          {(title || !preventClose) && (
+            <div className="flex items-start justify-between gap-4 mb-4 pb-3 border-b border-zinc-200 shrink-0">
+              <div>
+                {title && <h3 className="text-lg font-black text-black tracking-tight">{title}</h3>}
+                {subtitle && <p className="text-xs text-zinc-500 mt-0.5">{subtitle}</p>}
+              </div>
+              {!preventClose && onClose && (
+                <button
+                  onClick={onClose}
+                  className="text-zinc-400 hover:text-black p-1 rounded-md hover:bg-zinc-100 transition-colors"
+                >
+                  <X size={18} />
+                </button>
+              )}
             </div>
-            {!preventClose && onClose && (
-              <button
-                onClick={onClose}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
-              >
-                <X size={20} />
-              </button>
-            )}
-          </div>
-        )}
+          )}
 
-        {children}
+          <div className="overflow-y-auto flex-1 pr-1 -mr-1 text-zinc-900">
+            {children}
+          </div>
+        </div>
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };

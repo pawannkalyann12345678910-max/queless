@@ -40,8 +40,8 @@ export const OrgDetailPage: React.FC = () => {
 
   if (!organization) {
     return (
-      <div className="text-center py-24">
-        <h3 className="text-xl font-bold text-white">Organization Not Found</h3>
+      <div className="text-center py-24 bg-white rounded-xl border border-zinc-200 p-8 max-w-lg mx-auto">
+        <h3 className="text-xl font-bold text-black">Organization Not Found</h3>
         <Link to="/" className="mt-4 inline-block">
           <Button variant="secondary" size="md" leftIcon={<ArrowLeft size={16} />}>
             Back to Directory
@@ -52,42 +52,42 @@ export const OrgDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-10">
-      {/* Back Button */}
-      <Link to="/" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
-        <ArrowLeft size={16} /> Back to Directory
+    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      {/* Back Link */}
+      <Link to="/" className="inline-flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-black transition-colors">
+        <ArrowLeft size={14} /> Back to Directory
       </Link>
 
-      {/* Organization Banner / Header */}
-      <div className="glass-panel rounded-3xl p-6 sm:p-10 border border-white/10 relative overflow-hidden">
+      {/* Organization Header */}
+      <div className="bg-white rounded-xl p-6 sm:p-8 border border-zinc-200 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="flex items-start sm:items-center gap-5">
             {organization.LOGO_URL ? (
               <img
                 src={organization.LOGO_URL}
                 alt={organization.NAME}
-                className="w-20 h-20 rounded-3xl object-cover border border-white/15 bg-slate-900 shadow-xl"
+                className="w-16 h-16 rounded-xl object-cover border border-zinc-200 bg-zinc-50"
               />
             ) : (
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-600 to-cyan-500 border border-white/20 flex items-center justify-center font-black text-white text-3xl shadow-xl">
+              <div className="w-16 h-16 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center font-black text-black text-2xl">
                 {organization.NAME.charAt(0)}
               </div>
             )}
 
-            <div>
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="indigo" size="sm">{organization.CATEGORY}</Badge>
                 <Badge variant="emerald" size="sm">Verified Counter Host</Badge>
               </div>
 
-              <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-black">
                 {organization.NAME}
               </h1>
 
-              <div className="flex items-center gap-4 text-xs text-slate-400 mt-2 flex-wrap">
+              <div className="flex items-center gap-3 text-xs text-zinc-500 flex-wrap">
                 {organization.CITY && (
                   <span className="flex items-center gap-1">
-                    <MapPin size={14} className="text-slate-400" />
+                    <MapPin size={13} className="text-zinc-400" />
                     {organization.CITY}
                   </span>
                 )}
@@ -100,7 +100,7 @@ export const OrgDetailPage: React.FC = () => {
         </div>
 
         {organization.DESCRIPTION && (
-          <p className="text-sm text-slate-300 max-w-3xl mt-6 leading-relaxed border-t border-white/10 pt-4">
+          <p className="text-xs sm:text-sm text-zinc-600 max-w-3xl mt-4 border-t border-zinc-100 pt-4 leading-relaxed">
             {organization.DESCRIPTION}
           </p>
         )}
@@ -108,22 +108,22 @@ export const OrgDetailPage: React.FC = () => {
 
       {/* Available Counters / Queues List */}
       <div>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-              <Layers className="text-indigo-400" size={24} />
+            <h2 className="text-xl font-black text-black flex items-center gap-2">
+              <Layers className="text-blue-600" size={20} />
               Available Service Counters ({queues.length})
             </h2>
-            <p className="text-xs text-slate-400 mt-1">Select a counter below to book your digital token pass.</p>
+            <p className="text-xs text-zinc-500 mt-0.5">Select a counter below to book your digital token pass.</p>
           </div>
         </div>
 
         {queues.length === 0 ? (
-          <div className="text-center py-16 border border-dashed border-white/10 rounded-3xl p-8">
-            <p className="text-sm text-slate-400">No active service counters found for this organization.</p>
+          <div className="text-center py-16 border border-dashed border-zinc-300 rounded-xl p-8 bg-white">
+            <p className="text-xs text-zinc-500">No active service counters found for this organization.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {queues.map((q) => (
               <QueueCard key={q.QUEUE_ID} queue={q} onBookSuccess={loadData} />
             ))}

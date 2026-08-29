@@ -4,9 +4,7 @@ import {
   GoogleAuthProvider, 
   signInWithPopup, 
   signOut as fbSignOut, 
-  onAuthStateChanged,
-  setPersistence,
-  browserLocalPersistence
+  onAuthStateChanged
 } from 'firebase/auth';
 import type { User as FirebaseUser } from 'firebase/auth';
 
@@ -27,13 +25,9 @@ let googleProvider: any = null;
 try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
+  // Google Auth Provider setup
   googleProvider = new GoogleAuthProvider();
   googleProvider.setCustomParameters({ prompt: 'select_account' });
-  
-  // Set persistent session in browser so user stays logged in across tabs & restarts
-  setPersistence(auth, browserLocalPersistence).catch((err: any) => {
-    console.warn('Firebase persistence setup notice:', err.message);
-  });
 } catch (e) {
   console.warn('Firebase app initialization notice (Running with local auth engine):', e);
 }

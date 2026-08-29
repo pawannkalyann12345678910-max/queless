@@ -1,16 +1,28 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../common/Button';
 
 export const LoginButton: React.FC<{ className?: string }> = ({ className = '' }) => {
   const { signInWithGoogle, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignIn = async () => {
+    const role = await signInWithGoogle();
+    if (role === 'STAFF') {
+      navigate('/staff');
+    } else if (role === 'ADMIN') {
+      navigate('/admin');
+    }
+    // CUSTOMER stays on current page
+  };
 
   return (
     <Button
       variant="glass"
       size="md"
       isLoading={loading}
-      onClick={() => signInWithGoogle()}
+      onClick={handleSignIn}
       className={`font-semibold border-white/20 hover:border-indigo-400 ${className}`}
       leftIcon={
         <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24">

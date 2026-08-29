@@ -59,7 +59,7 @@ export const WalkInTokenModal: React.FC<WalkInTokenModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4 pt-2">
         {error && (
-          <div className="p-3 bg-rose-500/15 border border-rose-500/30 rounded-xl text-xs text-rose-300 font-medium">
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-600 font-medium">
             {error}
           </div>
         )}
@@ -69,7 +69,7 @@ export const WalkInTokenModal: React.FC<WalkInTokenModalProps> = ({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Robert Smith"
-          leftIcon={<User size={18} />}
+          leftIcon={<User size={16} />}
           required
           autoFocus
         />
@@ -80,7 +80,7 @@ export const WalkInTokenModal: React.FC<WalkInTokenModalProps> = ({
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder="e.g. +1 (555) 432-8765"
-          leftIcon={<Phone size={18} />}
+          leftIcon={<Phone size={16} />}
           required
         />
 
@@ -89,10 +89,10 @@ export const WalkInTokenModal: React.FC<WalkInTokenModalProps> = ({
           value={serviceNote}
           onChange={(e) => setServiceNote(e.target.value)}
           placeholder="e.g. Offline walk-in visitor"
-          leftIcon={<FileText size={18} />}
+          leftIcon={<FileText size={16} />}
         />
 
-        <div className="pt-3 flex items-center gap-3">
+        <div className="pt-3 flex items-center gap-3 border-t border-zinc-100">
           <Button type="button" variant="secondary" size="md" className="flex-1" onClick={onClose}>
             Cancel
           </Button>
@@ -100,7 +100,7 @@ export const WalkInTokenModal: React.FC<WalkInTokenModalProps> = ({
             type="submit"
             variant="emerald"
             size="md"
-            className="flex-1 font-bold shadow-emerald-600/20"
+            className="flex-1 font-bold"
             isLoading={loading}
             leftIcon={<Ticket size={16} />}
           >

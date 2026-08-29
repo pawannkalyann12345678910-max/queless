@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../common/Button';
-import { Tv, ExternalLink } from 'lucide-react';
+import { Tv } from 'lucide-react';
 
 interface HDMICastButtonProps {
   queueId: string;
@@ -27,16 +27,16 @@ export const HDMICastButton: React.FC<HDMICastButtonProps> = ({
       rel="noopener noreferrer"
       onClick={handleLaunchDisplay}
       className="inline-block no-underline"
+      title="Launch fullscreen HDMI public TV counter display"
     >
       <Button
         type="button"
         variant={variant}
         size="sm"
-        className={`font-semibold border-cyan-500/30 text-cyan-300 hover:text-white hover:bg-cyan-600/20 shadow-lg shadow-cyan-500/10 ${className}`}
-        leftIcon={<Tv size={16} className="text-cyan-400" />}
-        rightIcon={<ExternalLink size={12} className="opacity-70" />}
+        className={`font-semibold border-cyan-500/30 text-cyan-300 hover:text-white hover:bg-cyan-600/20 shadow-md shadow-cyan-500/10 px-2.5 py-1 text-xs ${className}`}
+        leftIcon={<Tv size={14} className="text-cyan-400" />}
       >
-        Launch Public HDMI Screen
+        HDMI Cast
       </Button>
     </a>
   );
