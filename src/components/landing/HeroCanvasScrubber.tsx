@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Play, Pause, RefreshCw, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, RefreshCw, Volume2, VolumeX } from 'lucide-react';
 
 const TOTAL_FRAMES = 240;
 
@@ -136,68 +136,42 @@ export const HeroCanvasScrubber: React.FC<HeroCanvasScrubberProps> = ({ scrollPr
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // Render Phone in Hand with Live Digital Pass as woman walks to counter (frames 105 - 240)
+      // Render natural phone in hand as woman walks to counter (frames 105 - 240)
       if (clampedIndex >= 105) {
         const walkProgress = Math.min(1, (clampedIndex - 105) / 125);
-        const phoneX = 850 + walkProgress * 210;
-        const phoneY = 435 - walkProgress * 35 + Math.sin(walkProgress * Math.PI * 4) * 3;
+        const phoneX = 860 + walkProgress * 195;
+        const phoneY = 445 - walkProgress * 30 + Math.sin(walkProgress * Math.PI * 4) * 2.5;
 
         ctx.save();
-        // Hand & Phone Shadow
-        ctx.shadowColor = 'rgba(16, 185, 129, 0.45)';
-        ctx.shadowBlur = 12;
+        ctx.translate(phoneX, phoneY);
+        ctx.rotate(-0.15); // Natural grip angle
 
-        // Smartphone body
-        ctx.fillStyle = '#0f172a';
+        // Phone body
+        ctx.fillStyle = '#1e293b';
         ctx.beginPath();
         if (ctx.roundRect) {
-          ctx.roundRect(phoneX, phoneY, 26, 44, 5);
+          ctx.roundRect(-8, -16, 16, 32, 3);
         } else {
-          ctx.rect(phoneX, phoneY, 26, 44);
+          ctx.rect(-8, -16, 16, 32);
         }
         ctx.fill();
 
-        // Phone Screen (Digital Pass Green Glow)
-        ctx.fillStyle = '#059669';
+        // Phone screen (subtle active digital pass glow)
+        ctx.fillStyle = '#10b981';
         ctx.beginPath();
         if (ctx.roundRect) {
-          ctx.roundRect(phoneX + 2.5, phoneY + 3, 21, 38, 3);
+          ctx.roundRect(-6.5, -14.5, 13, 29, 2);
         } else {
-          ctx.rect(phoneX + 2.5, phoneY + 3, 21, 38);
+          ctx.rect(-6.5, -14.5, 13, 29);
         }
         ctx.fill();
 
-        // Pass Code & QR indicator on Phone Screen
+        // Screen pass UI lines
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 7px monospace';
-        ctx.fillText('#005', phoneX + 4.5, phoneY + 16);
+        ctx.fillRect(-4.5, -11, 9, 3);
+        ctx.fillRect(-4.5, -5, 9, 8);
+        ctx.fillRect(-4.5, 6, 9, 2);
 
-        ctx.fillStyle = '#d1fae5';
-        ctx.fillRect(phoneX + 5, phoneY + 21, 16, 14);
-        ctx.fillStyle = '#065f46';
-        ctx.font = 'bold 5px sans-serif';
-        ctx.fillText('PASS', phoneX + 6, phoneY + 31);
-
-        // Verification Pill Indicator floating above the phone
-        if (clampedIndex >= 115) {
-          ctx.shadowBlur = 8;
-          ctx.shadowColor = 'rgba(0,0,0,0.25)';
-          ctx.fillStyle = '#ffffff';
-          ctx.beginPath();
-          if (ctx.roundRect) {
-            ctx.roundRect(phoneX - 38, phoneY - 24, 102, 19, 6);
-          } else {
-            ctx.rect(phoneX - 38, phoneY - 24, 102, 19);
-          }
-          ctx.fill();
-          ctx.strokeStyle = '#10b981';
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-
-          ctx.fillStyle = '#065f46';
-          ctx.font = 'bold 8px sans-serif';
-          ctx.fillText('📱 Live Pass in Hand', phoneX - 30, phoneY - 11);
-        }
         ctx.restore();
       }
     }
@@ -340,14 +314,6 @@ export const HeroCanvasScrubber: React.FC<HeroCanvasScrubberProps> = ({ scrollPr
           className="absolute inset-0 w-full h-full object-contain rounded-2xl pointer-events-none"
         />
       )}
-
-      {/* Interactive Scrub Hint Badge (Appears on Hover) */}
-      <div className="absolute top-3 left-3 z-30 opacity-85 group-hover:opacity-100 transition-opacity pointer-events-none">
-        <span className="px-3 py-1 rounded-full bg-[#141312]/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
-          <Sparkles size={11} className="text-[#C28E5C]" />
-          <span>Move Cursor / Swipe to Scrub Flow</span>
-        </span>
-      </div>
 
       {/* Bottom Controls: Sound On/Off & Play/Pause */}
       <div className="absolute bottom-3 right-3 z-30 flex items-center gap-2">
