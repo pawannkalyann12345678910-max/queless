@@ -51,6 +51,37 @@ class AudioEngine {
   }
 
   /**
+   * 3-pulse urgent proximity attention alarm
+   */
+  playProximityAlarm(): void {
+    try {
+      const ctx = this.getContext();
+      const now = ctx.currentTime;
+      const notes = [880, 1174.66, 1479.98];
+
+      notes.forEach((freq, index) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + index * 0.14);
+
+        gain.gain.setValueAtTime(0, now + index * 0.14);
+        gain.gain.linearRampToValueAtTime(0.2, now + index * 0.14 + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.14 + 0.35);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + index * 0.14);
+        osc.stop(now + index * 0.14 + 0.4);
+      });
+    } catch (err) {
+      console.warn('Proximity alarm audio notice:', err);
+    }
+  }
+
+  /**
    * Plays voice announcement: "Calling Token DOC-104 to Counter 1"
    */
   announceToken(tokenNumber: string, counterLabel: string): void {

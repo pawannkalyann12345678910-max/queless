@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { Token, Queue } from '../../types';
 import { TokenRow } from './TokenRow';
 import { TransferTokenModal } from './TransferTokenModal';
-import { Search, Inbox } from 'lucide-react';
+import { Search, Inbox, Zap, BellRing } from 'lucide-react';
 
 interface TokenQueueBoardProps {
   queue: Queue;
@@ -19,6 +19,7 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
 }) => {
   const [filterTab, setFilterTab] = useState<'ALL' | 'WAITING' | 'SERVING' | 'COMPLETED' | 'NO_SHOW'>('ALL');
   const [search, setSearch] = useState('');
+  const [autoNotifyEnabled, setAutoNotifyEnabled] = useState(true);
   const [selectedTokenForTransfer, setSelectedTokenForTransfer] = useState<Token | null>(null);
 
   // Filter tokens based on tab & search
@@ -50,7 +51,7 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
 
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#EAE5DE] shadow-xs">
-      {/* Board Header with Tabs & Search */}
+      {/* Board Header with Tabs, Auto-Notify Switch & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-[#EAE5DE]">
         {/* Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
@@ -96,16 +97,42 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
           </button>
         </div>
 
-        {/* Search input */}
-        <div className="relative w-full md:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E988E]" size={14} />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search token, name, phone..."
-            className="w-full pl-8 pr-3 py-2 bg-[#FAF7F2] border border-[#EAE5DE] rounded-xl text-xs text-[#141312] placeholder-[#9E988E] focus:outline-none focus:ring-1 focus:ring-[#141312] focus:border-[#141312]"
-          />
+        {/* Right: Auto-Notify Mode Switch & Search */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Automatic vs Manual WhatsApp Alert Toggle */}
+          <button
+            onClick={() => setAutoNotifyEnabled(!autoNotifyEnabled)}
+            title={autoNotifyEnabled ? "Auto-Notify ON: WhatsApp & SMS sent automatically on Call" : "Manual Notify: Click Notify button per token"}
+            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+              autoNotifyEnabled
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                : 'bg-[#FAF7F2] text-[#736E66] hover:bg-[#F5F1E9] border border-[#EAE5DE]'
+            }`}
+          >
+            {autoNotifyEnabled ? (
+              <>
+                <Zap size={13} className="text-amber-300 animate-pulse" />
+                <span>⚡ Auto-Notify: ON</span>
+              </>
+            ) : (
+              <>
+                <BellRing size={13} className="text-[#9E988E]" />
+                <span>✋ Manual Notify</span>
+              </>
+            )}
+          </button>
+
+          {/* Search input */}
+          <div className="relative w-full sm:w-56">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E988E]" size={14} />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search token, name, phone..."
+              className="w-full pl-8 pr-3 py-2 bg-[#FAF7F2] border border-[#EAE5DE] rounded-xl text-xs text-[#141312] placeholder-[#9E988E] focus:outline-none focus:ring-1 focus:ring-[#141312] focus:border-[#141312]"
+            />
+          </div>
         </div>
       </div>
 
@@ -138,6 +165,7 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
                   key={token.TOKEN_ID}
                   token={token}
                   counterLabel={queue.COUNTER_LABEL || 'Counter 1'}
+                  autoNotifyEnabled={autoNotifyEnabled}
                   onRefresh={onRefresh}
                   onTransferClick={(t) => setSelectedTokenForTransfer(t)}
                 />

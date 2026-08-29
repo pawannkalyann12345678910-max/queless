@@ -15,12 +15,14 @@ import {
   MessageSquare,
   XCircle,
   CheckCircle2,
-  Hourglass
+  Hourglass,
+  Zap
 } from 'lucide-react';
 
 interface TokenRowProps {
   token: Token;
   counterLabel: string;
+  autoNotifyEnabled?: boolean;
   onRefresh: () => void;
   onTransferClick: (token: Token) => void;
 }
@@ -28,6 +30,7 @@ interface TokenRowProps {
 export const TokenRow: React.FC<TokenRowProps> = ({
   token,
   counterLabel,
+  autoNotifyEnabled = true,
   onRefresh,
   onTransferClick
 }) => {
@@ -52,12 +55,29 @@ export const TokenRow: React.FC<TokenRowProps> = ({
     token.DELAY_STATUS === 'REQUESTED_10M' ? 10 : 5
   );
 
-  // Button 1: Call / Re-Chime
+  // Button 1: Call / Re-Chime (With Automatic WhatsApp/SMS Notification Dispatch)
   const handleCall = async () => {
     setLoading(true);
     try {
       await api.callToken(token.TOKEN_ID);
       audioService.announceToken(token.TOKEN_NUMBER, counterLabel);
+
+      // If Auto-Notify mode is active, automatically alert the customer's WhatsApp/phone in the background
+      if (autoNotifyEnabled && token.CUSTOMER_PHONE) {
+        api.sendTokenWhatsAppAlert({
+          orgId: token.ORG_ID,
+          queueId: token.QUEUE_ID,
+          tokenId: token.TOKEN_ID,
+          phone: token.CUSTOMER_PHONE,
+          messageType: 'CALL'
+        }).then(res => {
+          if (res?.success) {
+            setNotifySuccess(true);
+            setTimeout(() => setNotifySuccess(false), 3000);
+          }
+        }).catch(err => console.log('Auto-notify background log:', err));
+      }
+
       onRefresh();
     } catch (err: any) {
       alert(err.message || 'Call failed');
@@ -258,22 +278,22 @@ export const TokenRow: React.FC<TokenRowProps> = ({
             </div>
           )}
 
-          {/* WhatsApp Notify Button */}
+          {/* WhatsApp Notify Button (Manual Trigger or Auto Status Badge) */}
           {(isWaiting || isCalled) && (
             <Button
               variant={notifySuccess ? "emerald" : "secondary"}
               size="sm"
               isLoading={notifyLoading}
               onClick={handleNotifyWhatsApp}
-              leftIcon={<MessageSquare size={13} className={notifySuccess ? "text-white" : "text-emerald-700"} />}
-              title="Notify customer on WhatsApp"
+              leftIcon={autoNotifyEnabled && !notifySuccess ? <Zap size={13} className="text-amber-500" /> : <MessageSquare size={13} className={notifySuccess ? "text-white" : "text-emerald-700"} />}
+              title={autoNotifyEnabled ? "Auto-Notify is active on Call (Click to send manual WhatsApp alert)" : "Click to send manual WhatsApp alert"}
               className="text-xs px-2.5 font-bold border-[#EAE5DE] rounded-xl cursor-pointer"
             >
-              {notifySuccess ? "Notified!" : "Notify"}
+              {notifySuccess ? "Notified!" : autoNotifyEnabled ? "Auto-Alert" : "Notify"}
             </Button>
           )}
 
-          {/* 1. Call Next / Re-Chime Button */}
+          {/* 1. Call Next / Re-Chime Button (Triggers voice, chime + auto-notification) */}
           {(isWaiting || isCalled) && (
             <Button
               variant={isCalled ? "secondary" : "primary"}
