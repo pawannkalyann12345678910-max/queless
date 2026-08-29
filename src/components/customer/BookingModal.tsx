@@ -6,7 +6,7 @@ import type { Queue } from '../../types';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
 import { Input } from '../common/Input';
-import { User, Phone, FileText, Sparkles } from 'lucide-react';
+import { User, Phone, FileText, Sparkles, ArrowRight, Ticket } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface BookingModalProps {
@@ -85,32 +85,48 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     >
       <form onSubmit={handleBook} className="space-y-4 pt-1">
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 font-bold">
-            {error}
+          <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-900 font-medium space-y-2">
+            <div className="font-bold">{error}</div>
+            {error.includes('already have an active pass') && (
+              <div className="pt-1">
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="sm"
+                  onClick={() => {
+                    onClose();
+                    navigate('/my-tokens');
+                  }}
+                  className="bg-[#141312] hover:bg-[#262422] text-white text-xs py-2 px-4 rounded-xl font-bold flex items-center gap-1.5 shadow-xs cursor-pointer"
+                >
+                  <Ticket size={13} /> Open My Active Passes <ArrowRight size={13} />
+                </Button>
+              </div>
+            )}
           </div>
         )}
 
-        <div className="p-3.5 bg-zinc-50 border border-zinc-200 rounded-lg flex items-center justify-between">
+        <div className="p-4 bg-[#FAF7F2] border border-[#EAE5DE] rounded-2xl flex items-center justify-between shadow-2xs">
           <div>
-            <span className="text-[10px] uppercase font-bold text-zinc-500 block">Queue Prefix</span>
-            <span className="text-lg font-black font-mono text-black">{queue.PREFIX}</span>
+            <span className="text-[10px] uppercase font-bold text-[#736E66] block">Queue Prefix</span>
+            <span className="text-lg font-black font-mono text-[#141312]">{queue.PREFIX}</span>
           </div>
           <div className="text-right">
-            <span className="text-[10px] uppercase font-bold text-zinc-500 block">Est. Wait Speed</span>
-            <span className="text-xs font-bold text-amber-700 font-mono">~{queue.AVG_SERVICE_MINS}m / person</span>
+            <span className="text-[10px] uppercase font-bold text-[#736E66] block">Est. Wait Speed</span>
+            <span className="text-xs font-bold text-[#C28E5C] font-mono">~{queue.AVG_SERVICE_MINS}m / person</span>
           </div>
         </div>
 
         {!user ? (
           <div className="text-center py-4 space-y-3">
-            <p className="text-xs text-zinc-600">
+            <p className="text-xs text-[#736E66]">
               Sign in with your Google account to secure your live digital turn pass.
             </p>
             <Button
               type="button"
               variant="primary"
               size="md"
-              className="w-full font-bold bg-black text-white"
+              className="w-full font-bold bg-[#141312] hover:bg-[#262422] text-white rounded-xl cursor-pointer"
               onClick={() => signInWithGoogle()}
             >
               Sign In with Google to Book
@@ -138,11 +154,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             />
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#141312] mb-1">
                 Service Purpose / Note (Optional)
               </label>
               <div className="relative">
-                <div className="absolute top-2.5 left-3 text-zinc-400 pointer-events-none">
+                <div className="absolute top-2.5 left-3.5 text-[#9E988E] pointer-events-none">
                   <FileText size={16} />
                 </div>
                 <textarea
@@ -150,20 +166,20 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   value={serviceNote}
                   onChange={(e) => setServiceNote(e.target.value)}
                   placeholder="e.g. Fever & consultation, Account opening..."
-                  className="block w-full rounded-lg bg-white border border-zinc-300 pl-9 pr-3 py-2 text-sm text-black placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-black"
+                  className="block w-full rounded-xl bg-white border border-[#EAE5DE] pl-10 pr-3.5 py-2.5 text-sm text-[#141312] placeholder-[#9E988E] focus:outline-none focus:ring-1 focus:ring-[#141312]"
                 />
               </div>
             </div>
 
             <div className="pt-2 flex items-center gap-3">
-              <Button type="button" variant="secondary" size="md" className="flex-1" onClick={onClose}>
+              <Button type="button" variant="secondary" size="md" className="flex-1 border-[#EAE5DE] text-[#141312] hover:bg-[#FAF7F2] rounded-xl cursor-pointer" onClick={onClose}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 variant="emerald"
                 size="md"
-                className="flex-1 font-bold"
+                className="flex-1 font-bold rounded-xl cursor-pointer"
                 isLoading={loading}
                 leftIcon={<Sparkles size={15} />}
               >
