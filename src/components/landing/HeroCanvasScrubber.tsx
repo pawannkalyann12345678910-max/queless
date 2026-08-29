@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Play, Pause, RefreshCw, Sparkles } from 'lucide-react';
+import { Play, Pause, RefreshCw, Sparkles, Volume2, VolumeX } from 'lucide-react';
 
 const TOTAL_FRAMES = 240;
 
@@ -13,9 +13,89 @@ export const HeroCanvasScrubber: React.FC<HeroCanvasScrubberProps> = ({ scrollPr
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const [loadedCount, setLoadedCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isSoundOn, setIsSoundOn] = useState(false);
+  const isSoundOnRef = useRef(false);
   const playIndexRef = useRef(0);
+  const lastChimeFrameRef = useRef(-1);
   const animFrameIdRef = useRef<number | null>(null);
   const isUserInteractingRef = useRef(false);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    isSoundOnRef.current = isSoundOn;
+  }, [isSoundOn]);
+
+  // Web Audio Context initialization
+  const getAudioContext = () => {
+    if (!audioCtxRef.current) {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioCtx) {
+        audioCtxRef.current = new AudioCtx();
+      }
+    }
+    if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
+      audioCtxRef.current.resume();
+    }
+    return audioCtxRef.current;
+  };
+
+  // Play High-End Proximity Notification Chime
+  const playNotificationChime = useCallback(() => {
+    if (!isSoundOnRef.current) return;
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+
+      const now = ctx.currentTime;
+      
+      // Dual resonant bell chime (D5 -> A5 -> F#6)
+      const freqs = [587.33, 880.00, 1479.98];
+      freqs.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + i * 0.08);
+
+        gain.gain.setValueAtTime(0, now + i * 0.08);
+        gain.gain.linearRampToValueAtTime(0.18 / (i + 1), now + i * 0.08 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 1.2);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + i * 0.08);
+        osc.stop(now + i * 0.08 + 1.3);
+      });
+
+      // Crowdless Peaceful Ambient Harmonic Pad
+      const padOsc = ctx.createOscillator();
+      const padGain = ctx.createGain();
+      padOsc.type = 'triangle';
+      padOsc.frequency.setValueAtTime(440, now);
+      padGain.gain.setValueAtTime(0, now);
+      padGain.gain.linearRampToValueAtTime(0.08, now + 0.3);
+      padGain.gain.exponentialRampToValueAtTime(0.0001, now + 2.5);
+
+      padOsc.connect(padGain);
+      padGain.connect(ctx.destination);
+
+      padOsc.start(now);
+      padOsc.stop(now + 2.6);
+
+      // Subtle Spoken Proximity Voice Alert via SpeechSynthesis
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance("Your pass is ready. Please proceed to Counter 4.");
+        utterance.rate = 1.05;
+        utterance.pitch = 1.1;
+        utterance.volume = 0.75;
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch (err) {
+      console.warn('Audio chime notice:', err);
+    }
+  }, []);
 
   // Preload all 240 frames
   useEffect(() => {
@@ -41,7 +121,7 @@ export const HeroCanvasScrubber: React.FC<HeroCanvasScrubberProps> = ({ scrollPr
     imagesRef.current = loadedImages;
   }, []);
 
-  // Draw frame helper
+  // Draw frame helper & sound trigger
   const drawFrame = useCallback((frameIndex: number) => {
     const canvas = canvasRef.current;
     const images = imagesRef.current;
@@ -56,7 +136,17 @@ export const HeroCanvasScrubber: React.FC<HeroCanvasScrubberProps> = ({ scrollPr
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     }
-  }, []);
+
+    // Trigger notification chime when passing the notification moment (~frames 95 - 110)
+    if (clampedIndex >= 95 && clampedIndex <= 110) {
+      if (Math.abs(lastChimeFrameRef.current - clampedIndex) > 50) {
+        lastChimeFrameRef.current = clampedIndex;
+        playNotificationChime();
+      }
+    } else if (clampedIndex < 30 || clampedIndex > 200) {
+      lastChimeFrameRef.current = -1;
+    }
+  }, [playNotificationChime]);
 
   // Bind scroll progress if available
   useEffect(() => {
@@ -133,6 +223,20 @@ export const HeroCanvasScrubber: React.FC<HeroCanvasScrubberProps> = ({ scrollPr
     }, 400);
   };
 
+  const toggleSound = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const nextState = !isSoundOn;
+    setIsSoundOn(nextState);
+    if (nextState) {
+      getAudioContext();
+      playNotificationChime();
+    } else {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
+  };
+
   const loadPercent = Math.round((loadedCount / TOTAL_FRAMES) * 100);
 
   return (
@@ -180,17 +284,32 @@ export const HeroCanvasScrubber: React.FC<HeroCanvasScrubberProps> = ({ scrollPr
         </span>
       </div>
 
-      {/* Auto-Play / Pause Button (Bottom Right) */}
-      <div className="absolute bottom-3 right-3 z-30">
+      {/* Bottom Controls: Sound On/Off & Play/Pause */}
+      <div className="absolute bottom-3 right-3 z-30 flex items-center gap-2">
+        {/* Sound Toggle Button */}
+        <button
+          onClick={toggleSound}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer backdrop-blur-md ${
+            isSoundOn 
+              ? 'bg-emerald-700 text-white hover:bg-emerald-800' 
+              : 'bg-[#141312]/85 text-[#EAE5DE] hover:bg-[#141312]'
+          }`}
+          title={isSoundOn ? "Mute notification sound" : "Enable notification sound & calm chime"}
+        >
+          {isSoundOn ? <Volume2 size={13} className="text-white" /> : <VolumeX size={13} className="text-zinc-400" />}
+          <span>{isSoundOn ? 'Sound On' : 'Sound Off'}</span>
+        </button>
+
+        {/* Auto-Play / Pause Button */}
         <button
           onClick={(e) => {
             e.stopPropagation();
             setIsPlaying(!isPlaying);
           }}
-          className="px-3.5 py-1.5 rounded-xl bg-[#141312]/85 hover:bg-[#141312] text-white text-xs font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer backdrop-blur-sm"
+          className="px-3.5 py-1.5 rounded-xl bg-[#141312]/85 hover:bg-[#141312] text-white text-xs font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer backdrop-blur-md"
         >
           {isPlaying ? <Pause size={13} className="text-amber-400" /> : <Play size={13} className="text-emerald-400" />}
-          <span>{isPlaying ? 'Pause Flow' : 'Play Flow'}</span>
+          <span>{isPlaying ? 'Pause' : 'Play'}</span>
         </button>
       </div>
     </div>
