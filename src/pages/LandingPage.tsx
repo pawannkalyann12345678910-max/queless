@@ -79,12 +79,12 @@ export const LandingPage: React.FC = () => {
       <section ref={heroScrollTrackRef} className="relative h-[220vh] sm:h-[300vh] w-full bg-[var(--bg-cream)]">
         <div className="sticky top-16 h-[calc(100vh-4rem)] w-full flex flex-col justify-center overflow-hidden bg-[var(--bg-cream)] z-10 py-2 sm:py-4">
           
-          {/* Ambient luxury background backdrop & gradient from reference */}
-          <div className="absolute inset-0 z-0 opacity-20 pointer-events-none overflow-hidden">
+          {/* Ambient subtle modern lobby & queue orchestration backdrop */}
+          <div className="absolute inset-0 z-0 opacity-15 pointer-events-none overflow-hidden">
             <img 
-              src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&h=1080&fit=crop" 
-              alt="Luxury architecture" 
-              className="w-full h-full object-cover"
+              src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&h=1080&fit=crop" 
+              alt="Modern Service Center Architecture" 
+              className="w-full h-full object-cover filter contrast-105"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-cream)] via-[var(--bg-cream)]/90 to-transparent"></div>
           </div>
