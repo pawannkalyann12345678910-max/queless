@@ -73,12 +73,23 @@ export const LandingPage: React.FC = () => {
   });
 
   return (
-    <div className="space-y-16 sm:space-y-24 pb-20 sm:pb-12 text-[#141312] bg-[var(--bg-cream)] w-full">
+    <div className="text-[#141312] bg-[var(--bg-cream)] w-full overflow-hidden">
       
-      {/* 1. PINNED 2-COLUMN HERO STAGE WITH MOBILE RESPONSIVENESS */}
-      <div ref={heroScrollTrackRef} className="relative h-[220vh] sm:h-[300vh] w-full bg-[var(--bg-cream)]">
+      {/* 1. HERO SECTION WITH AMBIENT LUXURY OVERLAY */}
+      <section ref={heroScrollTrackRef} className="relative h-[220vh] sm:h-[300vh] w-full bg-[var(--bg-cream)]">
         <div className="sticky top-16 h-[calc(100vh-4rem)] w-full flex flex-col justify-center overflow-hidden bg-[var(--bg-cream)] z-10 py-2 sm:py-4">
-          <div className="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col justify-center">
+          
+          {/* Ambient luxury background backdrop & gradient from reference */}
+          <div className="absolute inset-0 z-0 opacity-20 pointer-events-none overflow-hidden">
+            <img 
+              src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&h=1080&fit=crop" 
+              alt="Luxury architecture" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-cream)] via-[var(--bg-cream)]/90 to-transparent"></div>
+          </div>
+
+          <div className="relative z-10 max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col justify-center">
             
             {/* DESKTOP LAYOUT (2 Columns) */}
             <div className="hidden lg:grid grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -103,7 +114,7 @@ export const LandingPage: React.FC = () => {
                 {/* CTAs */}
                 <div className="flex items-center gap-3.5 pt-2">
                   {user ? (
-                    <a href="#explore-counters">
+                    <a href="#collections">
                       <Button
                         variant="primary"
                         size="lg"
@@ -160,7 +171,7 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            {/* MOBILE / TABLET LAYOUT (Stacked, perfectly fitted to viewport) */}
+            {/* MOBILE / TABLET LAYOUT */}
             <div className="lg:hidden flex flex-col justify-between h-full py-2 space-y-2">
               <div className="text-center space-y-1">
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white border border-[#EAE5DE] text-[#141312] text-[10px] font-bold uppercase tracking-wider shadow-2xs">
@@ -173,7 +184,7 @@ export const LandingPage: React.FC = () => {
                 </h1>
               </div>
 
-              {/* Prominent High-Definition Animation Stage on Mobile */}
+              {/* High-Definition Animation Stage on Mobile */}
               <div className="w-full flex-1 flex items-center justify-center min-h-[180px] max-h-[48vh] relative overflow-hidden bg-white border border-[#EAE5DE] rounded-2xl p-1.5 shadow-xs">
                 <HeroCanvasScrubber scrollProgress={scrollYProgress} />
               </div>
@@ -181,7 +192,7 @@ export const LandingPage: React.FC = () => {
               {/* Mobile CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-2 pt-1">
                 {user ? (
-                  <a href="#explore-counters" className="w-full">
+                  <a href="#collections" className="w-full">
                     <Button
                       variant="primary"
                       size="md"
@@ -218,7 +229,7 @@ export const LandingPage: React.FC = () => {
 
           </div>
         </div>
-      </div>
+      </section>
 
       {/* 2. KINETIC MARQUEE TICKER */}
       <div className="bg-[#141312] text-white py-3.5 overflow-hidden whitespace-nowrap border-y border-[#262422] shadow-xs">
@@ -245,103 +256,117 @@ export const LandingPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. BENTO BENEFITS & ARCHITECTURE SHOWCASE */}
-      <BentoBenefitsGrid />
+      {/* 3. BENTO ARCHITECTURE & BENEFITS SECTION */}
+      <section className="py-16 sm:py-24 bg-[var(--bg-cream)]">
+        <BentoBenefitsGrid />
+      </section>
 
-      {/* 4. INTERACTIVE ROI & WAITING TIME COST CALCULATOR */}
-      <InteractiveRoiCalculator />
+      {/* 4. STORY & ROI ESTIMATOR SECTION */}
+      <section id="story" className="py-16 sm:py-24 bg-white border-y border-[#EAE5DE]">
+        <InteractiveRoiCalculator />
+      </section>
 
-      {/* 5. LIVE COUNTER DIRECTORY & PUBLIC EXPLORE */}
-      <section id="explore-counters" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 scroll-mt-24">
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#EAE5DE] shadow-xs space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#EAE5DE] pb-6">
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF7F2] border border-[#EAE5DE] text-[#141312] text-xs font-bold uppercase tracking-wider mb-2">
-                <Building2 size={13} className="text-[#141312]" />
-                <span>Verified Counter Directory</span>
+      {/* 5. COLLECTIONS / LIVE COUNTER DIRECTORY SECTION */}
+      <section id="collections" className="py-16 sm:py-24 bg-[var(--bg-cream)] scroll-mt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#EAE5DE] shadow-xs space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#EAE5DE] pb-6">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF7F2] border border-[#EAE5DE] text-[#141312] text-xs font-bold uppercase tracking-wider mb-2">
+                  <Building2 size={13} className="text-[#141312]" />
+                  <span>Verified Counter Directory</span>
+                </div>
+                <h2 className="text-3xl font-black text-[#141312] tracking-tight">
+                  Live Queues & Digital Counters
+                </h2>
+                <p className="text-sm text-[#736E66] mt-1">
+                  Select an organization below to check live serving tokens, estimated wait minutes, and book your digital pass.
+                </p>
               </div>
-              <h2 className="text-3xl font-black text-[#141312] tracking-tight">
-                Live Queues & Digital Counters
-              </h2>
-              <p className="text-sm text-[#736E66] mt-1">
-                Select an organization below to check live serving tokens, estimated wait minutes, and book your digital pass.
-              </p>
+
+              {/* Search bar */}
+              <div className="relative w-full sm:w-72">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9E988E]" size={16} />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search clinic, bank, campus, city..."
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE5DE] text-xs text-[#141312] placeholder-[#9E988E] focus:outline-none focus:ring-1 focus:ring-[#141312] focus:border-[#141312] transition-all"
+                />
+              </div>
             </div>
 
-            {/* Search bar */}
-            <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9E988E]" size={16} />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search clinic, bank, campus, city..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE5DE] text-xs text-[#141312] placeholder-[#9E988E] focus:outline-none focus:ring-1 focus:ring-[#141312] focus:border-[#141312] transition-all"
-              />
-            </div>
-          </div>
-
-          {/* Category Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
-                  selectedCategory === cat
-                    ? 'bg-[#141312] text-white shadow-xs'
-                    : 'bg-[#FAF7F2] text-[#736E66] hover:bg-[#F5F1E9] border border-[#EAE5DE]'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Organization Cards Grid */}
-          {loading ? (
-            <Spinner size="lg" className="py-20" />
-          ) : filteredOrgs.length === 0 ? (
-            <div className="text-center py-20 bg-[#FAF7F2] border border-dashed border-[#EAE5DE] rounded-2xl p-8">
-              <Building2 className="mx-auto text-[#9E988E] mb-3" size={32} />
-              <h4 className="text-base font-bold text-[#141312]">No organizations found</h4>
-              <p className="text-xs text-[#736E66] mt-1 max-w-sm mx-auto">
-                Try selecting a different category or adjusting your search term.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredOrgs.map((org) => (
-                <OrgCard key={org.ORG_ID} organization={org} />
+            {/* Category Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                    selectedCategory === cat
+                      ? 'bg-[#141312] text-white shadow-xs'
+                      : 'bg-[#FAF7F2] text-[#736E66] hover:bg-[#F5F1E9] border border-[#EAE5DE]'
+                  }`}
+                >
+                  {cat}
+                </button>
               ))}
             </div>
-          )}
+
+            {/* Organization Cards Grid */}
+            {loading ? (
+              <Spinner size="lg" className="py-20" />
+            ) : filteredOrgs.length === 0 ? (
+              <div className="text-center py-20 bg-[#FAF7F2] border border-dashed border-[#EAE5DE] rounded-2xl p-8">
+                <Building2 className="mx-auto text-[#9E988E] mb-3" size={32} />
+                <h4 className="text-base font-bold text-[#141312]">No organizations found</h4>
+                <p className="text-xs text-[#736E66] mt-1 max-w-sm mx-auto">
+                  Try selecting a different category or adjusting your search term.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredOrgs.map((org) => (
+                  <OrgCard key={org.ORG_ID} organization={org} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
       {/* 6. SOCIAL PROOF & TESTIMONIALS */}
-      <SocialProofReviews />
+      <section className="py-16 sm:py-24 bg-white border-y border-[#EAE5DE]">
+        <SocialProofReviews />
+      </section>
 
       {/* 7. FREQUENTLY ASKED QUESTIONS */}
-      <QuelessFaqSection />
+      <section id="faq" className="py-16 sm:py-24 bg-[var(--bg-cream)]">
+        <QuelessFaqSection />
+      </section>
 
       {/* 8. BUSINESS CALL TO ACTION BANNER */}
-      <section className="bg-[#141312] text-white rounded-3xl p-8 sm:p-14 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 max-w-7xl mx-auto border border-[#262422]">
-        <div className="space-y-2 text-left">
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Enterprise & Counter Onboarding</span>
-          <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Are You a Clinic, Bank, University, or Salon?
-          </h3>
-          <p className="text-xs sm:text-sm text-[#9E988E] max-w-xl">
-            Set up digital counters in under 2 minutes. Assign staff Google emails for auto-routing, download printable QR posters, and broadcast calls to waiting room TVs.
-          </p>
-        </div>
+      <section className="py-16 sm:py-24 bg-[var(--primary)] text-white border-t border-[#262422]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl p-8 sm:p-14 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 border border-[#262422] bg-[#1a1817]">
+            <div className="space-y-2 text-left">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Enterprise & Counter Onboarding</span>
+              <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                Are You a Clinic, Bank, University, or Salon?
+              </h3>
+              <p className="text-xs sm:text-sm text-[#9E988E] max-w-xl">
+                Set up digital counters in under 2 minutes. Assign staff Google emails for auto-routing, download printable QR posters, and broadcast calls to waiting room TVs.
+              </p>
+            </div>
 
-        <Link to="/admin/register" className="shrink-0 w-full sm:w-auto">
-          <Button variant="white" size="lg" rightIcon={<ArrowRight size={16} />} className="font-bold px-8 rounded-xl w-full sm:w-auto bg-white text-[#141312] hover:bg-[#FAF7F2] cursor-pointer shadow-xs">
-            Get Started Free
-          </Button>
-        </Link>
+            <Link to="/admin/register" className="shrink-0 w-full sm:w-auto">
+              <Button variant="white" size="lg" rightIcon={<ArrowRight size={16} />} className="font-bold px-8 rounded-xl w-full sm:w-auto bg-white text-[#141312] hover:bg-[#FAF7F2] cursor-pointer shadow-xs">
+                Get Started Free
+              </Button>
+            </Link>
+          </div>
+        </div>
       </section>
 
     </div>
