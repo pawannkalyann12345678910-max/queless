@@ -137,8 +137,7 @@ router.post('/send-token-alert', async (req, res) => {
       senderType,
       sender: sendResult.sender,
       recipient: sendResult.recipient,
-      messageId: sendResult.messageId,
-      directWaLink
+      messageId: sendResult.messageId
     });
   } catch (err) {
     console.error('WhatsApp token alert error:', err);
