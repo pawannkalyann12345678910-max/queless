@@ -16,7 +16,9 @@ import {
   XCircle,
   CheckCircle2,
   Hourglass,
-  Zap
+  Zap,
+  Mail,
+  User as UserIcon
 } from 'lucide-react';
 
 interface TokenRowProps {
@@ -197,7 +199,7 @@ export const TokenRow: React.FC<TokenRowProps> = ({
       isServing ? 'bg-emerald-50/50' :
       hasDelayRequest ? 'bg-amber-50/60' : 'hover:bg-[#FAF7F2]'
     }`}>
-      {/* Token Number */}
+      {/* 1. Token Number Column */}
       <td className="py-4 px-4 font-mono font-black text-base text-[#141312]">
         <div className="flex items-center gap-2">
           <span>{token.TOKEN_NUMBER}</span>
@@ -209,51 +211,75 @@ export const TokenRow: React.FC<TokenRowProps> = ({
         </div>
       </td>
 
-      {/* Customer Info & Delay Reason */}
+      {/* 2. Customer Name Column */}
       <td className="py-4 px-4">
-        <div className="font-bold text-[#141312] text-sm">{token.CUSTOMER_NAME}</div>
-        <div className="text-xs text-[#736E66] flex items-center gap-1.5 mt-0.5 font-medium">
-          <Phone size={12} className="text-[#9E988E]" />
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-[#FAF7F2] border border-[#EAE5DE] text-[#141312] flex items-center justify-center font-bold text-xs">
+            <UserIcon size={13} />
+          </div>
+          <div>
+            <div className="font-bold text-[#141312] text-sm">{token.CUSTOMER_NAME}</div>
+            <span className="text-[10px] text-[#9E988E]">Seq #{token.TOKEN_SEQ}</span>
+          </div>
+        </div>
+      </td>
+
+      {/* 3. Phone & WhatsApp Column */}
+      <td className="py-4 px-4 font-mono">
+        <div className="flex items-center gap-1.5 text-xs text-[#141312] font-semibold">
+          <Phone size={13} className="text-[#9E988E]" />
           <span>{token.CUSTOMER_PHONE}</span>
         </div>
-        
+        <span className="text-[10px] text-emerald-800 font-medium">WhatsApp Enabled</span>
+      </td>
+
+      {/* 4. Gmail ID & Notes Column */}
+      <td className="py-4 px-4 max-w-xs">
+        {token.CUSTOMER_EMAIL ? (
+          <div className="flex items-center gap-1.5 text-xs text-[#736E66] truncate">
+            <Mail size={12} className="text-[#9E988E] shrink-0" />
+            <span className="truncate">{token.CUSTOMER_EMAIL}</span>
+          </div>
+        ) : (
+          <span className="text-xs text-[#9E988E]">-</span>
+        )}
+
         {/* Customer Requested Delay Particulars Banner */}
         {hasDelayRequest && (
-          <div className="mt-2 p-2.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-950 font-medium max-w-sm shadow-2xs">
-            <span className="font-bold block text-[11px] text-amber-900 uppercase tracking-wide">
-              ⏳ Customer Requested +{requestedMins} Min Delay
-            </span>
-            <span className="text-[11px] text-amber-900 block mt-0.5">
-              Reason: <strong>{token.DELAY_REASON || '🚗 Parking / Traffic Delay'}</strong>
+          <div className="mt-1.5 p-2 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-950 font-medium shadow-2xs">
+            <span className="font-bold block text-[10px] text-amber-900 uppercase">
+              ⏳ Reason: {token.DELAY_REASON || '🚗 Parking / Traffic Delay'}
             </span>
           </div>
         )}
 
         {token.SERVICE_NOTE && !hasDelayRequest && (
-          <div className="text-xs text-[#736E66] italic mt-0.5 truncate max-w-xs">
+          <div className="text-[11px] text-[#736E66] italic mt-0.5 truncate">
             "{token.SERVICE_NOTE}"
           </div>
         )}
       </td>
 
-      {/* Status Badge */}
+      {/* 5. Status Badge Column */}
       <td className="py-4 px-4">
         <Badge status={token.STATUS} size="sm" dot />
       </td>
 
-      {/* Wait Time / Position */}
+      {/* 6. Wait Time / Position Column */}
       <td className="py-4 px-4 text-xs font-mono text-[#736E66]">
         {isWaiting ? (
           <div>
             <span className="font-bold text-[#141312]">#{token.POSITION_IN_QUEUE} in line</span>
             <span className="text-[#736E66] block font-normal">~{token.ESTIMATED_WAIT_MINS}m ETA</span>
           </div>
+        ) : isServing ? (
+          <span className="text-emerald-700 font-bold">At Counter</span>
         ) : (
           <span className="text-[#9E988E]">-</span>
         )}
       </td>
 
-      {/* Action Buttons Toolbar */}
+      {/* 7. Action Buttons Toolbar Column */}
       <td className="py-4 px-4 text-right">
         <div className="flex items-center justify-end gap-1.5 flex-wrap">
           {/* Delay Request Review & Arrangement Buttons for Staff */}

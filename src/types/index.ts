@@ -97,6 +97,9 @@ export interface Token {
   TOKEN_SEQ: number;
   CUSTOMER_NAME: string;
   CUSTOMER_PHONE: string;
+  CUSTOMER_EMAIL?: string;
+  CUSTOMER_ADDRESS?: string;
+  CUSTOMER_PHOTO?: string;
   SERVICE_NOTE?: string;
   STATUS: TokenStatus;
   DELAY_STATUS: DelayStatus;
@@ -120,7 +123,6 @@ export interface Token {
   ORG_CATEGORY?: OrgCategory;
   ORG_LOGO_URL?: string;
   CURRENT_SERVING_TOKEN?: string;
-  CUSTOMER_PHOTO?: string;
 }
 
 export interface ProximityAlert {

@@ -181,7 +181,7 @@ router.get('/queue/:queueId', authenticate, (req, res) => {
   recalculateQueuePositions(queueId);
 
   const tokens = db.prepare(`
-    SELECT t.*, u.PHOTO_URL as CUSTOMER_PHOTO
+    SELECT t.*, u.PHOTO_URL as CUSTOMER_PHOTO, u.EMAIL as CUSTOMER_EMAIL
     FROM TOKENS t
     LEFT JOIN USERS u ON t.USER_ID = u.USER_ID
     WHERE t.QUEUE_ID = ?
