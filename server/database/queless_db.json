@@ -54,6 +54,22 @@
       "VAPI_PHONE_NUMBER_ID": "7fb945cb-4b99-4f46-8546-84a93990fc3e",
       "VAPI_PHONE_NUMBER": "+14057169512",
       "VAPI_ASSISTANT_ID": ""
+    },
+    {
+      "ORG_ID": "0232ad19-e9f1-4a39-94ca-3a7020f16aa8",
+      "NAME": "abbs",
+      "CATEGORY": "University",
+      "DESCRIPTION": "iusvifusd",
+      "LOGO_URL": "",
+      "BANNER_URL": "",
+      "ADMIN_UID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ADMIN_EMAIL": "pawannkalyann12345678910@gmail.com",
+      "SUBSCRIPTION_TIER": "STARTER",
+      "ADDRESS": "vkfjvifusd",
+      "CITY": "divbfuvbif",
+      "IS_ACTIVE": 1,
+      "CREATED_AT": "2026-08-29T10:21:44.474Z",
+      "UPDATED_AT": "2026-08-29T10:21:44.474Z"
     }
   ],
   "QUEUES": [
@@ -65,8 +81,8 @@
       "COUNTER_LABEL": "Counter 1",
       "AVG_SERVICE_MINS": 10,
       "MAX_DAILY_TOKENS": 0,
-      "CURRENT_TOKEN_SEQ": 4,
-      "IS_ACTIVE": 0,
+      "CURRENT_TOKEN_SEQ": 5,
+      "IS_ACTIVE": 1,
       "IS_PAUSED": 0,
       "OPERATING_HOURS": "09:00 - 17:00",
       "CREATED_AT": "2026-08-29T06:19:00.518Z"
@@ -158,6 +174,23 @@
       "ESTIMATED_WAIT_MINS": 10,
       "BOOKING_DATE": "2026-08-29",
       "CREATED_AT": "2026-08-29T07:40:41.838Z"
+    },
+    {
+      "TOKEN_ID": "d4fee274-1ead-4599-ba26-27d0225628a6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "USER_ID": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "TOKEN_NUMBER": "DOC-ABC123-005",
+      "TOKEN_SEQ": 5,
+      "CUSTOMER_NAME": "mahesh raaj vs",
+      "CUSTOMER_PHONE": "8747087477",
+      "SERVICE_NOTE": "jnijb",
+      "STATUS": "WAITING",
+      "DELAY_STATUS": "NONE",
+      "POSITION_IN_QUEUE": 1,
+      "ESTIMATED_WAIT_MINS": 10,
+      "BOOKING_DATE": "2026-08-29",
+      "CREATED_AT": "2026-08-29T10:24:56.925Z"
     }
   ],
   "AUDIT_LOGS": [
@@ -439,6 +472,25 @@
       "ACTOR_UID": "Staff resumed online bookings",
       "DETAILS": "",
       "CREATED_AT": "2026-08-29T10:18:58.152Z"
+    },
+    {
+      "LOG_ID": "dfbe6e60-4b64-49b2-b8f2-63ac1f9b8382",
+      "ORG_ID": "0232ad19-e9f1-4a39-94ca-3a7020f16aa8",
+      "QUEUE_ID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "TOKEN_ID": "Registered org: abbs (University)",
+      "ACTOR_UID": "",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T10:21:44.478Z"
+    },
+    {
+      "LOG_ID": "8bb11411-4568-485a-8435-d5fd4502d434",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "d4fee274-1ead-4599-ba26-27d0225628a6",
+      "ACTION": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "ACTOR_UID": "Booked token: DOC-ABC123-005",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T10:24:56.927Z"
     }
   ]
 }

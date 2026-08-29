@@ -58,10 +58,6 @@ router.post('/queue/:queueId/book', authenticate, (req, res) => {
     return res.status(404).json({ error: 'Queue not found' });
   }
 
-  if (queue.IS_ACTIVE !== 1) {
-    return res.status(400).json({ error: 'This queue is currently inactive' });
-  }
-
   if (queue.IS_PAUSED === 1) {
     return res.status(400).json({ error: 'Online token intake is temporarily paused by staff. Please try again shortly.' });
   }
