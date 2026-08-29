@@ -315,8 +315,9 @@ router.post('/:id/cancel', authenticate, (req, res) => {
   res.json({ message: `Token ${token.TOKEN_NUMBER} cancelled successfully` });
 });
 
-// 9. Request +5 Min Delay (Customer)
+// 9. Request Flexible Delay (Customer: +5m, +10m, +15m with reason)
 router.post('/:id/delay-request', authenticate, (req, res) => {
+  const { delayMins = 5, reason = '🚗 Parking / Traffic Delay' } = req.body;
   const token = db.prepare('SELECT * FROM TOKENS WHERE TOKEN_ID = ?').get(req.params.id);
   if (!token) return res.status(404).json({ error: 'Token not found' });
 
@@ -324,47 +325,57 @@ router.post('/:id/delay-request', authenticate, (req, res) => {
     return res.status(400).json({ error: 'Delays can only be requested while waiting in line' });
   }
 
+  const mins = Number(delayMins) || 5;
+  const statusStr = mins === 15 ? 'REQUESTED_15M' : mins === 10 ? 'REQUESTED_10M' : 'REQUESTED_5M';
+
   db.prepare(`
     UPDATE TOKENS 
-    SET DELAY_STATUS = 'REQUESTED_5M', DELAY_REQUESTED_AT = CURRENT_TIMESTAMP 
+    SET DELAY_STATUS = ?, 
+        DELAY_MINUTES = ?, 
+        DELAY_REASON = ?, 
+        DELAY_REQUESTED_AT = CURRENT_TIMESTAMP 
     WHERE TOKEN_ID = ?
-  `).run(req.params.id);
+  `).run(statusStr, mins, reason, req.params.id);
 
   db.prepare(`
     INSERT INTO AUDIT_LOGS (LOG_ID, ORG_ID, QUEUE_ID, TOKEN_ID, ACTION, ACTOR_UID, DETAILS)
     VALUES (?, ?, ?, ?, 'DELAY_REQUESTED', ?, ?)
-  `).run(uuidv4(), token.ORG_ID, token.QUEUE_ID, token.TOKEN_ID, req.user.USER_ID, `Requested +5m delay for: ${token.TOKEN_NUMBER}`);
+  `).run(uuidv4(), token.ORG_ID, token.QUEUE_ID, token.TOKEN_ID, req.user.USER_ID, `Requested +${mins}m delay (${reason}) for: ${token.TOKEN_NUMBER}`);
 
   const updatedToken = db.prepare('SELECT * FROM TOKENS WHERE TOKEN_ID = ?').get(req.params.id);
-  res.json({ message: 'Delay request submitted to counter staff', token: updatedToken });
+  res.json({ message: `Delay request (+${mins}m) submitted to counter staff`, token: updatedToken });
 });
 
-// 10. Approve +5 Min Delay (Staff)
+// 10. Approve & Arrange Delay Request (Staff)
 router.post('/:id/delay-approve', authenticate, (req, res) => {
+  const { customShift } = req.body;
   const token = db.prepare('SELECT * FROM TOKENS WHERE TOKEN_ID = ?').get(req.params.id);
   if (!token) return res.status(404).json({ error: 'Token not found' });
 
-  // Shift token sequence by +2 to let 2 people move ahead
-  const newSeq = token.TOKEN_SEQ + 2.5;
+  const delayMins = token.DELAY_MINUTES || 5;
+  // Shift sequence based on requested minutes: 5m -> ~2.5, 10m -> ~4.5, 15m -> ~6.5
+  const shift = customShift ? Number(customShift) : (delayMins >= 15 ? 6.5 : delayMins >= 10 ? 4.5 : 2.5);
+  const newSeq = token.TOKEN_SEQ + shift;
+  const statusStr = delayMins >= 15 ? 'APPROVED_15M' : delayMins >= 10 ? 'APPROVED_10M' : 'APPROVED_5M';
 
   db.prepare(`
     UPDATE TOKENS 
-    SET DELAY_STATUS = 'APPROVED_5M', TOKEN_SEQ = ? 
+    SET DELAY_STATUS = ?, TOKEN_SEQ = ? 
     WHERE TOKEN_ID = ?
-  `).run(newSeq, req.params.id);
+  `).run(statusStr, newSeq, req.params.id);
 
   recalculateQueuePositions(token.QUEUE_ID);
 
   db.prepare(`
     INSERT INTO AUDIT_LOGS (LOG_ID, ORG_ID, QUEUE_ID, TOKEN_ID, ACTION, ACTOR_UID, DETAILS)
     VALUES (?, ?, ?, ?, 'DELAY_APPROVED', ?, ?)
-  `).run(uuidv4(), token.ORG_ID, token.QUEUE_ID, token.TOKEN_ID, req.user.USER_ID, `Approved +5m delay for: ${token.TOKEN_NUMBER}`);
+  `).run(uuidv4(), token.ORG_ID, token.QUEUE_ID, token.TOKEN_ID, req.user.USER_ID, `Approved +${delayMins}m delay (${token.DELAY_REASON || 'General'}) for: ${token.TOKEN_NUMBER}`);
 
   const updatedToken = db.prepare('SELECT * FROM TOKENS WHERE TOKEN_ID = ?').get(req.params.id);
-  res.json({ message: 'Delay request approved. Token shifted down in queue.', token: updatedToken });
+  res.json({ message: `Delay request (+${delayMins}m) approved and arranged. Token shifted down.`, token: updatedToken });
 });
 
-// 11. Reject +5 Min Delay (Staff)
+// 11. Reject Delay Request (Staff)
 router.post('/:id/delay-reject', authenticate, (req, res) => {
   const token = db.prepare('SELECT * FROM TOKENS WHERE TOKEN_ID = ?').get(req.params.id);
   if (!token) return res.status(404).json({ error: 'Token not found' });
@@ -378,7 +389,7 @@ router.post('/:id/delay-reject', authenticate, (req, res) => {
   db.prepare(`
     INSERT INTO AUDIT_LOGS (LOG_ID, ORG_ID, QUEUE_ID, TOKEN_ID, ACTION, ACTOR_UID, DETAILS)
     VALUES (?, ?, ?, ?, 'DELAY_REJECTED', ?, ?)
-  `).run(uuidv4(), token.ORG_ID, token.QUEUE_ID, token.TOKEN_ID, req.user.USER_ID, `Rejected delay request for: ${token.TOKEN_NUMBER}`);
+  `).run(uuidv4(), token.ORG_ID, token.QUEUE_ID, token.TOKEN_ID, req.user.USER_ID, `Staff rejected delay request for: ${token.TOKEN_NUMBER}`);
 
   const updatedToken = db.prepare('SELECT * FROM TOKENS WHERE TOKEN_ID = ?').get(req.params.id);
   res.json({ message: 'Delay request rejected. Customer notified.', token: updatedToken });

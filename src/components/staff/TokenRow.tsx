@@ -7,14 +7,15 @@ import { Button } from '../common/Button';
 import { 
   Volume2, 
   Play, 
-  CheckCircle, 
-  AlertOctagon, 
-  ArrowRightLeft, 
+  Check, 
+  X, 
   Phone, 
-  Check,
-  X,
+  ArrowRightLeft, 
+  AlertOctagon, 
+  MessageSquare,
   XCircle,
-  MessageSquare
+  CheckCircle2,
+  Hourglass
 } from 'lucide-react';
 
 interface TokenRowProps {
@@ -34,27 +35,30 @@ export const TokenRow: React.FC<TokenRowProps> = ({
   const [notifyLoading, setNotifyLoading] = useState(false);
   const [notifySuccess, setNotifySuccess] = useState(false);
 
-  // Button 1: Call Next / Re-Chime
+  // Status flags
+  const isWaiting = token.STATUS === 'WAITING';
+  const isCalled = token.STATUS === 'CALLED';
+  const isServing = token.STATUS === 'SERVING';
+
+  const hasDelayRequest = Boolean(
+    token.DELAY_STATUS?.startsWith('REQUESTED') || 
+    token.DELAY_STATUS === 'REQUESTED_5M' ||
+    token.DELAY_STATUS === 'REQUESTED_10M' ||
+    token.DELAY_STATUS === 'REQUESTED_15M'
+  );
+  
+  const requestedMins = token.DELAY_MINUTES || (
+    token.DELAY_STATUS === 'REQUESTED_15M' ? 15 : 
+    token.DELAY_STATUS === 'REQUESTED_10M' ? 10 : 5
+  );
+
+  // Button 1: Call / Re-Chime
   const handleCall = async () => {
     setLoading(true);
     try {
-      if (token.STATUS === 'CALLED') {
-        audioService.announceToken(token.TOKEN_NUMBER, counterLabel);
-      } else {
-        await api.callToken(token.TOKEN_ID);
-        audioService.announceToken(token.TOKEN_NUMBER, counterLabel);
-        
-        // Auto-send WhatsApp turn alert if phone is present
-        if (token.CUSTOMER_PHONE) {
-          api.sendTokenWhatsAppAlert({
-            tokenId: token.TOKEN_ID,
-            queueId: token.QUEUE_ID,
-            messageType: 'CALL'
-          }).catch(err => console.warn('Auto WhatsApp notice:', err));
-        }
-
-        onRefresh();
-      }
+      await api.callToken(token.TOKEN_ID);
+      audioService.announceToken(token.TOKEN_NUMBER, counterLabel);
+      onRefresh();
     } catch (err: any) {
       alert(err.message || 'Call failed');
     } finally {
@@ -62,19 +66,16 @@ export const TokenRow: React.FC<TokenRowProps> = ({
     }
   };
 
-  // Dedicated WhatsApp Notify Button (Sends via Background Bot)
+  // WhatsApp Alert Trigger
   const handleNotifyWhatsApp = async () => {
-    if (!token.CUSTOMER_PHONE) {
-      alert('This customer did not provide a mobile phone number.');
-      return;
-    }
-
     setNotifyLoading(true);
     try {
       const res = await api.sendTokenWhatsAppAlert({
-        tokenId: token.TOKEN_ID,
+        orgId: token.ORG_ID,
         queueId: token.QUEUE_ID,
-        messageType: isCalled ? 'CALL' : isWaiting ? 'ADVANCE_5M' : 'CALL'
+        tokenId: token.TOKEN_ID,
+        phone: token.CUSTOMER_PHONE,
+        messageType: isCalled ? 'CALL' : 'ADVANCE_5M'
       });
 
       if (res.connected && res.success) {
@@ -144,7 +145,7 @@ export const TokenRow: React.FC<TokenRowProps> = ({
     }
   };
 
-  // Delay Accept
+  // Delay Accept & Arrange
   const handleApproveDelay = async () => {
     setLoading(true);
     try {
@@ -170,37 +171,45 @@ export const TokenRow: React.FC<TokenRowProps> = ({
     }
   };
 
-  const isWaiting = token.STATUS === 'WAITING';
-  const isCalled = token.STATUS === 'CALLED';
-  const isServing = token.STATUS === 'SERVING';
-  const hasDelayRequest = token.DELAY_STATUS === 'REQUESTED_5M';
-
   return (
     <tr className={`border-b border-[#EAE5DE] transition-colors ${
       isCalled ? 'bg-amber-50/60' :
       isServing ? 'bg-emerald-50/50' :
-      hasDelayRequest ? 'bg-amber-50/50' : 'hover:bg-[#FAF7F2]'
+      hasDelayRequest ? 'bg-amber-50/60' : 'hover:bg-[#FAF7F2]'
     }`}>
       {/* Token Number */}
       <td className="py-4 px-4 font-mono font-black text-base text-[#141312]">
         <div className="flex items-center gap-2">
           <span>{token.TOKEN_NUMBER}</span>
           {hasDelayRequest && (
-            <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 font-bold px-1.5 py-0.5 rounded-md">
-              +5m Request
+            <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2 py-0.5 rounded-md flex items-center gap-1 animate-pulse">
+              <Hourglass size={10} /> +{requestedMins}m Request
             </span>
           )}
         </div>
       </td>
 
-      {/* Customer Info */}
+      {/* Customer Info & Delay Reason */}
       <td className="py-4 px-4">
         <div className="font-bold text-[#141312] text-sm">{token.CUSTOMER_NAME}</div>
         <div className="text-xs text-[#736E66] flex items-center gap-1.5 mt-0.5 font-medium">
           <Phone size={12} className="text-[#9E988E]" />
           <span>{token.CUSTOMER_PHONE}</span>
         </div>
-        {token.SERVICE_NOTE && (
+        
+        {/* Customer Requested Delay Particulars Banner */}
+        {hasDelayRequest && (
+          <div className="mt-2 p-2.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-950 font-medium max-w-sm shadow-2xs">
+            <span className="font-bold block text-[11px] text-amber-900 uppercase tracking-wide">
+              ⏳ Customer Requested +{requestedMins} Min Delay
+            </span>
+            <span className="text-[11px] text-amber-900 block mt-0.5">
+              Reason: <strong>{token.DELAY_REASON || '🚗 Parking / Traffic Delay'}</strong>
+            </span>
+          </div>
+        )}
+
+        {token.SERVICE_NOTE && !hasDelayRequest && (
           <div className="text-xs text-[#736E66] italic mt-0.5 truncate max-w-xs">
             "{token.SERVICE_NOTE}"
           </div>
@@ -227,22 +236,22 @@ export const TokenRow: React.FC<TokenRowProps> = ({
       {/* Action Buttons Toolbar */}
       <td className="py-4 px-4 text-right">
         <div className="flex items-center justify-end gap-1.5 flex-wrap">
-          {/* Delay Request Review Buttons */}
+          {/* Delay Request Review & Arrangement Buttons for Staff */}
           {hasDelayRequest && (
-            <div className="flex items-center gap-1 bg-amber-50 p-1 rounded-xl border border-amber-200 mr-1">
+            <div className="flex items-center gap-1.5 bg-amber-50 p-1.5 rounded-xl border border-amber-200 mr-1 shadow-2xs">
               <button
                 onClick={handleApproveDelay}
                 disabled={loading}
-                title="Approve +5m Delay"
-                className="px-2 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors text-xs flex items-center gap-1 font-bold cursor-pointer"
+                title={`Accept & arrange +${requestedMins}m delay for ${token.CUSTOMER_NAME}`}
+                className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors text-xs flex items-center gap-1 font-bold cursor-pointer shadow-2xs"
               >
-                <Check size={13} /> Accept
+                <Check size={13} /> Accept (+{requestedMins}m)
               </button>
               <button
                 onClick={handleRejectDelay}
                 disabled={loading}
-                title="Reject +5m Delay"
-                className="px-2 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white transition-colors text-xs flex items-center gap-1 font-bold cursor-pointer"
+                title="Reject delay request"
+                className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white transition-colors text-xs flex items-center gap-1 font-bold cursor-pointer shadow-2xs"
               >
                 <X size={13} /> Reject
               </button>
@@ -278,34 +287,33 @@ export const TokenRow: React.FC<TokenRowProps> = ({
                   : 'bg-[#141312] hover:bg-[#262422] text-white'
               }`}
             >
-              {isCalled ? "Re-Chime" : "Call Next"}
+              {isCalled ? 'Re-Chime' : 'Call Next'}
             </Button>
           )}
 
           {/* 2. Start Serving Button */}
           {isCalled && (
             <Button
-              variant="emerald"
+              variant="secondary"
               size="sm"
               isLoading={loading}
               onClick={handleServe}
-              leftIcon={<Play size={13} />}
-              className="text-xs px-2.5 font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-xs"
+              leftIcon={<Play size={13} className="text-emerald-600 fill-emerald-600" />}
+              className="text-xs px-2.5 font-bold border-[#EAE5DE] rounded-xl cursor-pointer text-emerald-800 bg-emerald-50 hover:bg-emerald-100"
             >
-              Start Serving
+              Serve
             </Button>
           )}
 
-          {/* 3. Direct Complete Service Button (For CALLED and SERVING tokens) */}
-          {(isServing || isCalled) && (
+          {/* 3. Direct Complete Button (When called or serving) */}
+          {(isCalled || isServing) && (
             <Button
               variant="emerald"
               size="sm"
               isLoading={loading}
               onClick={handleComplete}
-              leftIcon={<CheckCircle size={13} />}
-              className="text-xs px-2.5 font-bold rounded-xl bg-[#141312] hover:bg-[#262422] text-white cursor-pointer shadow-xs"
-              title="Mark customer visit as Completed"
+              leftIcon={<CheckCircle2 size={13} />}
+              className="text-xs px-3 font-bold rounded-xl cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs"
             >
               Complete
             </Button>
@@ -313,44 +321,38 @@ export const TokenRow: React.FC<TokenRowProps> = ({
 
           {/* 4. Staff Cancel Pass Button */}
           {(isWaiting || isCalled || isServing) && (
-            <Button
-              variant="ghost"
-              size="sm"
-              isLoading={loading}
+            <button
               onClick={handleCancelToken}
-              title="Cancel / Void Token Pass"
-              className="text-rose-700 hover:text-rose-900 bg-rose-50/80 hover:bg-rose-100 px-2.5 py-1.5 rounded-xl border border-rose-200/80 text-xs font-bold flex items-center gap-1 cursor-pointer"
+              disabled={loading}
+              title="Cancel this pass"
+              className="p-2 rounded-xl text-rose-600 hover:text-white hover:bg-rose-600 border border-rose-200 transition-colors text-xs flex items-center justify-center font-bold cursor-pointer"
             >
-              <XCircle size={13} />
-              <span>Cancel</span>
-            </Button>
+              <XCircle size={14} />
+            </button>
           )}
 
           {/* 5. Mark No-Show Button */}
-          {(isCalled || isWaiting) && (
-            <Button
-              variant="ghost"
-              size="sm"
-              isLoading={loading}
+          {(isWaiting || isCalled) && (
+            <button
               onClick={handleNoShow}
-              title="Mark Customer as No-Show"
-              className="text-[#736E66] hover:text-amber-700 hover:bg-amber-50 p-1.5 rounded-xl border border-transparent hover:border-amber-200 cursor-pointer"
+              disabled={loading}
+              title="Mark No-Show"
+              className="p-2 rounded-xl text-[#736E66] hover:text-amber-600 hover:bg-amber-50 border border-[#EAE5DE] transition-colors text-xs flex items-center justify-center font-bold cursor-pointer"
             >
-              <AlertOctagon size={15} />
-            </Button>
+              <AlertOctagon size={14} />
+            </button>
           )}
 
-          {/* 6. Transfer Button */}
+          {/* 6. Transfer Token Button */}
           {(isWaiting || isCalled || isServing) && (
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={() => onTransferClick(token)}
+              disabled={loading}
               title="Transfer to another counter"
-              className="text-[#736E66] hover:text-[#141312] hover:bg-[#FAF7F2] p-1.5 rounded-xl border border-transparent hover:border-[#EAE5DE] cursor-pointer"
+              className="p-2 rounded-xl text-[#736E66] hover:text-[#141312] hover:bg-[#F5F1E9] border border-[#EAE5DE] transition-colors text-xs flex items-center justify-center font-bold cursor-pointer"
             >
-              <ArrowRightLeft size={15} />
-            </Button>
+              <ArrowRightLeft size={14} />
+            </button>
           )}
         </div>
       </td>

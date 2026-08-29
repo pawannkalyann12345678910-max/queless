@@ -4,6 +4,7 @@ import { api } from '../../services/api';
 import { audioService } from '../../services/audio';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
+import { Modal } from '../common/Modal';
 import { 
   Clock, 
   Users, 
@@ -23,6 +24,9 @@ interface LiveTokenPassProps {
 export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }) => {
   const [actionLoading, setActionLoading] = useState(false);
   const [alertDismissed, setAlertDismissed] = useState(false);
+  const [isDelayModalOpen, setIsDelayModalOpen] = useState(false);
+  const [selectedDelayMins, setSelectedDelayMins] = useState<number>(5);
+  const [selectedDelayReason, setSelectedDelayReason] = useState<string>('🚗 Parking / Traffic Delay');
 
   // Audio announcement when CALLED
   useEffect(() => {
@@ -60,10 +64,12 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
     }
   }
 
-  const handleRequestDelay = async () => {
+  const handleDelaySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setActionLoading(true);
     try {
-      await api.requestDelay(token.TOKEN_ID);
+      await api.requestDelay(token.TOKEN_ID, selectedDelayMins, selectedDelayReason);
+      setIsDelayModalOpen(false);
       onRefresh();
     } catch (err: any) {
       alert(err.message || 'Could not request delay');
@@ -101,6 +107,20 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
   const isCalled = token.STATUS === 'CALLED';
   const isServing = token.STATUS === 'SERVING';
   const isCompleted = token.STATUS === 'COMPLETED';
+
+  const hasPendingDelay = Boolean(
+    token.DELAY_STATUS?.startsWith('REQUESTED') ||
+    token.DELAY_STATUS === 'REQUESTED_5M' ||
+    token.DELAY_STATUS === 'REQUESTED_10M' ||
+    token.DELAY_STATUS === 'REQUESTED_15M'
+  );
+
+  const hasApprovedDelay = Boolean(
+    token.DELAY_STATUS?.startsWith('APPROVED') ||
+    token.DELAY_STATUS === 'APPROVED_5M' ||
+    token.DELAY_STATUS === 'APPROVED_10M' ||
+    token.DELAY_STATUS === 'APPROVED_15M'
+  );
 
   return (
     <div className={`bg-white rounded-3xl p-6 sm:p-8 border shadow-xs transition-all ${
@@ -141,17 +161,20 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
         </div>
       )}
 
-      {token.DELAY_STATUS === 'APPROVED_5M' && (
+      {hasApprovedDelay && (
         <div className="mb-5 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center gap-2.5 shadow-2xs">
           <CheckCircle2 className="shrink-0 text-emerald-600" size={16} />
-          <span><strong>Delay Approved:</strong> Your pass was shifted down by ~5 minutes.</span>
+          <span><strong>Delay Approved:</strong> Your pass was shifted down by ~{token.DELAY_MINUTES || 5} minutes.</span>
         </div>
       )}
 
-      {token.DELAY_STATUS === 'REQUESTED_5M' && (
-        <div className="mb-5 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-2.5 animate-pulse shadow-2xs">
-          <Hourglass className="shrink-0 text-amber-600" size={16} />
-          <span><strong>Delay Request Pending:</strong> Waiting for counter staff approval...</span>
+      {hasPendingDelay && (
+        <div className="mb-5 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5 animate-pulse shadow-2xs">
+          <Hourglass className="shrink-0 text-amber-600 mt-0.5" size={16} />
+          <div>
+            <span className="font-bold block">Delay Request Pending (+{token.DELAY_MINUTES || 5}m):</span>
+            Waiting for staff operator approval. Reason: <em>{token.DELAY_REASON || 'Parking / Traffic'}</em>
+          </div>
         </div>
       )}
 
@@ -257,16 +280,16 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
       {/* Action Controls for Customer */}
       {token.STATUS === 'WAITING' && (
         <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-[#EAE5DE]">
-          {token.DELAY_STATUS === 'NONE' && (
+          {!hasPendingDelay && !hasApprovedDelay && (
             <Button
               variant="secondary"
               size="sm"
               isLoading={actionLoading}
-              onClick={handleRequestDelay}
+              onClick={() => setIsDelayModalOpen(true)}
               leftIcon={<Hourglass size={13} />}
-              className="text-amber-900 bg-amber-50 hover:bg-amber-100 border-amber-200 rounded-xl cursor-pointer"
+              className="text-amber-900 bg-amber-50 hover:bg-amber-100 border-amber-200 rounded-xl cursor-pointer font-bold"
             >
-              Request +5 Min Delay
+              Request Extra Time (+5m / +10m)
             </Button>
           )}
 
@@ -291,6 +314,97 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
             Cancel Pass
           </Button>
         </div>
+      )}
+
+      {/* Customer Delay Request Modal */}
+      {isDelayModalOpen && (
+        <Modal
+          isOpen={isDelayModalOpen}
+          onClose={() => setIsDelayModalOpen(false)}
+          title="Request Extra Waiting Time"
+          subtitle="Running late? Choose extra minutes and notify the counter staff"
+          maxWidth="md"
+        >
+          <form onSubmit={handleDelaySubmit} className="space-y-4 pt-1">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#141312] mb-1.5">
+                Select Extra Time Needed
+              </label>
+              <div className="grid grid-cols-3 gap-2.5">
+                {[5, 10, 15].map(mins => (
+                  <button
+                    key={mins}
+                    type="button"
+                    onClick={() => setSelectedDelayMins(mins)}
+                    className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                      selectedDelayMins === mins
+                        ? 'bg-[#141312] text-white border-[#141312] shadow-xs'
+                        : 'bg-[#FAF7F2] text-[#736E66] hover:bg-[#F5F1E9] border-[#EAE5DE]'
+                    }`}
+                  >
+                    <span className="text-base font-black font-mono">+{mins}m</span>
+                    <span className="text-[10px] opacity-80">{mins === 5 ? '(Recommended)' : 'Extra Time'}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#141312] mb-1.5">
+                Reason (Sent Directly to Counter Staff)
+              </label>
+              <div className="space-y-2">
+                {[
+                  '🚗 Parking / Traffic Delay',
+                  '☕ Grabbing Coffee / Restroom Break',
+                  '💼 Consultation / Meeting Running Over',
+                  '👶 Attending to Family / Companion'
+                ].map(reason => (
+                  <label
+                    key={reason}
+                    onClick={() => setSelectedDelayReason(reason)}
+                    className={`flex items-center gap-3 p-3 rounded-2xl border text-xs font-medium transition-all cursor-pointer ${
+                      selectedDelayReason === reason
+                        ? 'bg-amber-50/80 border-amber-300 text-amber-950 font-bold'
+                        : 'bg-[#FAF7F2] border-[#EAE5DE] text-[#736E66] hover:bg-[#F5F1E9]'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="customerDelayReason"
+                      checked={selectedDelayReason === reason}
+                      onChange={() => setSelectedDelayReason(reason)}
+                      className="accent-[#141312]"
+                    />
+                    <span>{reason}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-2 flex items-center gap-3">
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                className="flex-1 border-[#EAE5DE] text-[#141312] rounded-xl cursor-pointer"
+                onClick={() => setIsDelayModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="emerald"
+                size="md"
+                isLoading={actionLoading}
+                className="flex-1 bg-[#141312] hover:bg-[#262422] text-white rounded-xl font-bold cursor-pointer"
+                leftIcon={<Hourglass size={15} />}
+              >
+                Submit to Staff (+{selectedDelayMins}m)
+              </Button>
+            </div>
+          </form>
+        </Modal>
       )}
     </div>
   );

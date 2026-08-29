@@ -201,12 +201,18 @@ class ApiClient {
     return this.request(`/tokens/${tokenId}/cancel`, { method: 'POST' });
   }
 
-  async requestDelay(tokenId: string): Promise<{ message: string; token: Token }> {
-    return this.request(`/tokens/${tokenId}/delay-request`, { method: 'POST' });
+  async requestDelay(tokenId: string, delayMins: number = 5, reason: string = '🚗 Parking / Traffic Delay'): Promise<{ message: string; token: Token }> {
+    return this.request(`/tokens/${tokenId}/delay-request`, {
+      method: 'POST',
+      body: JSON.stringify({ delayMins, reason })
+    });
   }
 
-  async approveDelay(tokenId: string): Promise<{ message: string; token: Token }> {
-    return this.request(`/tokens/${tokenId}/delay-approve`, { method: 'POST' });
+  async approveDelay(tokenId: string, customShift?: number): Promise<{ message: string; token: Token }> {
+    return this.request(`/tokens/${tokenId}/delay-approve`, {
+      method: 'POST',
+      body: JSON.stringify({ customShift })
+    });
   }
 
   async rejectDelay(tokenId: string): Promise<{ message: string; token: Token }> {
