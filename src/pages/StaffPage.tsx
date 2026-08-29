@@ -80,21 +80,21 @@ export const StaffPage: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="text-center py-20 bg-white rounded-xl p-8 max-w-lg mx-auto border border-zinc-200 shadow-xs">
-        <h3 className="text-xl font-bold text-black">Staff Authentication Required</h3>
-        <p className="text-xs text-zinc-500 mt-2">Please sign in with your authorized staff Google email address.</p>
+      <div className="text-center py-20 bg-white rounded-3xl p-8 max-w-lg mx-auto border border-[#EAE5DE] shadow-xs my-8">
+        <h3 className="text-xl font-bold text-[#141312]">Staff Authentication Required</h3>
+        <p className="text-xs text-[#736E66] mt-2">Please sign in with your authorized staff Google email address.</p>
       </div>
     );
   }
 
   if (assignedQueues.length === 0) {
     return (
-      <div className="text-center py-20 bg-white rounded-xl p-8 max-w-lg mx-auto border border-zinc-200 shadow-xs">
-        <div className="w-14 h-14 rounded-lg bg-zinc-100 border border-zinc-200 flex items-center justify-center mx-auto text-black mb-3">
+      <div className="text-center py-20 bg-white rounded-3xl p-8 max-w-lg mx-auto border border-[#EAE5DE] shadow-xs my-8">
+        <div className="w-14 h-14 rounded-2xl bg-[#FAF7F2] border border-[#EAE5DE] flex items-center justify-center mx-auto text-[#141312] mb-3">
           <Users size={28} />
         </div>
-        <h3 className="text-xl font-black text-black">No Assigned Service Counters</h3>
-        <p className="text-xs text-zinc-600 mt-2 mb-6">
+        <h3 className="text-xl font-black text-[#141312]">No Assigned Service Counters</h3>
+        <p className="text-xs text-[#736E66] mt-2 mb-6">
           Your Google email (<strong>{user.EMAIL}</strong>) is not currently assigned to any active service counter. Ask your organization admin to assign your email in the Admin Console.
         </p>
       </div>
@@ -102,9 +102,9 @@ export const StaffPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {/* Top Header & Queue Switcher */}
-      <div className="bg-white rounded-xl p-6 sm:p-8 border border-zinc-200 shadow-xs">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#EAE5DE] shadow-xs">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           {/* Left: Queue Info */}
           <div className="flex items-start sm:items-center gap-4">
@@ -112,10 +112,10 @@ export const StaffPage: React.FC = () => {
               <img
                 src={activeQueue.ORG_LOGO_URL}
                 alt={activeQueue.ORG_NAME}
-                className="w-14 h-14 rounded-lg object-cover border border-zinc-200 bg-zinc-50"
+                className="w-14 h-14 rounded-2xl object-cover border border-[#EAE5DE] bg-[#FAF7F2]"
               />
             ) : (
-              <div className="w-14 h-14 rounded-lg bg-black text-white flex items-center justify-center font-black text-xl">
+              <div className="w-14 h-14 rounded-2xl bg-[#141312] text-white flex items-center justify-center font-black text-xl shadow-xs">
                 {activeQueue?.ORG_NAME ? activeQueue.ORG_NAME.charAt(0) : 'Q'}
               </div>
             )}
@@ -128,10 +128,10 @@ export const StaffPage: React.FC = () => {
                   <Badge variant="rose" size="sm" dot>Intake Paused</Badge>
                 )}
               </div>
-              <h1 className="text-2xl font-black text-black">
+              <h1 className="text-2xl font-black text-[#141312]">
                 {activeQueue?.NAME} ({activeQueue?.COUNTER_LABEL || 'Counter 1'})
               </h1>
-              <p className="text-xs text-zinc-500 mt-0.5">Operator: {user.EMAIL}</p>
+              <p className="text-xs text-[#736E66] mt-0.5">Operator: {user.EMAIL}</p>
             </div>
           </div>
 
@@ -142,9 +142,9 @@ export const StaffPage: React.FC = () => {
               <Button
                 variant="secondary"
                 size="sm"
-                leftIcon={<MessageSquare size={14} className="text-emerald-600" />}
+                leftIcon={<MessageSquare size={14} className="text-emerald-700" />}
                 onClick={() => setIsWhatsAppOpen(true)}
-                className="font-bold border-emerald-300 hover:bg-emerald-50 text-emerald-950"
+                className="font-bold border-emerald-300 bg-emerald-50/50 hover:bg-emerald-100 text-emerald-950 rounded-xl cursor-pointer"
               >
                 Connect WhatsApp
               </Button>
@@ -159,7 +159,7 @@ export const StaffPage: React.FC = () => {
               size="sm"
               onClick={() => setIsWalkInOpen(true)}
               leftIcon={<Plus size={15} />}
-              className="font-bold"
+              className="font-bold rounded-xl cursor-pointer"
             >
               Issue Walk-In Token
             </Button>
@@ -169,6 +169,7 @@ export const StaffPage: React.FC = () => {
               size="sm"
               onClick={handleTogglePause}
               leftIcon={activeQueue?.IS_PAUSED === 1 ? <PlayCircle size={15} /> : <PauseCircle size={15} />}
+              className="rounded-xl border-[#EAE5DE] cursor-pointer"
             >
               {activeQueue?.IS_PAUSED === 1 ? "Resume Intake" : "Pause Intake"}
             </Button>
@@ -177,16 +178,16 @@ export const StaffPage: React.FC = () => {
 
         {/* Multi-queue selector tabs */}
         {assignedQueues.length > 1 && (
-          <div className="flex items-center gap-2 mt-5 pt-4 border-t border-zinc-100 overflow-x-auto pb-1 scrollbar-none">
-            <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider mr-2">Switch Counter:</span>
+          <div className="flex items-center gap-2 mt-5 pt-4 border-t border-[#EAE5DE] overflow-x-auto pb-1 scrollbar-none">
+            <span className="text-xs text-[#736E66] font-bold uppercase tracking-wider mr-2">Switch Counter:</span>
             {assignedQueues.map((q) => (
               <button
                 key={q.QUEUE_ID}
                 onClick={() => setSelectedQueueId(q.QUEUE_ID)}
-                className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   selectedQueueId === q.QUEUE_ID
-                    ? 'bg-black text-white shadow-xs'
-                    : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                    ? 'bg-[#141312] text-white shadow-xs'
+                    : 'bg-[#FAF7F2] text-[#736E66] hover:bg-[#F5F1E9] border border-[#EAE5DE]'
                 }`}
               >
                 {q.NAME} ({q.COUNTER_LABEL})

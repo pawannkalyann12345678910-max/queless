@@ -14,8 +14,8 @@ export const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const baseClass = interactive 
-    ? 'bg-white rounded-xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-400 hover:shadow-md transition-all cursor-pointer' 
-    : 'bg-white rounded-xl p-5 border border-zinc-200 shadow-xs';
+    ? 'bg-white rounded-3xl p-6 border border-[#EAE5DE] shadow-2xs hover:border-[#C4BDAF] hover:shadow-md transition-all cursor-pointer' 
+    : 'bg-white rounded-3xl p-6 border border-[#EAE5DE] shadow-2xs';
 
   return (
     <div

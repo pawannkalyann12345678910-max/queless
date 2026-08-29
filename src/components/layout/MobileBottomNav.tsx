@@ -18,14 +18,14 @@ export const MobileBottomNav: React.FC = () => {
   const isAdmin = location.pathname.startsWith('/admin');
 
   return (
-    <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-zinc-200 px-2 py-1.5 flex items-center justify-around shadow-lg">
+    <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#EAE5DE] px-2 py-1.5 flex items-center justify-around shadow-lg">
       <Link
         to="/"
         className={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${
-          isExplore ? 'text-black font-bold' : 'text-zinc-500 hover:text-black'
+          isExplore ? 'text-[#141312] font-bold' : 'text-[#736E66] hover:text-[#141312]'
         }`}
       >
-        <Compass size={18} className={isExplore ? 'text-black' : 'text-zinc-400'} />
+        <Compass size={18} className={isExplore ? 'text-[#141312]' : 'text-[#9E988E]'} />
         <span className="text-[10px] mt-0.5">Explore</span>
       </Link>
 
@@ -33,10 +33,10 @@ export const MobileBottomNav: React.FC = () => {
         <Link
           to="/my-tokens"
           className={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${
-            isPasses ? 'text-black font-bold' : 'text-zinc-500 hover:text-black'
+            isPasses ? 'text-[#141312] font-bold' : 'text-[#736E66] hover:text-[#141312]'
           }`}
         >
-          <Ticket size={18} className={isPasses ? 'text-black' : 'text-zinc-400'} />
+          <Ticket size={18} className={isPasses ? 'text-[#141312]' : 'text-[#9E988E]'} />
           <span className="text-[10px] mt-0.5">Passes</span>
         </Link>
       )}
@@ -45,10 +45,10 @@ export const MobileBottomNav: React.FC = () => {
         <Link
           to="/staff"
           className={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${
-            isStaff ? 'text-black font-bold' : 'text-zinc-500 hover:text-black'
+            isStaff ? 'text-[#141312] font-bold' : 'text-[#736E66] hover:text-[#141312]'
           }`}
         >
-          <Users size={18} className={isStaff ? 'text-black' : 'text-zinc-400'} />
+          <Users size={18} className={isStaff ? 'text-[#141312]' : 'text-[#9E988E]'} />
           <span className="text-[10px] mt-0.5">Staff</span>
         </Link>
       )}
@@ -57,10 +57,10 @@ export const MobileBottomNav: React.FC = () => {
         <Link
           to="/admin"
           className={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${
-            isAdmin ? 'text-black font-bold' : 'text-zinc-500 hover:text-black'
+            isAdmin ? 'text-[#141312] font-bold' : 'text-[#736E66] hover:text-[#141312]'
           }`}
         >
-          <Building2 size={18} className={isAdmin ? 'text-black' : 'text-zinc-400'} />
+          <Building2 size={18} className={isAdmin ? 'text-[#141312]' : 'text-[#9E988E]'} />
           <span className="text-[10px] mt-0.5">Admin</span>
         </Link>
       )}

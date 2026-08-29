@@ -52,30 +52,30 @@ export const Badge: React.FC<BadgeProps> = ({
   }
 
   const sizeStyles = {
-    sm: "text-[11px] px-2 py-0.5 font-medium rounded-md",
-    md: "text-xs px-2.5 py-0.5 font-medium rounded-md",
-    lg: "text-xs px-3 py-1 font-semibold rounded-md"
+    sm: "text-[11px] px-2 py-0.5 font-semibold rounded-md",
+    md: "text-xs px-2.5 py-0.5 font-semibold rounded-lg",
+    lg: "text-xs px-3 py-1 font-bold rounded-lg"
   };
 
   const variantStyles = {
-    neutral: "bg-zinc-100 text-zinc-800 border-zinc-200",
-    slate: "bg-zinc-100 text-zinc-800 border-zinc-200",
-    emerald: "bg-emerald-50 text-emerald-800 border-emerald-200/80",
-    indigo: "bg-blue-50 text-blue-800 border-blue-200/80",
-    amber: "bg-amber-50 text-amber-900 border-amber-200/80",
-    rose: "bg-red-50 text-red-800 border-red-200/80",
-    cyan: "bg-zinc-100 text-zinc-900 border-zinc-200",
-    purple: "bg-purple-50 text-purple-800 border-purple-200/80"
+    neutral: "bg-[#FAF7F2] text-[#141312] border-[#EAE5DE]",
+    slate: "bg-[#FAF7F2] text-[#736E66] border-[#EAE5DE]",
+    emerald: "bg-emerald-50/80 text-emerald-800 border-emerald-200/80",
+    indigo: "bg-[#FAF7F2] text-[#141312] border-[#EAE5DE]",
+    amber: "bg-amber-50/80 text-amber-900 border-amber-200/80",
+    rose: "bg-rose-50/80 text-rose-800 border-rose-200/80",
+    cyan: "bg-[#FAF7F2] text-[#141312] border-[#EAE5DE]",
+    purple: "bg-purple-50/80 text-purple-800 border-purple-200/80"
   };
 
   const dotColors = {
-    neutral: "bg-zinc-500",
-    slate: "bg-zinc-500",
+    neutral: "bg-[#736E66]",
+    slate: "bg-[#736E66]",
     emerald: "bg-emerald-600",
-    indigo: "bg-blue-600",
+    indigo: "bg-[#141312]",
     amber: "bg-amber-600",
-    rose: "bg-red-600",
-    cyan: "bg-zinc-700",
+    rose: "bg-rose-600",
+    cyan: "bg-[#141312]",
     purple: "bg-purple-600"
   };
 

@@ -45,11 +45,11 @@ export const QuelessFaqSection: React.FC = () => {
   return (
     <section className="max-w-4xl mx-auto px-4 sm:px-6 space-y-8">
       <div className="text-center space-y-2">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 text-zinc-800 text-xs font-bold uppercase tracking-wider border border-zinc-200">
-          <HelpCircle size={13} className="text-blue-600" />
+        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white text-[#141312] text-xs font-bold uppercase tracking-wider border border-[#EAE5DE] shadow-2xs">
+          <HelpCircle size={13} className="text-[#C28E5C]" />
           Frequently Asked Questions
         </span>
-        <h3 className="text-2xl sm:text-4xl font-black text-black">
+        <h3 className="text-2xl sm:text-4xl font-black text-[#141312] tracking-tight">
           Everything You Need to Know About Queless
         </h3>
       </div>
@@ -65,10 +65,10 @@ export const QuelessFaqSection: React.FC = () => {
           <button
             key={tab.id}
             onClick={() => setFilter(tab.id as any)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               filter === tab.id
-                ? 'bg-black text-white'
-                : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                ? 'bg-[#141312] text-white shadow-xs'
+                : 'bg-white text-[#736E66] hover:bg-[#FAF7F2] border border-[#EAE5DE]'
             }`}
           >
             {tab.label}
@@ -83,19 +83,19 @@ export const QuelessFaqSection: React.FC = () => {
           return (
             <div
               key={faq.question}
-              className={`rounded-xl border transition-colors overflow-hidden ${
-                isOpen ? 'bg-white border-zinc-300 shadow-xs' : 'bg-zinc-50 border-zinc-200 hover:bg-white'
+              className={`rounded-2xl border transition-all overflow-hidden ${
+                isOpen ? 'bg-white border-[#C4BDAF] shadow-xs' : 'bg-white border-[#EAE5DE] hover:border-[#D3CCC2]'
               }`}
             >
               <button
                 onClick={() => setOpenIndex(isOpen ? null : idx)}
-                className="w-full flex items-center justify-between p-4 sm:p-5 text-left font-bold text-black text-sm sm:text-base"
+                className="w-full flex items-center justify-between p-4 sm:p-5 text-left font-bold text-[#141312] text-sm sm:text-base cursor-pointer"
               >
                 <span>{faq.question}</span>
                 <ChevronDown
                   size={18}
-                  className={`shrink-0 ml-4 text-zinc-500 transition-transform duration-200 ${
-                    isOpen ? 'rotate-180 text-blue-600' : ''
+                  className={`shrink-0 ml-4 text-[#736E66] transition-transform duration-200 ${
+                    isOpen ? 'rotate-180 text-[#141312]' : ''
                   }`}
                 />
               </button>
@@ -108,7 +108,7 @@ export const QuelessFaqSection: React.FC = () => {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.2, ease: 'easeInOut' }}
                   >
-                    <div className="px-4 sm:px-5 pb-4 pt-1 text-xs sm:text-sm text-zinc-600 leading-relaxed border-t border-zinc-100">
+                    <div className="px-4 sm:px-5 pb-4 pt-1 text-xs sm:text-sm text-[#736E66] leading-relaxed border-t border-[#EAE5DE]">
                       {faq.answer}
                     </div>
                   </motion.div>

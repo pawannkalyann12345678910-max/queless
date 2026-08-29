@@ -70,6 +70,22 @@
       "IS_ACTIVE": 1,
       "CREATED_AT": "2026-08-29T10:21:44.474Z",
       "UPDATED_AT": "2026-08-29T10:21:44.474Z"
+    },
+    {
+      "ORG_ID": "922bfb49-4622-42e7-b5cc-f9e78dd0b873",
+      "NAME": "pk",
+      "CATEGORY": "University",
+      "DESCRIPTION": "sdfsfd",
+      "LOGO_URL": "",
+      "BANNER_URL": "",
+      "ADMIN_UID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ADMIN_EMAIL": "pawannkalyann12345678910@gmail.com",
+      "SUBSCRIPTION_TIER": "STARTER",
+      "ADDRESS": "dsdj",
+      "CITY": "bangalore",
+      "IS_ACTIVE": 1,
+      "CREATED_AT": "2026-08-29T16:02:10.827Z",
+      "UPDATED_AT": "2026-08-29T16:02:10.827Z"
     }
   ],
   "QUEUES": [
@@ -85,7 +101,8 @@
       "IS_ACTIVE": 1,
       "IS_PAUSED": 0,
       "OPERATING_HOURS": "09:00 - 17:00",
-      "CREATED_AT": "2026-08-29T06:19:00.518Z"
+      "CREATED_AT": "2026-08-29T06:19:00.518Z",
+      "ALLOW_STAFF_WHATSAPP": 1
     }
   ],
   "STAFF_ASSIGNMENTS": [
@@ -185,12 +202,13 @@
       "CUSTOMER_NAME": "mahesh raaj vs",
       "CUSTOMER_PHONE": "8747087477",
       "SERVICE_NOTE": "jnijb",
-      "STATUS": "WAITING",
+      "STATUS": "CALLED",
       "DELAY_STATUS": "NONE",
-      "POSITION_IN_QUEUE": 1,
-      "ESTIMATED_WAIT_MINS": 10,
+      "POSITION_IN_QUEUE": 0,
+      "ESTIMATED_WAIT_MINS": 0,
       "BOOKING_DATE": "2026-08-29",
-      "CREATED_AT": "2026-08-29T10:24:56.925Z"
+      "CREATED_AT": "2026-08-29T10:24:56.925Z",
+      "CALLED_AT": "2026-08-29T16:03:39.930Z"
     }
   ],
   "AUDIT_LOGS": [
@@ -491,6 +509,25 @@
       "ACTOR_UID": "Booked token: DOC-ABC123-005",
       "DETAILS": "",
       "CREATED_AT": "2026-08-29T10:24:56.927Z"
+    },
+    {
+      "LOG_ID": "168ac7ae-19ef-4ecf-a9f4-880f23f23f4b",
+      "ORG_ID": "922bfb49-4622-42e7-b5cc-f9e78dd0b873",
+      "QUEUE_ID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "TOKEN_ID": "Registered org: pk (University)",
+      "ACTOR_UID": "",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T16:02:10.829Z"
+    },
+    {
+      "LOG_ID": "18863ceb-0a2c-4dec-9c27-b1c50a1a8288",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "d4fee274-1ead-4599-ba26-27d0225628a6",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Called token: DOC-ABC123-005",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T16:03:39.931Z"
     }
   ]
 }

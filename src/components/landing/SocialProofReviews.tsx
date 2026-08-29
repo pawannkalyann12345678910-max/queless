@@ -41,11 +41,11 @@ export const SocialProofReviews: React.FC = () => {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       <div className="text-center space-y-2 max-w-2xl mx-auto">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 text-zinc-800 text-xs font-bold uppercase tracking-wider border border-zinc-200">
-          <MessageSquare size={13} className="text-blue-600" />
+        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white text-[#141312] text-xs font-bold uppercase tracking-wider border border-[#EAE5DE] shadow-2xs">
+          <MessageSquare size={13} className="text-[#C28E5C]" />
           Verified Stories from Counter Hosts & Visitors
         </span>
-        <h2 className="text-2xl sm:text-4xl font-black text-black">
+        <h2 className="text-2xl sm:text-4xl font-black text-[#141312] tracking-tight">
           Trusted by High-Volume Organizations
         </h2>
       </div>
@@ -54,34 +54,34 @@ export const SocialProofReviews: React.FC = () => {
         {REVIEWS.map((r) => (
           <div
             key={r.name}
-            className="bg-white rounded-2xl p-6 sm:p-7 border border-zinc-200 shadow-xs flex flex-col justify-between space-y-4 hover:border-zinc-300 transition-colors"
+            className="bg-white rounded-3xl p-6 sm:p-7 border border-[#EAE5DE] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#C4BDAF] transition-all"
           >
             <div className="space-y-3">
               {/* Stars */}
-              <div className="flex items-center gap-1 text-amber-400">
+              <div className="flex items-center gap-1 text-[#C28E5C]">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={15} className="fill-amber-400 text-amber-400" />
+                  <Star key={i} size={15} className="fill-[#C28E5C] text-[#C28E5C]" />
                 ))}
               </div>
 
               {/* Quote */}
-              <p className="text-xs sm:text-sm text-zinc-700 leading-relaxed italic">
+              <p className="text-xs sm:text-sm text-[#736E66] leading-relaxed italic">
                 "{r.quote}"
               </p>
             </div>
 
-            <div className="pt-4 border-t border-zinc-100 space-y-2">
+            <div className="pt-4 border-t border-[#EAE5DE] space-y-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-sm font-bold text-black flex items-center gap-1">
+                  <h4 className="text-sm font-bold text-[#141312] flex items-center gap-1">
                     {r.name}
                     <CheckCircle2 size={13} className="text-emerald-600" />
                   </h4>
-                  <p className="text-xs text-zinc-500">{r.role} • {r.org}</p>
+                  <p className="text-xs text-[#9E988E]">{r.role} • {r.org}</p>
                 </div>
               </div>
 
-              <span className="inline-block text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">
+              <span className="inline-block text-[11px] font-bold text-[#141312] bg-[#FAF7F2] px-2.5 py-0.5 rounded-md border border-[#EAE5DE]">
                 {r.metric}
               </span>
             </div>
