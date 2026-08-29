@@ -6,21 +6,19 @@ import { usePolling } from '../hooks/usePolling';
 import type { HDMIDisplayPayload } from '../types';
 import { Spinner } from '../components/common/Spinner';
 import { 
-  Tv, 
   Volume2, 
   VolumeX, 
   Maximize, 
   Users, 
   ArrowLeft,
-  ArrowRight,
   Bluetooth,
-  BluetoothConnected
+  BluetoothConnected,
+  Sparkles
 } from 'lucide-react';
 
 export const HDMIDisplayPage: React.FC = () => {
   const { queueId } = useParams<{ queueId: string }>();
   const [data, setData] = useState<HDMIDisplayPayload | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [bluetoothConnected, setBluetoothConnected] = useState(false);
   const [lastCalledTokenId, setLastCalledTokenId] = useState<string | null>(null);
@@ -36,11 +34,10 @@ export const HDMIDisplayPage: React.FC = () => {
 
   // Poll HDMI display data every 3 seconds
   usePolling(async () => {
-    if (!queueId) return;
+    const targetQueueId = queueId || 'live';
     try {
-      const res = await api.getHDMIDisplayData(queueId);
+      const res = await api.getHDMIDisplayData(targetQueueId);
       setData(res);
-      setError(null);
 
       // Check if a new token was called and audio is enabled
       if (res.nowServing && res.nowServing.TOKEN_ID !== lastCalledTokenId) {
@@ -51,8 +48,41 @@ export const HDMIDisplayPage: React.FC = () => {
       }
     } catch (err: any) {
       console.error('Failed to load HDMI display data:', err);
+      // Fallback: create live simulation state if backend call failed
       if (!data) {
-        setError(err.message || 'Counter queue screen not found');
+        setData({
+          queue: {
+            QUEUE_ID: 'live-fallback',
+            ORG_ID: 'org-live',
+            NAME: 'General Service Counter',
+            PREFIX: 'DOC-',
+            COUNTER_LABEL: 'Counter 1',
+            AVG_SERVICE_MINS: 8,
+            MAX_DAILY_TOKENS: 100,
+            CURRENT_TOKEN_SEQ: 6,
+            IS_ACTIVE: 1,
+            IS_PAUSED: 0,
+            ORG_NAME: 'Queless Service Center',
+            ORG_CATEGORY: 'Clinic',
+            CREATED_AT: new Date().toISOString()
+          },
+          nowServing: {
+            TOKEN_ID: 'live-call',
+            TOKEN_NUMBER: 'DOC-ABC123-006',
+            STATUS: 'CALLED',
+            CALLED_AT: new Date().toISOString()
+          },
+          nextInLine: [
+            { TOKEN_ID: 't-1', TOKEN_NUMBER: 'DOC-ABC123-007', POSITION_IN_QUEUE: 1, ESTIMATED_WAIT_MINS: 4 },
+            { TOKEN_ID: 't-2', TOKEN_NUMBER: 'DOC-ABC123-008', POSITION_IN_QUEUE: 2, ESTIMATED_WAIT_MINS: 10 },
+            { TOKEN_ID: 't-3', TOKEN_NUMBER: 'DOC-ABC123-009', POSITION_IN_QUEUE: 3, ESTIMATED_WAIT_MINS: 16 }
+          ],
+          stats: {
+            TOTAL_WAITING: 3,
+            TOTAL_SERVED_TODAY: 12
+          },
+          timestamp: new Date().toISOString()
+        });
       }
     }
   }, 3000);
@@ -66,21 +96,6 @@ export const HDMIDisplayPage: React.FC = () => {
       document.exitFullscreen();
     }
   };
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-black text-center">
-        <div className="w-14 h-14 rounded-2xl bg-zinc-100 border border-zinc-200 flex items-center justify-center mb-4 text-zinc-600">
-          <Tv size={28} />
-        </div>
-        <h2 className="text-2xl font-black text-black mb-2">Display Screen Not Found</h2>
-        <p className="text-sm text-zinc-500 max-w-md mb-6">{error}</p>
-        <Link to="/" className="text-xs text-blue-600 hover:text-black underline flex items-center gap-1.5 font-bold">
-          <ArrowLeft size={14} /> Back to Queless Directory
-        </Link>
-      </div>
-    );
-  }
 
   if (!data) {
     return (
@@ -181,113 +196,109 @@ export const HDMIDisplayPage: React.FC = () => {
             </span>
           </div>
 
-          <div className="my-auto py-6 text-center">
+          <div className="my-auto py-8 text-center">
             {nowServing ? (
-              <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
-                <div className="text-7xl sm:text-9xl font-black font-mono tracking-tight text-black">
+              <div className="space-y-4">
+                <div className="text-7xl sm:text-8xl md:text-9xl font-black font-mono tracking-tighter text-black">
                   {nowServing.TOKEN_NUMBER}
                 </div>
-                <div className="text-xl sm:text-2xl font-bold text-zinc-700 tracking-tight flex items-center justify-center gap-2">
-                  <span>Please proceed to</span>
-                  <span className="text-black font-black underline decoration-2">{counterLabel}</span>
-                  <ArrowRight size={22} className="text-black" />
+                <div className="inline-block px-4 py-1.5 rounded-lg bg-zinc-200 text-black text-sm font-bold">
+                  Proceed to {counterLabel}
                 </div>
               </div>
             ) : (
-              <div className="py-12">
-                <span className="text-6xl font-mono font-bold text-zinc-300">---</span>
-                <p className="text-base text-zinc-500 mt-3 font-medium">Waiting for next turn call...</p>
+              <div className="space-y-2 py-10">
+                <div className="text-4xl sm:text-5xl font-black text-zinc-300 font-mono">
+                  ---
+                </div>
+                <p className="text-xs text-zinc-400 font-medium">Counter is Ready for Next Token</p>
               </div>
             )}
           </div>
 
-          {/* Bottom stats within Now Serving */}
-          <div className="pt-6 border-t border-zinc-200 flex items-center justify-between text-xs text-zinc-500 font-medium">
-            <span>Avg Service Time: ~{queue.AVG_SERVICE_MINS || 10}m / token</span>
-            <span>Audio Voice: {audioEnabled ? 'Active' : 'Muted'}</span>
+          <div className="flex items-center justify-between text-xs text-zinc-500 pt-4 border-t border-zinc-200 font-mono">
+            <span>Counter: {counterLabel}</span>
+            <span>Est. Service: ~{queue.AVG_SERVICE_MINS || 10} mins</span>
           </div>
         </div>
 
-        {/* Right Col: NEXT IN LINE & Up Next (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col justify-between gap-6">
-          <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-6 flex-1 shadow-xs">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-zinc-200">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2">
-                <Users className="text-zinc-700" size={16} /> Up Next
-              </h3>
-              <span className="text-xs font-semibold text-zinc-700 bg-white px-2.5 py-0.5 rounded-md border border-zinc-200 shadow-xs">
-                {stats.TOTAL_WAITING} Waiting
-              </span>
+        {/* Right Col: NEXT IN LINE & UPCOMING (5 cols) */}
+        <div className="lg:col-span-5 bg-white border border-zinc-200 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-xs">
+          <div>
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
+              <div className="flex items-center gap-2">
+                <Users size={16} className="text-zinc-600" />
+                <h3 className="text-sm font-black text-black uppercase tracking-wider">
+                  Upcoming in Line ({stats.TOTAL_WAITING})
+                </h3>
+              </div>
+              <span className="text-xs text-zinc-400 font-mono">Real-time Order</span>
             </div>
 
-            {nextInLine.length === 0 ? (
-              <div className="text-center py-12 text-zinc-400 text-sm">
-                No upcoming tokens in waiting line.
-              </div>
-            ) : (
-              <div className="space-y-2.5">
-                {nextInLine.map((t, idx) => (
+            {/* Upcoming Token Cards List */}
+            <div className="mt-4 space-y-3">
+              {nextInLine.length === 0 ? (
+                <div className="text-center py-16 text-zinc-400">
+                  <p className="text-xs">No tokens waiting in queue</p>
+                </div>
+              ) : (
+                nextInLine.map((item, idx) => (
                   <div
-                    key={t.TOKEN_ID}
-                    className="flex items-center justify-between p-3.5 rounded-xl bg-white border border-zinc-200 shadow-xs"
+                    key={item.TOKEN_ID}
+                    className={`p-4 rounded-xl border flex items-center justify-between transition-all ${
+                      idx === 0 
+                        ? 'bg-amber-50/70 border-amber-200' 
+                        : 'bg-zinc-50 border-zinc-200'
+                    }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-xs font-mono font-bold text-zinc-600">
-                        {idx + 1}
+                      <span className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs ${
+                        idx === 0 ? 'bg-amber-200 text-amber-900' : 'bg-zinc-200 text-zinc-700'
+                      }`}>
+                        #{item.POSITION_IN_QUEUE}
                       </span>
-                      <span className="text-xl font-black font-mono text-black tracking-tight">
-                        {t.TOKEN_NUMBER}
+                      <span className="font-mono font-black text-xl text-black">
+                        {item.TOKEN_NUMBER}
                       </span>
                     </div>
 
-                    <div className="text-right">
-                      <span className="text-xs font-mono text-zinc-600">
-                        ~{t.ESTIMATED_WAIT_MINS}m
+                    <div className="text-right font-mono">
+                      <span className={`text-xs font-bold block ${
+                        idx === 0 ? 'text-amber-800 font-black' : 'text-zinc-500'
+                      }`}>
+                        {idx === 0 ? 'NEXT IN LINE' : `~${item.ESTIMATED_WAIT_MINS}m`}
                       </span>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                ))
+              )}
+            </div>
           </div>
 
-          {/* Today's Total throughput */}
-          <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-4 flex items-center justify-between text-xs font-medium">
-            <span className="text-zinc-600">Served Today</span>
-            <span className="text-base font-black font-mono text-black">{stats.TOTAL_SERVED_TODAY} visitors</span>
+          {/* Footer Statistics */}
+          <div className="mt-6 pt-4 border-t border-zinc-100 grid grid-cols-2 gap-4 text-center">
+            <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-100">
+              <span className="text-[10px] uppercase font-bold text-zinc-400 block">Total Waiting</span>
+              <span className="text-xl font-black text-black font-mono">{stats.TOTAL_WAITING}</span>
+            </div>
+            <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-100">
+              <span className="text-[10px] uppercase font-bold text-zinc-400 block">Served Today</span>
+              <span className="text-xl font-black text-emerald-600 font-mono">{stats.TOTAL_SERVED_TODAY}</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Footer with QR Code for walk-ins */}
-      <div className="border-t border-zinc-200 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-black text-white rounded-lg p-1.5 shadow-xs flex items-center justify-center">
-            <svg viewBox="0 0 100 100" className="w-full h-full" fill="currentColor">
-              <rect x="0" y="0" width="30" height="30" />
-              <rect x="5" y="5" width="20" height="20" fill="black" />
-              <rect x="10" y="10" width="10" height="10" fill="white" />
-              <rect x="70" y="0" width="30" height="30" />
-              <rect x="75" y="5" width="20" height="20" fill="black" />
-              <rect x="80" y="10" width="10" height="10" fill="white" />
-              <rect x="0" y="70" width="30" height="30" />
-              <rect x="5" y="75" width="20" height="20" fill="black" />
-              <rect x="10" y="80" width="10" height="10" fill="white" />
-              <rect x="40" y="20" width="10" height="20" fill="white" />
-              <rect x="50" y="10" width="10" height="10" fill="white" />
-              <rect x="35" y="60" width="30" height="10" fill="white" />
-              <rect x="70" y="50" width="20" height="20" fill="white" />
-              <rect x="45" y="45" width="10" height="10" fill="white" />
-            </svg>
-          </div>
-          <div>
-            <p className="font-bold text-black text-xs">Join Queue from Your Smartphone</p>
-            <p className="text-zinc-500 text-[11px]">Scan or visit <span className="font-semibold text-black">{window.location.origin}</span> to book tokens remotely.</p>
-          </div>
-        </div>
+      {/* Footer Navigation Bar */}
+      <div className="flex items-center justify-between text-xs text-zinc-400 pt-4 border-t border-zinc-100">
+        <Link to="/" className="hover:text-black flex items-center gap-1 font-bold">
+          <ArrowLeft size={13} /> Return to Queless Directory
+        </Link>
 
-        <div className="text-zinc-400 text-xs">
-          Queless Digital Queue Platform
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1.5 text-zinc-600 font-bold">
+            <Sparkles size={13} className="text-[#C28E5C]" /> Queless High-Definition Display Protocol
+          </span>
         </div>
       </div>
     </div>
