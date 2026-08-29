@@ -121,7 +121,7 @@ export const HeroCanvasScrubber: React.FC<HeroCanvasScrubberProps> = ({ scrollPr
     imagesRef.current = loadedImages;
   }, []);
 
-  // Draw frame helper & sound trigger
+  // Draw frame helper & sound trigger & phone in hand overlay
   const drawFrame = useCallback((frameIndex: number) => {
     const canvas = canvasRef.current;
     const images = imagesRef.current;
@@ -135,6 +135,71 @@ export const HeroCanvasScrubber: React.FC<HeroCanvasScrubberProps> = ({ scrollPr
     if (img && img.complete && img.naturalWidth > 0) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Render Phone in Hand with Live Digital Pass as woman walks to counter (frames 105 - 240)
+      if (clampedIndex >= 105) {
+        const walkProgress = Math.min(1, (clampedIndex - 105) / 125);
+        const phoneX = 850 + walkProgress * 210;
+        const phoneY = 435 - walkProgress * 35 + Math.sin(walkProgress * Math.PI * 4) * 3;
+
+        ctx.save();
+        // Hand & Phone Shadow
+        ctx.shadowColor = 'rgba(16, 185, 129, 0.45)';
+        ctx.shadowBlur = 12;
+
+        // Smartphone body
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(phoneX, phoneY, 26, 44, 5);
+        } else {
+          ctx.rect(phoneX, phoneY, 26, 44);
+        }
+        ctx.fill();
+
+        // Phone Screen (Digital Pass Green Glow)
+        ctx.fillStyle = '#059669';
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(phoneX + 2.5, phoneY + 3, 21, 38, 3);
+        } else {
+          ctx.rect(phoneX + 2.5, phoneY + 3, 21, 38);
+        }
+        ctx.fill();
+
+        // Pass Code & QR indicator on Phone Screen
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 7px monospace';
+        ctx.fillText('#005', phoneX + 4.5, phoneY + 16);
+
+        ctx.fillStyle = '#d1fae5';
+        ctx.fillRect(phoneX + 5, phoneY + 21, 16, 14);
+        ctx.fillStyle = '#065f46';
+        ctx.font = 'bold 5px sans-serif';
+        ctx.fillText('PASS', phoneX + 6, phoneY + 31);
+
+        // Verification Pill Indicator floating above the phone
+        if (clampedIndex >= 115) {
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = 'rgba(0,0,0,0.25)';
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          if (ctx.roundRect) {
+            ctx.roundRect(phoneX - 38, phoneY - 24, 102, 19, 6);
+          } else {
+            ctx.rect(phoneX - 38, phoneY - 24, 102, 19);
+          }
+          ctx.fill();
+          ctx.strokeStyle = '#10b981';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.fillStyle = '#065f46';
+          ctx.font = 'bold 8px sans-serif';
+          ctx.fillText('📱 Live Pass in Hand', phoneX - 30, phoneY - 11);
+        }
+        ctx.restore();
+      }
     }
 
     // Trigger notification chime when passing the notification moment (~frames 95 - 110)
