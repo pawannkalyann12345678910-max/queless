@@ -6,14 +6,16 @@ import { api } from '../services/api';
 import type { Token } from '../types';
 import { LiveTokenPass } from '../components/customer/LiveTokenPass';
 import { TokenHistoryCard } from '../components/customer/TokenHistoryCard';
+import { CustomerSettingsModal } from '../components/customer/CustomerSettingsModal';
 import { Spinner } from '../components/common/Spinner';
 import { Button } from '../components/common/Button';
-import { Ticket, History, Compass, ArrowRight, AlertCircle } from 'lucide-react';
+import { Ticket, History, Compass, ArrowRight, AlertCircle, Settings } from 'lucide-react';
 
 export const MyTokensPage: React.FC = () => {
   const { user } = useAuth();
   const [tokens, setTokens] = useState<Token[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const loadTokens = async () => {
     if (!user) return;
@@ -70,11 +72,23 @@ export const MyTokensPage: React.FC = () => {
           </p>
         </div>
 
-        <Link to="/">
-          <Button variant="secondary" size="sm" leftIcon={<Compass size={14} />} className="border-[#EAE5DE] bg-white text-[#141312] hover:bg-[#FAF7F2] rounded-xl shadow-2xs cursor-pointer">
-            Explore More Queues
+        <div className="flex items-center gap-2.5">
+          <Button
+            variant="secondary"
+            size="sm"
+            leftIcon={<Settings size={14} className="text-[#141312]" />}
+            onClick={() => setIsSettingsOpen(true)}
+            className="border-[#EAE5DE] bg-white text-[#141312] hover:bg-[#FAF7F2] rounded-xl shadow-2xs cursor-pointer font-bold"
+          >
+            Profile Settings
           </Button>
-        </Link>
+
+          <Link to="/">
+            <Button variant="secondary" size="sm" leftIcon={<Compass size={14} />} className="border-[#EAE5DE] bg-white text-[#141312] hover:bg-[#FAF7F2] rounded-xl shadow-2xs cursor-pointer">
+              Explore Queues
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Staff Update / Rejection Notice Banner */}
@@ -135,6 +149,14 @@ export const MyTokensPage: React.FC = () => {
             ))}
           </div>
         </div>
+      )}
+
+      {/* Customer Profile & Settings Modal */}
+      {isSettingsOpen && (
+        <CustomerSettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+        />
       )}
     </div>
   );
