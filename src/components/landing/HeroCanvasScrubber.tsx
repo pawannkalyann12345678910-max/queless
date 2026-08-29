@@ -136,44 +136,7 @@ export const HeroCanvasScrubber: React.FC<HeroCanvasScrubberProps> = ({ scrollPr
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // Render natural phone in hand as woman walks to counter (frames 105 - 240)
-      if (clampedIndex >= 105) {
-        const walkProgress = Math.min(1, (clampedIndex - 105) / 125);
-        const phoneX = 860 + walkProgress * 195;
-        const phoneY = 445 - walkProgress * 30 + Math.sin(walkProgress * Math.PI * 4) * 2.5;
-
-        ctx.save();
-        ctx.translate(phoneX, phoneY);
-        ctx.rotate(-0.15); // Natural grip angle
-
-        // Phone body
-        ctx.fillStyle = '#1e293b';
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(-8, -16, 16, 32, 3);
-        } else {
-          ctx.rect(-8, -16, 16, 32);
-        }
-        ctx.fill();
-
-        // Phone screen (subtle active digital pass glow)
-        ctx.fillStyle = '#10b981';
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(-6.5, -14.5, 13, 29, 2);
-        } else {
-          ctx.rect(-6.5, -14.5, 13, 29);
-        }
-        ctx.fill();
-
-        // Screen pass UI lines
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(-4.5, -11, 9, 3);
-        ctx.fillRect(-4.5, -5, 9, 8);
-        ctx.fillRect(-4.5, 6, 9, 2);
-
-        ctx.restore();
-      }
+      // Original clean frame rendering - zero artificial overlays
     }
 
     // Trigger notification chime when passing the notification moment (~frames 95 - 110)
