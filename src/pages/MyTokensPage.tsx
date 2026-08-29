@@ -8,7 +8,7 @@ import { LiveTokenPass } from '../components/customer/LiveTokenPass';
 import { TokenHistoryCard } from '../components/customer/TokenHistoryCard';
 import { Spinner } from '../components/common/Spinner';
 import { Button } from '../components/common/Button';
-import { Ticket, History, Compass, ArrowRight } from 'lucide-react';
+import { Ticket, History, Compass, ArrowRight, AlertCircle } from 'lucide-react';
 
 export const MyTokensPage: React.FC = () => {
   const { user } = useAuth();
@@ -54,6 +54,7 @@ export const MyTokensPage: React.FC = () => {
 
   const activeTokens = tokens.filter(t => ['WAITING', 'CALLED', 'SERVING'].includes(t.STATUS));
   const pastTokens = tokens.filter(t => ['COMPLETED', 'NO_SHOW', 'CANCELLED'].includes(t.STATUS));
+  const hasStaffNotice = tokens.some(t => t.STATUS === 'CANCELLED' || t.DELAY_STATUS === 'REJECTED_5M');
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -75,6 +76,17 @@ export const MyTokensPage: React.FC = () => {
           </Button>
         </Link>
       </div>
+
+      {/* Staff Update / Rejection Notice Banner */}
+      {hasStaffNotice && (
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-3xl flex items-start gap-3 shadow-2xs">
+          <AlertCircle className="text-amber-800 shrink-0 mt-0.5" size={18} />
+          <div className="text-xs text-amber-950 font-medium">
+            <span className="font-bold block text-sm">Notice Regarding Your Token Pass</span>
+            The counter staff has updated or was unable to accept one of your requests. Please see the status on your passes below or try again later.
+          </div>
+        </div>
+      )}
 
       {/* Active Passes Section */}
       <div>
