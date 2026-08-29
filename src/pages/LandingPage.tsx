@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { useScroll } from 'framer-motion';
 import { api } from '../services/api';
 import type { Organization } from '../types';
 import { OrgCard } from '../components/customer/OrgCard';
@@ -29,13 +28,6 @@ export const LandingPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Hero Scroll Runway
-  const heroScrollTrackRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroScrollTrackRef,
-    offset: ["start start", "end end"]
-  });
 
   useEffect(() => {
     const fetchOrgs = async () => {
@@ -73,161 +65,159 @@ export const LandingPage: React.FC = () => {
   });
 
   return (
-    <div className="text-[#141312] bg-[var(--bg-cream)] w-full overflow-hidden">
+    <div className="text-[#141312] bg-[var(--bg-cream)] w-full">
       
-      {/* 1. HERO SECTION WITH AMBIENT LUXURY OVERLAY */}
-      <section ref={heroScrollTrackRef} className="relative h-[220vh] sm:h-[300vh] w-full bg-[var(--bg-cream)]">
-        <div className="sticky top-16 h-[calc(100vh-4rem)] w-full flex flex-col justify-center overflow-hidden bg-[var(--bg-cream)] z-10 py-2 sm:py-4">
+      {/* 1. HERO SECTION (Natural Viewport Layout - Zero Blank Spacing) */}
+      <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center py-6 sm:py-10 w-full bg-[var(--bg-cream)] border-b border-[#EAE5DE]">
+        
+        {/* Ambient subtle modern lobby & queue orchestration backdrop */}
+        <div className="absolute inset-0 z-0 opacity-15 pointer-events-none overflow-hidden">
+          <img 
+            src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&h=1080&fit=crop" 
+            alt="Modern Service Center Architecture" 
+            className="w-full h-full object-cover filter contrast-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-cream)] via-[var(--bg-cream)]/90 to-transparent"></div>
+        </div>
+
+        <div className="relative z-10 max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
           
-          {/* Ambient subtle modern lobby & queue orchestration backdrop */}
-          <div className="absolute inset-0 z-0 opacity-15 pointer-events-none overflow-hidden">
-            <img 
-              src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&h=1080&fit=crop" 
-              alt="Modern Service Center Architecture" 
-              className="w-full h-full object-cover filter contrast-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-cream)] via-[var(--bg-cream)]/90 to-transparent"></div>
-          </div>
+          {/* DESKTOP LAYOUT (2 Columns) */}
+          <div className="hidden lg:grid grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* Left Column: Typography & CTAs (5 cols) */}
+            <div className="col-span-5 text-left space-y-6">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#EAE5DE] text-[#141312] text-xs font-bold uppercase tracking-wider shadow-2xs">
+                <Sparkles size={14} className="text-[#C28E5C]" />
+                <span>Smart Digital Pass & Live Queue Flow</span>
+              </div>
 
-          <div className="relative z-10 max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col justify-center">
-            
-            {/* DESKTOP LAYOUT (2 Columns) */}
-            <div className="hidden lg:grid grid-cols-12 gap-8 lg:gap-12 items-center">
-              {/* Left Column: Typography & CTAs (5 cols) */}
-              <div className="col-span-5 text-left space-y-6">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#EAE5DE] text-[#141312] text-xs font-bold uppercase tracking-wider shadow-2xs">
-                  <Sparkles size={14} className="text-[#C28E5C]" />
-                  <span>Smart Digital Pass & Live Queue Flow</span>
-                </div>
+              <h1 className="text-5xl xl:text-7xl font-black tracking-tight text-[#141312] leading-[1.03]">
+                Eliminate Physical Lines. <br />
+                <span className="text-[#141312]">
+                  Turn Any Counter Into A Live Digital Pass.
+                </span>
+              </h1>
 
-                <h1 className="text-5xl xl:text-7xl font-black tracking-tight text-[#141312] leading-[1.03]">
-                  Eliminate Physical Lines. <br />
-                  <span className="text-[#141312]">
-                    Turn Any Counter Into A Live Digital Pass.
-                  </span>
-                </h1>
+              <p className="text-lg xl:text-xl text-[#736E66] leading-relaxed font-normal">
+                Replace hardware kiosks with instant mobile ticketing, live turn algorithms, 10-minute proximity buzz alerts, and waiting room HDMI TV broadcasting.
+              </p>
 
-                <p className="text-lg xl:text-xl text-[#736E66] leading-relaxed font-normal">
-                  Replace hardware kiosks with instant mobile ticketing, live turn algorithms, 10-minute proximity buzz alerts, and waiting room HDMI TV broadcasting.
-                </p>
-
-                {/* CTAs */}
-                <div className="flex items-center gap-3.5 pt-2">
-                  {user ? (
-                    <a href="#collections">
-                      <Button
-                        variant="primary"
-                        size="lg"
-                        className="font-bold px-8 py-3.5 text-base bg-[#141312] hover:bg-[#262422] text-white rounded-xl shadow-xs cursor-pointer"
-                        rightIcon={<ArrowRight size={18} />}
-                      >
-                        Explore Live Counters
-                      </Button>
-                    </a>
-                  ) : (
+              {/* CTAs */}
+              <div className="flex items-center gap-3.5 pt-2">
+                {user ? (
+                  <a href="#collections">
                     <Button
                       variant="primary"
                       size="lg"
-                      onClick={handleSignIn}
-                      isLoading={authLoading}
                       className="font-bold px-8 py-3.5 text-base bg-[#141312] hover:bg-[#262422] text-white rounded-xl shadow-xs cursor-pointer"
                       rightIcon={<ArrowRight size={18} />}
                     >
-                      Sign In to View Counters
-                    </Button>
-                  )}
-
-                  <Link to="/admin/register">
-                    <Button
-                      variant="secondary"
-                      size="lg"
-                      className="font-bold border border-[#EAE5DE] bg-white hover:bg-[#FAF7F2] text-[#141312] rounded-xl px-7 py-3.5 text-base shadow-2xs cursor-pointer"
-                      leftIcon={<Zap size={18} className="text-[#C28E5C]" />}
-                    >
-                      Setup Business (Free)
-                    </Button>
-                  </Link>
-                </div>
-
-                {/* Trust Proof Checklist */}
-                <div className="pt-2 flex flex-wrap items-center gap-3 text-xs font-semibold text-[#736E66]">
-                  <span className="flex items-center gap-1.5 text-emerald-800 bg-emerald-50/80 px-3 py-1.5 rounded-lg border border-emerald-200/80">
-                    <Check size={14} className="stroke-[3]" /> Zero App Download
-                  </span>
-                  <span className="flex items-center gap-1.5 text-[#141312] bg-white px-3 py-1.5 rounded-lg border border-[#EAE5DE]">
-                    <Check size={14} className="stroke-[3]" /> Real-Time Sync
-                  </span>
-                  <span className="flex items-center gap-1.5 text-[#141312] bg-white px-3 py-1.5 rounded-lg border border-[#EAE5DE]">
-                    <Check size={14} className="stroke-[3]" /> HDMI TV Screen Cast
-                  </span>
-                </div>
-              </div>
-
-              {/* Right Column: Animation Canvas (7 cols) */}
-              <div className="col-span-7 relative flex items-center justify-center">
-                <div className="w-full relative bg-white border border-[#EAE5DE] rounded-2xl shadow-sm overflow-hidden p-2">
-                  <HeroCanvasScrubber scrollProgress={scrollYProgress} />
-                </div>
-              </div>
-            </div>
-
-            {/* MOBILE / TABLET LAYOUT */}
-            <div className="lg:hidden flex flex-col justify-between h-full py-2 space-y-2">
-              <div className="text-center space-y-1">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white border border-[#EAE5DE] text-[#141312] text-[10px] font-bold uppercase tracking-wider shadow-2xs">
-                  <Sparkles size={12} className="text-[#C28E5C]" />
-                  <span>Smart Digital Queue Pass</span>
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#141312] leading-tight">
-                  Eliminate Physical Lines. <br />
-                  <span className="text-[#141312]">Live Digital Pass.</span>
-                </h1>
-              </div>
-
-              {/* High-Definition Animation Stage on Mobile */}
-              <div className="w-full flex-1 flex items-center justify-center min-h-[180px] max-h-[48vh] relative overflow-hidden bg-white border border-[#EAE5DE] rounded-2xl p-1.5 shadow-xs">
-                <HeroCanvasScrubber scrollProgress={scrollYProgress} />
-              </div>
-
-              {/* Mobile CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-2 pt-1">
-                {user ? (
-                  <a href="#collections" className="w-full">
-                    <Button
-                      variant="primary"
-                      size="md"
-                      className="w-full font-bold bg-[#141312] text-white rounded-xl py-2.5 text-xs shadow-xs cursor-pointer"
-                      rightIcon={<ArrowRight size={14} />}
-                    >
-                      Explore Counters
+                      Explore Live Counters
                     </Button>
                   </a>
                 ) : (
                   <Button
                     variant="primary"
-                    size="md"
+                    size="lg"
                     onClick={handleSignIn}
                     isLoading={authLoading}
-                    className="w-full font-bold bg-[#141312] text-white rounded-xl py-2.5 text-xs shadow-xs cursor-pointer"
-                    rightIcon={<ArrowRight size={14} />}
+                    className="font-bold px-8 py-3.5 text-base bg-[#141312] hover:bg-[#262422] text-white rounded-xl shadow-xs cursor-pointer"
+                    rightIcon={<ArrowRight size={18} />}
                   >
-                    Sign In to Book Passes
+                    Sign In to View Counters
                   </Button>
                 )}
 
-                <Link to="/admin/register" className="w-full">
+                <Link to="/admin/register">
                   <Button
                     variant="secondary"
-                    size="md"
-                    className="w-full font-bold border border-[#EAE5DE] bg-white text-[#141312] rounded-xl py-2.5 text-xs cursor-pointer"
+                    size="lg"
+                    className="font-bold border border-[#EAE5DE] bg-white hover:bg-[#FAF7F2] text-[#141312] rounded-xl px-7 py-3.5 text-base shadow-2xs cursor-pointer"
+                    leftIcon={<Zap size={18} className="text-[#C28E5C]" />}
                   >
-                    Setup Business
+                    Setup Business (Free)
                   </Button>
                 </Link>
               </div>
+
+              {/* Trust Proof Checklist */}
+              <div className="pt-2 flex flex-wrap items-center gap-3 text-xs font-semibold text-[#736E66]">
+                <span className="flex items-center gap-1.5 text-emerald-800 bg-emerald-50/80 px-3 py-1.5 rounded-lg border border-emerald-200/80">
+                  <Check size={14} className="stroke-[3]" /> Zero App Download
+                </span>
+                <span className="flex items-center gap-1.5 text-[#141312] bg-white px-3 py-1.5 rounded-lg border border-[#EAE5DE]">
+                  <Check size={14} className="stroke-[3]" /> Real-Time Sync
+                </span>
+                <span className="flex items-center gap-1.5 text-[#141312] bg-white px-3 py-1.5 rounded-lg border border-[#EAE5DE]">
+                  <Check size={14} className="stroke-[3]" /> HDMI TV Screen Cast
+                </span>
+              </div>
             </div>
 
+            {/* Right Column: Animation Canvas (7 cols) */}
+            <div className="col-span-7 relative flex items-center justify-center">
+              <div className="w-full relative bg-white border border-[#EAE5DE] rounded-3xl shadow-sm overflow-hidden p-2">
+                <HeroCanvasScrubber />
+              </div>
+            </div>
           </div>
+
+          {/* MOBILE / TABLET LAYOUT */}
+          <div className="lg:hidden flex flex-col justify-between py-2 space-y-4">
+            <div className="text-center space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white border border-[#EAE5DE] text-[#141312] text-[10px] font-bold uppercase tracking-wider shadow-2xs">
+                <Sparkles size={12} className="text-[#C28E5C]" />
+                <span>Smart Digital Queue Pass</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#141312] leading-tight">
+                Eliminate Physical Lines. <br />
+                <span className="text-[#141312]">Live Digital Pass.</span>
+              </h1>
+            </div>
+
+            {/* High-Definition Animation Stage on Mobile */}
+            <div className="w-full min-h-[220px] max-h-[55vh] relative overflow-hidden bg-white border border-[#EAE5DE] rounded-2xl p-1.5 shadow-xs">
+              <HeroCanvasScrubber />
+            </div>
+
+            {/* Mobile CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 pt-1">
+              {user ? (
+                <a href="#collections" className="w-full">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    className="w-full font-bold bg-[#141312] text-white rounded-xl py-2.5 text-xs shadow-xs cursor-pointer"
+                    rightIcon={<ArrowRight size={14} />}
+                  >
+                    Explore Counters
+                  </Button>
+                </a>
+              ) : (
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={handleSignIn}
+                  isLoading={authLoading}
+                  className="w-full font-bold bg-[#141312] text-white rounded-xl py-2.5 text-xs shadow-xs cursor-pointer"
+                  rightIcon={<ArrowRight size={14} />}
+                >
+                  Sign In to Book Passes
+                </Button>
+              )}
+
+              <Link to="/admin/register" className="w-full">
+                <Button
+                  variant="secondary"
+                  size="md"
+                  className="w-full font-bold border border-[#EAE5DE] bg-white text-[#141312] rounded-xl py-2.5 text-xs cursor-pointer"
+                >
+                  Setup Business
+                </Button>
+              </Link>
+            </div>
+          </div>
+
         </div>
       </section>
 
