@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { api } from '../../services/api';
 import { Modal } from '../common/Modal';
 import { Input } from '../common/Input';
 import { Button } from '../common/Button';
@@ -40,8 +41,12 @@ export const CustomerSettingsModal: React.FC<CustomerSettingsModalProps> = ({
     setSuccess(false);
 
     try {
-      await updateProfile(displayName.trim(), phone.trim());
-      if (refreshAuth) await refreshAuth();
+      if (updateProfile) {
+        await updateProfile(displayName.trim(), phone.trim());
+      } else {
+        await api.updateProfile(displayName.trim(), phone.trim());
+        await refreshAuth();
+      }
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);

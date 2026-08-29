@@ -22,7 +22,6 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   updateProfile: (displayName: string, phone: string) => Promise<void>;
   refreshAuth: () => Promise<void>;
-  refreshUser?: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -173,8 +172,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signInWithGoogle,
       signOut,
       updateProfile,
-      refreshAuth,
-      refreshUser: refreshAuth
+      refreshAuth
     }}>
       {children}
     </AuthContext.Provider>

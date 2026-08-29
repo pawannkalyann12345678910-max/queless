@@ -25,13 +25,13 @@
     {
       "USER_ID": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
       "EMAIL": "ab25bca125@abbs.edu.in",
-      "DISPLAY_NAME": "mahesh raaj vs",
-      "PHONE": "8747087477",
+      "DISPLAY_NAME": "Pavan Kalyan N",
+      "PHONE": "8310066760",
       "PHOTO_URL": "https://lh3.googleusercontent.com/a/ACg8ocLfA2Zp3KWsubKal01fHB1xn5fvpHf9WGLOH_ACCx_d-rP_FQ=s96-c",
       "PROFILE_COMPLETE": 1,
       "ROLE": "CUSTOMER",
       "CREATED_AT": "2026-08-29T07:26:50.276Z",
-      "UPDATED_AT": "2026-08-29T07:27:02.864Z"
+      "UPDATED_AT": "2026-08-29T16:58:00.463Z"
     }
   ],
   "ORGANIZATIONS": [
@@ -97,7 +97,7 @@
       "COUNTER_LABEL": "Counter 1",
       "AVG_SERVICE_MINS": 10,
       "MAX_DAILY_TOKENS": 0,
-      "CURRENT_TOKEN_SEQ": 5,
+      "CURRENT_TOKEN_SEQ": 6,
       "IS_ACTIVE": 1,
       "IS_PAUSED": 0,
       "OPERATING_HOURS": "09:00 - 17:00",
@@ -202,13 +202,32 @@
       "CUSTOMER_NAME": "mahesh raaj vs",
       "CUSTOMER_PHONE": "8747087477",
       "SERVICE_NOTE": "jnijb",
-      "STATUS": "CALLED",
+      "STATUS": "NO_SHOW",
       "DELAY_STATUS": "NONE",
       "POSITION_IN_QUEUE": 0,
       "ESTIMATED_WAIT_MINS": 0,
       "BOOKING_DATE": "2026-08-29",
       "CREATED_AT": "2026-08-29T10:24:56.925Z",
       "CALLED_AT": "2026-08-29T16:03:39.930Z"
+    },
+    {
+      "TOKEN_ID": "01930e63-99a7-4300-9180-022f2c114014",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "USER_ID": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "TOKEN_NUMBER": "DOC-ABC123-006",
+      "TOKEN_SEQ": 6,
+      "CUSTOMER_NAME": "Pavan Kalyan N",
+      "CUSTOMER_PHONE": "8310066760",
+      "SERVICE_NOTE": "",
+      "STATUS": "COMPLETED",
+      "DELAY_STATUS": "NONE",
+      "POSITION_IN_QUEUE": 0,
+      "ESTIMATED_WAIT_MINS": 0,
+      "BOOKING_DATE": "2026-08-29",
+      "CREATED_AT": "2026-08-29T16:13:19.658Z",
+      "CALLED_AT": "2026-08-29T16:14:09.092Z",
+      "COMPLETED_AT": "2026-08-29T16:44:20.800Z"
     }
   ],
   "AUDIT_LOGS": [
@@ -528,6 +547,46 @@
       "ACTOR_UID": "Called token: DOC-ABC123-005",
       "DETAILS": "",
       "CREATED_AT": "2026-08-29T16:03:39.931Z"
+    },
+    {
+      "LOG_ID": "8ad7cd4e-ab4e-4957-bb3a-0d0b67e9a9ac",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "d4fee274-1ead-4599-ba26-27d0225628a6",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Marked no-show: DOC-ABC123-005",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T16:12:08.351Z"
+    },
+    {
+      "LOG_ID": "fd795cfb-a74a-4a40-8cf9-953c03140fa6",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "01930e63-99a7-4300-9180-022f2c114014",
+      "ACTION": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "ACTOR_UID": "Booked token: DOC-ABC123-006",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T16:13:19.659Z"
+    },
+    {
+      "LOG_ID": "123de8ee-d312-443c-abe1-a5f58e198760",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "01930e63-99a7-4300-9180-022f2c114014",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Called token: DOC-ABC123-006",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T16:14:09.092Z"
+    },
+    {
+      "LOG_ID": "e9d5b329-c09c-4bbb-8326-07598e752caf",
+      "ORG_ID": "d7f5bf04-746a-400c-8530-348cbd4931d6",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "01930e63-99a7-4300-9180-022f2c114014",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Completed service for: DOC-ABC123-006",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T16:44:20.800Z"
     }
   ]
 }
