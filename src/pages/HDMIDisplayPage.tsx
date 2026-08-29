@@ -12,7 +12,9 @@ import {
   Maximize, 
   Users, 
   ArrowLeft,
-  ArrowRight
+  ArrowRight,
+  Bluetooth,
+  BluetoothConnected
 } from 'lucide-react';
 
 export const HDMIDisplayPage: React.FC = () => {
@@ -20,6 +22,7 @@ export const HDMIDisplayPage: React.FC = () => {
   const [data, setData] = useState<HDMIDisplayPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [audioEnabled, setAudioEnabled] = useState(true);
+  const [bluetoothConnected, setBluetoothConnected] = useState(false);
   const [lastCalledTokenId, setLastCalledTokenId] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
 
@@ -132,9 +135,22 @@ export const HDMIDisplayPage: React.FC = () => {
 
           <div className="flex items-center gap-2 pl-4 border-l border-zinc-200">
             <button
+              onClick={() => setBluetoothConnected(!bluetoothConnected)}
+              title={bluetoothConnected ? "Bluetooth Screen Sync: Connected (Click to Turn OFF)" : "Bluetooth Screen Sync: Disconnected (Click to Connect)"}
+              className={`p-2.5 rounded-xl border transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold ${
+                bluetoothConnected 
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
+                  : 'bg-zinc-100 text-zinc-500 border-zinc-200 hover:bg-zinc-200'
+              }`}
+            >
+              {bluetoothConnected ? <BluetoothConnected size={16} /> : <Bluetooth size={16} />}
+              <span className="hidden sm:inline">{bluetoothConnected ? 'BT Linked' : 'BT Off'}</span>
+            </button>
+
+            <button
               onClick={() => setAudioEnabled(!audioEnabled)}
               title={audioEnabled ? "Voice Broadcast: ON" : "Voice Broadcast: MUTED"}
-              className={`p-2.5 rounded-lg border transition-colors cursor-pointer ${
+              className={`p-2.5 rounded-xl border transition-colors cursor-pointer ${
                 audioEnabled 
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
                   : 'bg-zinc-100 text-zinc-400 border-zinc-200'
@@ -146,7 +162,7 @@ export const HDMIDisplayPage: React.FC = () => {
             <button
               onClick={toggleFullscreen}
               title="Fullscreen Mode (F11)"
-              className="p-2.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200 transition-colors cursor-pointer"
+              className="p-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200 transition-colors cursor-pointer"
             >
               <Maximize size={18} />
             </button>

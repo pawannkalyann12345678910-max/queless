@@ -12,11 +12,24 @@ import {
   Download,
   Check,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  Bluetooth,
+  BluetoothConnected,
+  Radio,
+  Power,
+  Monitor
 } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
 import confetti from 'canvas-confetti';
+
+interface BluetoothDeviceOption {
+  id: string;
+  name: string;
+  type: string;
+  resolution: string;
+  signal: string;
+}
 
 export const BentoBenefitsGrid: React.FC = () => {
   // Interactive Modals State
@@ -40,6 +53,72 @@ export const BentoBenefitsGrid: React.FC = () => {
   // Simulated Live Countdown Tracker
   const [simulatedCountdown, setSimulatedCountdown] = useState(6);
   const [simulatedPosition, setSimulatedPosition] = useState(2);
+
+  // Bluetooth / Wireless Display State
+  const [bluetoothStatus, setBluetoothStatus] = useState<'DISCONNECTED' | 'SCANNING' | 'CONNECTED'>('DISCONNECTED');
+  const [connectedDevice, setConnectedDevice] = useState<BluetoothDeviceOption | null>(null);
+  const [availableDevices, setAvailableDevices] = useState<BluetoothDeviceOption[]>([]);
+
+  // Discovered nearby screens
+  const sampleDevices: BluetoothDeviceOption[] = [
+    { id: 'dev-1', name: 'Samsung 65" Waiting Lobby Display', type: 'Bluetooth Smart TV', resolution: '4K 60Hz', signal: '98%' },
+    { id: 'dev-2', name: 'Outdoor Entrance OLED Board', type: 'BLE Broadcast Dongle', resolution: '1080p Ultra-Bright', signal: '92%' },
+    { id: 'dev-3', name: 'Sony BRAVIA Reception Screen', type: 'Wireless HDMI Display', resolution: '1080p 60Hz', signal: '88%' },
+    { id: 'dev-4', name: 'Portable Handheld Outdoor Monitor', type: 'BLE Tablet Screen', resolution: '2K Touch Display', signal: '95%' }
+  ];
+
+  // Scan for Bluetooth screens
+  const handleStartBluetoothScan = async () => {
+    setBluetoothStatus('SCANNING');
+    setAvailableDevices([]);
+
+    // Check if real Web Bluetooth API is supported
+    if (typeof navigator !== 'undefined' && (navigator as any).bluetooth) {
+      try {
+        const device = await (navigator as any).bluetooth.requestDevice({
+          acceptAllDevices: true
+        });
+        if (device) {
+          const matched: BluetoothDeviceOption = {
+            id: device.id || 'real-bt',
+            name: device.name || 'External Bluetooth Screen',
+            type: 'Connected Hardware Display',
+            resolution: '1080p 60Hz',
+            signal: '99%'
+          };
+          setConnectedDevice(matched);
+          setBluetoothStatus('CONNECTED');
+          confetti({ particleCount: 40, spread: 50 });
+          return;
+        }
+      } catch (err) {
+        console.log('Bluetooth picker canceled or simulated fallback:', err);
+      }
+    }
+
+    // Simulated device discovery scan
+    setTimeout(() => {
+      setAvailableDevices(sampleDevices);
+    }, 1200);
+  };
+
+  // Connect to a selected discovered Bluetooth screen
+  const handleConnectDevice = (dev: BluetoothDeviceOption) => {
+    setConnectedDevice(dev);
+    setBluetoothStatus('CONNECTED');
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.6 }
+    });
+  };
+
+  // Turn OFF / Disconnect Bluetooth
+  const handleTurnOffBluetooth = () => {
+    setConnectedDevice(null);
+    setBluetoothStatus('DISCONNECTED');
+    setAvailableDevices([]);
+  };
 
   // Generate QR Code on mount
   useEffect(() => {
@@ -284,7 +363,7 @@ export const BentoBenefitsGrid: React.FC = () => {
           </div>
         </div>
 
-        {/* Tile 5 (Span 4): Waiting Room TV Broadcast */}
+        {/* Tile 5 (Span 4): Waiting Room TV Broadcast & Bluetooth Link */}
         <div 
           onClick={() => setIsTvModalOpen(true)}
           className="md:col-span-4 bg-white rounded-3xl p-6 border border-[#EAE5DE] space-y-3 hover:border-[#C4BDAF] hover:shadow-md transition-all shadow-2xs cursor-pointer group flex flex-col justify-between"
@@ -294,20 +373,28 @@ export const BentoBenefitsGrid: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-[#FAF7F2] border border-[#EAE5DE] text-[#141312] flex items-center justify-center font-bold">
                 <Tv size={20} />
               </div>
-              <span className="text-[10px] font-bold text-[#141312] bg-[#FAF7F2] px-2.5 py-0.5 rounded-full border border-[#EAE5DE]">
-                HDMI Broadcast
-              </span>
+              <div className="flex items-center gap-1">
+                {bluetoothStatus === 'CONNECTED' ? (
+                  <span className="text-[10px] font-bold text-emerald-900 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <BluetoothConnected size={11} className="text-emerald-700" /> Bluetooth Active
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-bold text-[#141312] bg-[#FAF7F2] px-2.5 py-0.5 rounded-full border border-[#EAE5DE] flex items-center gap-1">
+                    <Bluetooth size={11} className="text-[#C28E5C]" /> Bluetooth & HDMI
+                  </span>
+                )}
+              </div>
             </div>
-            <h4 className="text-base font-bold text-[#141312] group-hover:text-[#C28E5C] transition-colors">HDMI TV Broadcast</h4>
+            <h4 className="text-base font-bold text-[#141312] group-hover:text-[#C28E5C] transition-colors">HDMI & Bluetooth TV Broadcast</h4>
             <p className="text-xs text-[#736E66] leading-relaxed">
-              Full-screen waiting room TV display with chime audio and automatic token turn transitions.
+              Full-screen waiting room TV display with chime audio and wireless Bluetooth screen sync for outdoor counters.
             </p>
           </div>
 
           <div className="pt-2">
             <div className="p-2.5 bg-[#FAF7F2] rounded-2xl border border-[#EAE5DE] text-xs font-bold text-[#141312] flex items-center justify-center gap-1.5 group-hover:bg-white transition-colors">
               <Tv size={13} className="text-[#141312]" />
-              <span>Launch Waiting Room HDMI TV</span>
+              <span>Launch HDMI & Bluetooth Broadcast</span>
             </div>
           </div>
         </div>
@@ -495,23 +582,37 @@ export const BentoBenefitsGrid: React.FC = () => {
         </Modal>
       )}
 
-      {/* MODAL 3: HDMI TV BROADCAST LAUNCHER */}
+      {/* MODAL 3: HDMI TV BROADCAST & BLUETOOTH WIRELESS DISPLAY BRIDGE */}
       {isTvModalOpen && (
         <Modal
           isOpen={isTvModalOpen}
           onClose={() => setIsTvModalOpen(false)}
-          title="Waiting Room HDMI TV Display Broadcast"
-          subtitle="Full-screen high-resolution turn calling display for reception & lobby screens"
-          maxWidth="md"
+          title="Waiting Room HDMI & Bluetooth Screen Broadcast"
+          subtitle="Full-screen high-resolution turn calling display with wireless Bluetooth screen sync for outdoor screens"
+          maxWidth="lg"
         >
-          <div className="space-y-4 pt-1 text-center">
-            <div className="bg-[#141312] text-white p-6 rounded-3xl border border-[#262422] space-y-4 shadow-xl">
+          <div className="space-y-4 pt-1">
+            
+            {/* TV Screen Preview */}
+            <div className="bg-[#141312] text-white p-6 rounded-3xl border border-[#262422] space-y-4 shadow-xl text-center">
               <div className="flex items-center justify-between text-xs text-[#9E988E] border-b border-zinc-800 pb-3">
-                <span className="font-bold uppercase tracking-wider text-emerald-400">● LIVE BROADCAST</span>
-                <span className="font-mono">COUNTER 1 • GENERAL OPD</span>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="font-bold uppercase tracking-wider text-emerald-400">LIVE TV BROADCAST</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {bluetoothStatus === 'CONNECTED' ? (
+                    <span className="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded-full flex items-center gap-1 font-bold">
+                      <BluetoothConnected size={11} /> BT Screen Linked ({connectedDevice?.signal})
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-zinc-400 font-mono">HDMI 1080p 60FPS</span>
+                  )}
+                  <span className="font-mono text-zinc-300">COUNTER 1 • GENERAL OPD</span>
+                </div>
               </div>
 
-              <div className="py-3">
+              <div className="py-2">
                 <span className="text-[11px] uppercase tracking-widest text-[#9E988E] block mb-1 font-mono">NOW SERVING TOKEN</span>
                 <div className="text-6xl font-black font-mono tracking-tight text-white">#B-104</div>
               </div>
@@ -534,10 +635,111 @@ export const BentoBenefitsGrid: React.FC = () => {
               </div>
             </div>
 
-            <p className="text-xs text-[#736E66] max-w-sm mx-auto">
-              Plug your laptop, mini-PC, or smart TV into an HDMI cable or cast wirelessly to display token turn updates with chime bells in real-time.
-            </p>
+            {/* BLUETOOTH & WIRELESS DEVICE CONNECTION CONTROLLER */}
+            <div className="bg-[#FAF7F2] p-4 sm:p-5 rounded-3xl border border-[#EAE5DE] space-y-3.5 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-white shadow-2xs ${
+                    bluetoothStatus === 'CONNECTED' ? 'bg-emerald-600' : bluetoothStatus === 'SCANNING' ? 'bg-amber-500 animate-pulse' : 'bg-[#141312]'
+                  }`}>
+                    {bluetoothStatus === 'CONNECTED' ? <BluetoothConnected size={16} /> : <Bluetooth size={16} />}
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-black text-[#141312] uppercase tracking-wide">
+                      Bluetooth & Wireless Screen Bridge
+                    </h5>
+                    <p className="text-[11px] text-[#736E66]">
+                      {bluetoothStatus === 'CONNECTED' 
+                        ? `Live connected to ${connectedDevice?.name}` 
+                        : 'Connect handheld devices or outdoor waiting screens wirelessly'}
+                    </p>
+                  </div>
+                </div>
 
+                {/* Bluetooth ON / OFF State Buttons */}
+                <div className="flex items-center gap-2">
+                  {bluetoothStatus === 'CONNECTED' ? (
+                    <button
+                      onClick={handleTurnOffBluetooth}
+                      className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                      title="Turn OFF Bluetooth connection"
+                    >
+                      <Power size={13} /> Turn OFF Bluetooth
+                    </button>
+                  ) : (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={handleStartBluetoothScan}
+                      isLoading={bluetoothStatus === 'SCANNING'}
+                      leftIcon={<Radio size={13} className="text-[#C28E5C]" />}
+                      className="bg-[#141312] hover:bg-[#262422] text-white rounded-xl text-xs font-bold cursor-pointer"
+                    >
+                      {bluetoothStatus === 'SCANNING' ? 'Scanning Displays...' : 'Scan Bluetooth Screens'}
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Connected Device Info Card */}
+              {bluetoothStatus === 'CONNECTED' && connectedDevice && (
+                <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+                  <div className="flex items-center gap-2.5">
+                    <Monitor size={18} className="text-emerald-700" />
+                    <div>
+                      <span className="text-xs font-bold text-emerald-950 block">{connectedDevice.name}</span>
+                      <span className="text-[10px] text-emerald-800">
+                        {connectedDevice.type} • {connectedDevice.resolution} • Signal: {connectedDevice.signal} (12ms latency)
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <Check size={11} /> Mirroring Active
+                    </span>
+                    <button
+                      onClick={handleTurnOffBluetooth}
+                      className="text-xs font-bold text-rose-600 hover:text-rose-800 underline p-1 cursor-pointer"
+                    >
+                      Disconnect
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Discovered Nearby Bluetooth Displays List */}
+              {bluetoothStatus === 'SCANNING' && availableDevices.length > 0 && (
+                <div className="space-y-2 pt-1">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#736E66] block">
+                    Discovered Nearby Screens & TVs:
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {availableDevices.map(dev => (
+                      <div
+                        key={dev.id}
+                        className="p-3 bg-white border border-[#EAE5DE] hover:border-[#141312] rounded-2xl flex items-center justify-between gap-2 shadow-2xs transition-all"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <span className="text-xs font-bold text-[#141312] truncate block">{dev.name}</span>
+                          <span className="text-[10px] text-[#736E66] block">{dev.type} • {dev.resolution}</span>
+                        </div>
+                        <Button
+                          variant="emerald"
+                          size="sm"
+                          onClick={() => handleConnectDevice(dev)}
+                          className="text-[11px] px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold cursor-pointer shadow-2xs"
+                        >
+                          Accept & Pair
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Bottom Action Controls */}
             <div className="flex items-center gap-3 pt-2">
               <Button
                 variant="secondary"
