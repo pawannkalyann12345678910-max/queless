@@ -351,7 +351,7 @@
       "COUNTER_LABEL": "Admissions Desk 1",
       "AVG_SERVICE_MINS": 8,
       "MAX_DAILY_TOKENS": 80,
-      "CURRENT_TOKEN_SEQ": 9,
+      "CURRENT_TOKEN_SEQ": 10,
       "IS_ACTIVE": 1,
       "IS_PAUSED": 0,
       "OPERATING_HOURS": "09:30 - 16:30",
@@ -453,7 +453,35 @@
       "BOOKING_DATE": "2026-08-30",
       "CREATED_AT": "2026-08-30T09:00:00.000Z",
       "CALLED_AT": "2026-08-30T09:15:00.000Z"
+    },
+    {
+      "TOKEN_ID": "e1c2b4c7-a699-4ecd-be32-32f8762c6411",
+      "QUEUE_ID": "q-abbs-admissions",
+      "ORG_ID": "0232ad19-e9f1-4a39-94ca-3a7020f16aa8",
+      "USER_ID": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "TOKEN_NUMBER": "ADM-010",
+      "TOKEN_SEQ": 10,
+      "CUSTOMER_NAME": "Pavan Kalyan N",
+      "CUSTOMER_PHONE": "8310066760",
+      "SERVICE_NOTE": "Admission",
+      "STATUS": "WAITING",
+      "DELAY_STATUS": "NONE",
+      "POSITION_IN_QUEUE": 1,
+      "ESTIMATED_WAIT_MINS": 8,
+      "BOOKING_DATE": "2026-08-30",
+      "CREATED_AT": "2026-08-30T15:51:11.419Z"
     }
   ],
-  "AUDIT_LOGS": []
+  "AUDIT_LOGS": [
+    {
+      "LOG_ID": "a9b45f6a-9d02-41e4-b845-647c1f767373",
+      "ORG_ID": "0232ad19-e9f1-4a39-94ca-3a7020f16aa8",
+      "QUEUE_ID": "q-abbs-admissions",
+      "TOKEN_ID": "e1c2b4c7-a699-4ecd-be32-32f8762c6411",
+      "ACTION": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "ACTOR_UID": "Booked token: ADM-010",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-30T15:51:11.420Z"
+    }
+  ]
 }

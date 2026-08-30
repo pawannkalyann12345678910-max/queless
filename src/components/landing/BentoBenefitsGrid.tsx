@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import QRCode from 'qrcode';
 import { 
   Clock, 
@@ -21,10 +22,14 @@ import {
   Copy,
   Smartphone,
   Laptop,
-  Cast
+  Cast,
+  Ticket,
+  ArrowRight
 } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
+import { BookingModal } from '../customer/BookingModal';
+import type { Queue } from '../../types';
 import confetti from 'canvas-confetti';
 
 interface BluetoothDeviceOption {
@@ -37,11 +42,14 @@ interface BluetoothDeviceOption {
 }
 
 export const BentoBenefitsGrid: React.FC = () => {
+  const navigate = useNavigate();
+
   // Interactive Modals State
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isDelayModalOpen, setIsDelayModalOpen] = useState(false);
   const [isTvModalOpen, setIsTvModalOpen] = useState(false);
   const [isPassModalOpen, setIsPassModalOpen] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   // Proximity Alarm Test State
   const [isAlarmPlaying, setIsAlarmPlaying] = useState(false);
@@ -51,6 +59,7 @@ export const BentoBenefitsGrid: React.FC = () => {
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [tvCastQrUrl, setTvCastQrUrl] = useState<string>('');
   const [copiedCastLink, setCopiedCastLink] = useState(false);
+  const [copiedPassLink, setCopiedPassLink] = useState(false);
 
   // Delay Request Form State
   const [selectedDelayMins, setSelectedDelayMins] = useState<number>(5);
@@ -67,6 +76,69 @@ export const BentoBenefitsGrid: React.FC = () => {
   const [availableDevices, setAvailableDevices] = useState<BluetoothDeviceOption[]>([]);
   const [isNativeCasting, setIsNativeCasting] = useState(false);
   const [activeTab, setActiveTab] = useState<'BLUETOOTH' | 'QR_CAST' | 'SCREEN_SHARE'>('BLUETOOTH');
+
+  // Available counter options for instant booking
+  const sampleQueues: Queue[] = [
+    {
+      QUEUE_ID: "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      ORG_ID: "org-apex-clinic",
+      NAME: "General OPD (Dr. Peterson)",
+      PREFIX: "DOC-",
+      COUNTER_LABEL: "Counter 1",
+      AVG_SERVICE_MINS: 8,
+      MAX_DAILY_TOKENS: 100,
+      CURRENT_TOKEN_SEQ: 6,
+      IS_ACTIVE: 1,
+      IS_PAUSED: 0,
+      ORG_NAME: "Apex Healthcare Clinic",
+      ORG_CATEGORY: "Clinic"
+    },
+    {
+      QUEUE_ID: "q-hosp-triage",
+      ORG_ID: "org-city-hospital",
+      NAME: "Emergency Triage Desk",
+      PREFIX: "ER-",
+      COUNTER_LABEL: "Triage 1",
+      AVG_SERVICE_MINS: 5,
+      MAX_DAILY_TOKENS: 200,
+      CURRENT_TOKEN_SEQ: 12,
+      IS_ACTIVE: 1,
+      IS_PAUSED: 0,
+      ORG_NAME: "City Care Hospital",
+      ORG_CATEGORY: "Hospital"
+    },
+    {
+      QUEUE_ID: "q-bank-cash",
+      ORG_ID: "org-hdfc-bank",
+      NAME: "Cash & Teller Desk",
+      PREFIX: "CASH-",
+      COUNTER_LABEL: "Teller 1",
+      AVG_SERVICE_MINS: 4,
+      MAX_DAILY_TOKENS: 150,
+      CURRENT_TOKEN_SEQ: 18,
+      IS_ACTIVE: 1,
+      IS_PAUSED: 0,
+      ORG_NAME: "HDFC Premier Bank",
+      ORG_CATEGORY: "Bank"
+    },
+    {
+      QUEUE_ID: "q-salon-hair",
+      ORG_ID: "org-toni-guy",
+      NAME: "Hair Cut & Color Studio",
+      PREFIX: "HAIR-",
+      COUNTER_LABEL: "Stylist 1",
+      AVG_SERVICE_MINS: 25,
+      MAX_DAILY_TOKENS: 35,
+      CURRENT_TOKEN_SEQ: 4,
+      IS_ACTIVE: 1,
+      IS_PAUSED: 0,
+      ORG_NAME: "Toni & Guy Salon",
+      ORG_CATEGORY: "Salon"
+    }
+  ];
+
+  // Selected sample queue for instant pass booking
+  const [selectedQueueForBooking, setSelectedQueueForBooking] = useState<Queue>(sampleQueues[0]);
 
   // Sample discovered screens around user
   const sampleDevices: BluetoothDeviceOption[] = [
@@ -157,7 +229,7 @@ export const BentoBenefitsGrid: React.FC = () => {
     const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
     
     // Directory QR
-    QRCode.toDataURL(`${origin}/#collections`, {
+    QRCode.toDataURL(`${origin}/org/org-apex-clinic`, {
       width: 320,
       margin: 2,
       color: { dark: '#141312', light: '#FFFFFF' }
@@ -177,6 +249,14 @@ export const BentoBenefitsGrid: React.FC = () => {
     navigator.clipboard.writeText(`${origin}/display/q-doc-opd`);
     setCopiedCastLink(true);
     setTimeout(() => setCopiedCastLink(false), 2500);
+  };
+
+  // Copy Pass Link
+  const handleCopyPassLink = () => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+    navigator.clipboard.writeText(`${origin}/org/org-apex-clinic`);
+    setCopiedPassLink(true);
+    setTimeout(() => setCopiedPassLink(false), 2500);
   };
 
   // Simulated countdown interval
@@ -447,65 +527,120 @@ export const BentoBenefitsGrid: React.FC = () => {
 
       </div>
 
-      {/* MODAL 1: LIVE QR POSTER PASS MODAL */}
+      {/* MODAL 1: LIVE QR POSTER PASS & INSTANT BOOKING MODAL */}
       {isQrModalOpen && (
         <Modal
           isOpen={isQrModalOpen}
           onClose={() => setIsQrModalOpen(false)}
           title="Instant QR Counter Pass"
-          subtitle="Scan with any smartphone camera to immediately book a live digital pass"
+          subtitle="Scan with smartphone camera or click below to immediately book a digital pass"
           maxWidth="md"
         >
           <div className="text-center space-y-5 pt-2">
-            <div className="p-6 bg-[#FAF7F2] rounded-3xl border border-[#EAE5DE] inline-block shadow-xs">
+            {/* Scannable QR Code */}
+            <div className="p-5 bg-[#FAF7F2] rounded-3xl border border-[#EAE5DE] inline-block shadow-xs">
               {qrDataUrl ? (
                 <img 
                   src={qrDataUrl} 
                   alt="Live Queless QR Code" 
-                  className="w-56 h-56 mx-auto rounded-2xl shadow-sm border border-white"
+                  className="w-52 h-52 mx-auto rounded-2xl shadow-sm border border-white"
                 />
               ) : (
-                <div className="w-56 h-56 flex items-center justify-center text-xs text-[#736E66]">
+                <div className="w-52 h-52 flex items-center justify-center text-xs text-[#736E66]">
                   Generating QR Code...
                 </div>
               )}
             </div>
 
-            <div className="space-y-1.5">
-              <h4 className="text-base font-black text-[#141312]">Counter Scan & Go</h4>
+            <div className="space-y-3">
+              {/* Select Counter */}
+              <div className="text-left bg-white p-3.5 rounded-2xl border border-[#EAE5DE] shadow-2xs">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#736E66] mb-1">
+                  Select Counter to Generate Pass:
+                </label>
+                <select
+                  value={selectedQueueForBooking.QUEUE_ID}
+                  onChange={(e) => {
+                    const q = sampleQueues.find(sq => sq.QUEUE_ID === e.target.value) || sampleQueues[0];
+                    setSelectedQueueForBooking(q);
+                    const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+                    QRCode.toDataURL(`${origin}/org/${q.ORG_ID}`).then(url => setQrDataUrl(url)).catch(() => {});
+                  }}
+                  className="w-full text-xs font-bold text-[#141312] p-2 bg-[#FAF7F2] rounded-xl border border-[#EAE5DE] focus:outline-none focus:ring-1 focus:ring-[#141312] cursor-pointer"
+                >
+                  {sampleQueues.map(q => (
+                    <option key={q.QUEUE_ID} value={q.QUEUE_ID}>
+                      {q.ORG_NAME} • {q.NAME} ({q.COUNTER_LABEL})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <p className="text-xs text-[#736E66] max-w-sm mx-auto leading-relaxed">
-                Display this QR poster at your entrance or reception counter. Visitors scan to hold their turn without standing in crowded physical queues.
+                Scan this QR code from your phone or click below to immediately book your turn pass for <strong>{selectedQueueForBooking.NAME}</strong>.
               </p>
             </div>
 
-            <div className="flex items-center gap-3 pt-2">
+            {/* Direct 1-Click Action Buttons */}
+            <div className="space-y-2 pt-1">
               <Button
-                variant="secondary"
+                variant="primary"
                 size="md"
-                className="flex-1 border-[#EAE5DE] text-[#141312] rounded-xl cursor-pointer"
-                onClick={() => setIsQrModalOpen(false)}
+                onClick={() => {
+                  setIsQrModalOpen(false);
+                  setIsBookingOpen(true);
+                }}
+                className="w-full bg-[#141312] hover:bg-[#262422] text-white rounded-xl font-bold py-3 text-xs shadow-xs cursor-pointer"
+                leftIcon={<Ticket size={16} className="text-amber-300" />}
+                rightIcon={<ArrowRight size={14} />}
               >
-                Close
+                Book Digital Pass Now ({selectedQueueForBooking.COUNTER_LABEL})
               </Button>
-              {qrDataUrl && (
-                <a 
-                  href={qrDataUrl} 
-                  download="queless-counter-qr-poster.png"
-                  className="flex-1"
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleCopyPassLink}
+                  leftIcon={copiedPassLink ? <Check size={13} className="text-emerald-600" /> : <Copy size={13} />}
+                  className="flex-1 text-xs border-[#EAE5DE] bg-[#FAF7F2] text-[#141312] rounded-xl font-bold cursor-pointer"
                 >
-                  <Button
-                    variant="primary"
-                    size="md"
-                    className="w-full bg-[#141312] hover:bg-[#262422] text-white rounded-xl font-bold cursor-pointer"
-                    leftIcon={<Download size={15} />}
+                  {copiedPassLink ? 'Copied Link!' : 'Copy Mobile Link'}
+                </Button>
+
+                {qrDataUrl && (
+                  <a 
+                    href={qrDataUrl} 
+                    download="queless-counter-qr-poster.png"
+                    className="flex-1"
                   >
-                    Download Poster
-                  </Button>
-                </a>
-              )}
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="w-full text-xs border-[#EAE5DE] bg-[#FAF7F2] text-[#141312] rounded-xl font-bold cursor-pointer"
+                      leftIcon={<Download size={13} />}
+                    >
+                      Download Poster
+                    </Button>
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </Modal>
+      )}
+
+      {/* INSTANT BOOKING MODAL (TRIGGERED DIRECTLY FROM QR MODAL) */}
+      {isBookingOpen && (
+        <BookingModal
+          queue={selectedQueueForBooking}
+          isOpen={isBookingOpen}
+          onClose={() => setIsBookingOpen(false)}
+          onSuccess={() => {
+            setIsBookingOpen(false);
+            navigate('/my-tokens');
+          }}
+        />
       )}
 
       {/* MODAL 2: INTERACTIVE +5 MIN DELAY NEGOTIATOR */}
@@ -936,7 +1071,7 @@ export const BentoBenefitsGrid: React.FC = () => {
           <div className="space-y-4 pt-1">
             <div className="bg-white rounded-3xl p-6 border border-[#EAE5DE] shadow-xs text-center space-y-4">
               <div className="flex items-center justify-between border-b border-[#EAE5DE] pb-3">
-                <span className="text-xs font-bold text-[#141312]">City Hospital • General OPD</span>
+                <span className="text-xs font-bold text-[#141312]">Apex Healthcare • General OPD</span>
                 <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                   ● Active Turn Pass
                 </span>
