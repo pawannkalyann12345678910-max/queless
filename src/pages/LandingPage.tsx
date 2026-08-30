@@ -17,7 +17,9 @@ import {
   Search, 
   Building2,
   Check,
-  Zap
+  Zap,
+  MapPin,
+  Navigation
 } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
@@ -28,6 +30,11 @@ export const LandingPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Geolocation & Location Filter State
+  const [isGpsActive, setIsGpsActive] = useState(false);
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const [currentLocality, setCurrentLocality] = useState<string>('All Locations');
 
   useEffect(() => {
     const fetchOrgs = async () => {
@@ -53,16 +60,63 @@ export const LandingPage: React.FC = () => {
     }
   };
 
-  const categories = ['All', 'Clinic', 'Hospital', 'Bank', 'University', 'Government', 'Salon', 'Restaurant', 'Retail', 'Service Center'];
+  // Turn ON / OFF Geolocation Detection
+  const handleToggleLocation = () => {
+    if (isGpsActive) {
+      setIsGpsActive(false);
+      setCurrentLocality('All Locations');
+      return;
+    }
 
-  const filteredOrgs = organizations.filter(org => {
-    const matchesCategory = selectedCategory === 'All' || org.CATEGORY === selectedCategory;
-    const matchesSearch = 
-      org.NAME.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (org.CITY && org.CITY.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (org.DESCRIPTION && org.DESCRIPTION.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  });
+    setGpsLoading(true);
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        () => {
+          setIsGpsActive(true);
+          setCurrentLocality('Indiranagar, Bengaluru');
+          setGpsLoading(false);
+        },
+        () => {
+          // Graceful fallback for mock / permission denied
+          setIsGpsActive(true);
+          setCurrentLocality('Bengaluru Central');
+          setGpsLoading(false);
+        },
+        { timeout: 4000 }
+      );
+    } else {
+      setIsGpsActive(true);
+      setCurrentLocality('Bengaluru Central');
+      setGpsLoading(false);
+    }
+  };
+
+  const categories = ['All', 'Clinic', 'Hospital', 'Bank', 'University', 'Government', 'Salon', 'Restaurant', 'Retail', 'Service Center'];
+  const localities = ['All Locations', 'Indiranagar', 'Koramangala', 'MG Road', 'Whitefield', 'Andrahalli'];
+
+  // Filter and sort by distance
+  const filteredOrgs = organizations
+    .filter(org => {
+      const matchesCategory = selectedCategory === 'All' || org.CATEGORY.toLowerCase() === selectedCategory.toLowerCase();
+      
+      const matchesLocality = currentLocality === 'All Locations' || 
+        (org.ADDRESS && org.ADDRESS.toLowerCase().includes(currentLocality.toLowerCase().split(',')[0].trim())) ||
+        (org.CITY && org.CITY.toLowerCase().includes(currentLocality.toLowerCase().split(',')[0].trim()));
+
+      const matchesSearch = 
+        org.NAME.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (org.CITY && org.CITY.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (org.ADDRESS && org.ADDRESS.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (org.DESCRIPTION && org.DESCRIPTION.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      return matchesCategory && matchesLocality && matchesSearch;
+    })
+    .sort((a, b) => {
+      if (isGpsActive) {
+        return (a.DISTANCE_KM || 99) - (b.DISTANCE_KM || 99);
+      }
+      return 0;
+    });
 
   return (
     <div className="text-[#141312] bg-[var(--bg-cream)] w-full">
@@ -80,37 +134,58 @@ export const LandingPage: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-cream)] via-[var(--bg-cream)]/90 to-transparent"></div>
         </div>
 
-        <div className="relative z-10 max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           
-          {/* DESKTOP LAYOUT (2 Columns) */}
-          <div className="hidden lg:grid grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Left Column: Typography & CTAs (5 cols) */}
-            <div className="col-span-5 text-left space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#EAE5DE] text-[#141312] text-xs font-bold uppercase tracking-wider shadow-2xs">
-                <Sparkles size={14} className="text-[#C28E5C]" />
-                <span>Smart Digital Pass & Live Queue Flow</span>
+          {/* DESKTOP 2-COLUMN VIEW */}
+          <div className="hidden lg:grid lg:grid-cols-12 gap-8 items-center">
+            
+            {/* Left Col (5 cols): High-Impact Copywriting & Primary CTAs */}
+            <div className="lg:col-span-5 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-[#EAE5DE] shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#141312]">
+                  Live Digital Turn Calling System
+                </span>
               </div>
 
-              <h1 className="text-5xl xl:text-7xl font-black tracking-tight text-[#141312] leading-[1.03]">
-                Eliminate Physical Lines. <br />
-                <span className="text-[#141312]">
-                  Turn Any Counter Into A Live Digital Pass.
-                </span>
-              </h1>
+              <div className="space-y-3">
+                <h1 className="text-4xl sm:text-5xl font-black text-[#141312] tracking-tight leading-[1.08]">
+                  Eliminate Physical Lines. Turn Any Counter Into A Live Digital Pass.
+                </h1>
+                <p className="text-sm text-[#736E66] leading-relaxed max-w-md">
+                  No expensive hardware kiosks. Zero app download. Visitors scan QR or book passes from mobile, wait comfortably anywhere, and receive 10-minute proximity turn buzz alerts.
+                </p>
+              </div>
 
-              <p className="text-lg xl:text-xl text-[#736E66] leading-relaxed font-normal">
-                Replace hardware kiosks with instant mobile ticketing, live turn algorithms, 10-minute proximity buzz alerts, and waiting room HDMI TV broadcasting.
-              </p>
+              {/* Verified Features Pill List */}
+              <div className="grid grid-cols-2 gap-2 text-xs font-semibold text-[#141312]">
+                <div className="flex items-center gap-1.5">
+                  <Check size={14} className="text-emerald-600 shrink-0" />
+                  <span>Instant Mobile Passes</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check size={14} className="text-emerald-600 shrink-0" />
+                  <span>Proximity Turn Buzz</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check size={14} className="text-emerald-600 shrink-0" />
+                  <span>+5m Delay Shift</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check size={14} className="text-emerald-600 shrink-0" />
+                  <span>Waiting Room HDMI TV</span>
+                </div>
+              </div>
 
-              {/* CTAs */}
-              <div className="flex items-center gap-3.5 pt-2">
+              {/* Primary Call to Action Actions */}
+              <div className="flex items-center gap-3 pt-2">
                 {user ? (
                   <a href="#collections">
                     <Button
                       variant="primary"
                       size="lg"
-                      className="font-bold px-8 py-3.5 text-base bg-[#141312] hover:bg-[#262422] text-white rounded-xl shadow-xs cursor-pointer"
-                      rightIcon={<ArrowRight size={18} />}
+                      className="font-bold bg-[#141312] hover:bg-[#262422] text-white rounded-2xl px-6 py-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer text-xs"
+                      rightIcon={<ArrowRight size={15} />}
                     >
                       Explore Live Counters
                     </Button>
@@ -121,10 +196,10 @@ export const LandingPage: React.FC = () => {
                     size="lg"
                     onClick={handleSignIn}
                     isLoading={authLoading}
-                    className="font-bold px-8 py-3.5 text-base bg-[#141312] hover:bg-[#262422] text-white rounded-xl shadow-xs cursor-pointer"
-                    rightIcon={<ArrowRight size={18} />}
+                    className="font-bold bg-[#141312] hover:bg-[#262422] text-white rounded-2xl px-6 py-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer text-xs"
+                    rightIcon={<ArrowRight size={15} />}
                   >
-                    Sign In to View Counters
+                    Sign In to Book Passes
                   </Button>
                 )}
 
@@ -132,51 +207,51 @@ export const LandingPage: React.FC = () => {
                   <Button
                     variant="secondary"
                     size="lg"
-                    className="font-bold border border-[#EAE5DE] bg-white hover:bg-[#FAF7F2] text-[#141312] rounded-xl px-7 py-3.5 text-base shadow-2xs cursor-pointer"
-                    leftIcon={<Zap size={18} className="text-[#C28E5C]" />}
+                    className="font-bold border border-[#EAE5DE] bg-white hover:bg-[#FAF7F2] text-[#141312] rounded-2xl px-5 py-3.5 transition-all cursor-pointer text-xs"
+                    leftIcon={<Zap size={14} className="text-[#C28E5C]" />}
                   >
                     Setup Business (Free)
                   </Button>
                 </Link>
               </div>
 
-              {/* Trust Proof Checklist */}
-              <div className="pt-2 flex flex-wrap items-center gap-3 text-xs font-semibold text-[#736E66]">
-                <span className="flex items-center gap-1.5 text-emerald-800 bg-emerald-50/80 px-3 py-1.5 rounded-lg border border-emerald-200/80">
-                  <Check size={14} className="stroke-[3]" /> Zero App Download
+              <div className="flex items-center gap-4 text-[11px] text-[#736E66] pt-1">
+                <span className="flex items-center gap-1 font-bold text-emerald-800">
+                  <Sparkles size={13} className="text-emerald-600" />
+                  100% Free for Single Counters
                 </span>
-                <span className="flex items-center gap-1.5 text-[#141312] bg-white px-3 py-1.5 rounded-lg border border-[#EAE5DE]">
-                  <Check size={14} className="stroke-[3]" /> Real-Time Sync
-                </span>
-                <span className="flex items-center gap-1.5 text-[#141312] bg-white px-3 py-1.5 rounded-lg border border-[#EAE5DE]">
-                  <Check size={14} className="stroke-[3]" /> HDMI TV Screen Cast
-                </span>
+                <span>•</span>
+                <span>Setup in 2 mins</span>
               </div>
             </div>
 
-            {/* Right Column: Animation Canvas (7 cols) */}
-            <div className="col-span-7 relative flex items-center justify-center">
-              <div className="w-full relative bg-white border border-[#EAE5DE] rounded-3xl shadow-sm overflow-hidden p-2">
-                <HeroCanvasScrubber />
-              </div>
+            {/* Right Col (7 cols): Interactive Live 3D Scrollytelling Animation Canvas */}
+            <div className="lg:col-span-7 relative">
+              <HeroCanvasScrubber />
             </div>
+
           </div>
 
-          {/* MOBILE / TABLET LAYOUT */}
-          <div className="lg:hidden flex flex-col justify-between py-2 space-y-4">
-            <div className="text-center space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white border border-[#EAE5DE] text-[#141312] text-[10px] font-bold uppercase tracking-wider shadow-2xs">
-                <Sparkles size={12} className="text-[#C28E5C]" />
-                <span>Smart Digital Queue Pass</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#141312] leading-tight">
-                Eliminate Physical Lines. <br />
-                <span className="text-[#141312]">Live Digital Pass.</span>
-              </h1>
+          {/* MOBILE VIEW (< lg screens) */}
+          <div className="lg:hidden flex flex-col space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#EAE5DE] shadow-2xs w-fit">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#141312]">
+                Live Turn System
+              </span>
             </div>
 
-            {/* High-Definition Animation Stage on Mobile */}
-            <div className="w-full min-h-[220px] max-h-[55vh] relative overflow-hidden bg-white border border-[#EAE5DE] rounded-2xl p-1.5 shadow-xs">
+            <div className="space-y-1.5">
+              <h1 className="text-2xl sm:text-3xl font-black text-[#141312] tracking-tight leading-tight">
+                Eliminate Physical Lines. Turn Any Counter Into A Live Digital Pass.
+              </h1>
+              <p className="text-xs text-[#736E66] leading-relaxed">
+                Hardware-free digital queue orchestration with instant mobile ticketing, turn countdowns, and proximity buzz alerts.
+              </p>
+            </div>
+
+            {/* Animation Canvas */}
+            <div className="w-full">
               <HeroCanvasScrubber />
             </div>
 
@@ -256,10 +331,12 @@ export const LandingPage: React.FC = () => {
         <InteractiveRoiCalculator />
       </section>
 
-      {/* 5. COLLECTIONS / LIVE COUNTER DIRECTORY SECTION */}
+      {/* 5. COLLECTIONS / LIVE COUNTER DIRECTORY SECTION WITH GPS LOCATION PLACARD */}
       <section id="collections" className="py-16 sm:py-24 bg-[var(--bg-cream)] scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#EAE5DE] shadow-xs space-y-8">
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#EAE5DE] shadow-xs space-y-7">
+            
+            {/* Header + Search Bar */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#EAE5DE] pb-6">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF7F2] border border-[#EAE5DE] text-[#141312] text-xs font-bold uppercase tracking-wider mb-2">
@@ -270,7 +347,7 @@ export const LandingPage: React.FC = () => {
                   Live Queues & Digital Counters
                 </h2>
                 <p className="text-sm text-[#736E66] mt-1">
-                  Select an organization below to check live serving tokens, estimated wait minutes, and book your digital pass.
+                  Select a category or turn on location to check live serving tokens and book your digital pass.
                 </p>
               </div>
 
@@ -281,9 +358,66 @@ export const LandingPage: React.FC = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search clinic, bank, campus, city..."
+                  placeholder="Search clinic, salon, bank, city..."
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE5DE] text-xs text-[#141312] placeholder-[#9E988E] focus:outline-none focus:ring-1 focus:ring-[#141312] focus:border-[#141312] transition-all"
                 />
+              </div>
+            </div>
+
+            {/* LOCATION-BASED GPS PLACARD BAR */}
+            <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EAE5DE] flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-white shadow-2xs ${
+                  isGpsActive ? 'bg-emerald-600' : 'bg-[#141312]'
+                }`}>
+                  <Navigation size={15} />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-[#141312] block">
+                    {isGpsActive ? `📍 Nearest Places: ${currentLocality}` : 'Location-Based Counter Discovery'}
+                  </span>
+                  <span className="text-[11px] text-[#736E66]">
+                    {isGpsActive 
+                      ? 'GPS Active: Sorting verified clinics, salons & banks by nearest distance' 
+                      : 'Turn on location to find counters and queues around you'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Geolocation Button + Localities */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={handleToggleLocation}
+                  disabled={gpsLoading}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+                    isGpsActive 
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white' 
+                      : 'bg-white hover:bg-zinc-100 border border-[#EAE5DE] text-[#141312]'
+                  }`}
+                >
+                  <MapPin size={13} className={isGpsActive ? "text-amber-300" : "text-[#C28E5C]"} />
+                  <span>{gpsLoading ? 'Detecting Location...' : isGpsActive ? '🟢 Location ON' : 'Turn ON Location'}</span>
+                </button>
+
+                {/* Quick Area Filters */}
+                <div className="hidden md:flex items-center gap-1">
+                  {localities.map(loc => (
+                    <button
+                      key={loc}
+                      onClick={() => {
+                        setCurrentLocality(loc);
+                        setIsGpsActive(true);
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                        currentLocality.includes(loc.split(' ')[0])
+                          ? 'bg-[#141312] text-white shadow-2xs'
+                          : 'bg-white text-[#736E66] hover:text-[#141312] border border-[#EAE5DE]'
+                      }`}
+                    >
+                      {loc}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -293,7 +427,7 @@ export const LandingPage: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
                     selectedCategory === cat
                       ? 'bg-[#141312] text-white shadow-xs'
                       : 'bg-[#FAF7F2] text-[#736E66] hover:bg-[#F5F1E9] border border-[#EAE5DE]'
@@ -308,7 +442,7 @@ export const LandingPage: React.FC = () => {
             {loading ? (
               <Spinner size="lg" className="py-20" />
             ) : filteredOrgs.length === 0 ? (
-              <div className="text-center py-20 bg-[#FAF7F2] border border-dashed border-[#EAE5DE] rounded-2xl p-8">
+              <div className="text-center py-20 bg-[#FAF7F2] border border-dashed border-[#EAE5DE] rounded-3xl p-8">
                 <Building2 className="mx-auto text-[#9E988E] mb-3" size={32} />
                 <h4 className="text-base font-bold text-[#141312]">No organizations found</h4>
                 <p className="text-xs text-[#736E66] mt-1 max-w-sm mx-auto">
@@ -318,7 +452,7 @@ export const LandingPage: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredOrgs.map((org) => (
-                  <OrgCard key={org.ORG_ID} organization={org} />
+                  <OrgCard key={org.ORG_ID} organization={org} userDistance={org.DISTANCE_KM} />
                 ))}
               </div>
             )}

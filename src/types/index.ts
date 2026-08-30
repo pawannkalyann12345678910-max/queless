@@ -40,6 +40,9 @@ export interface Organization {
   SUBSCRIPTION_TIER: 'FREE' | 'STARTER' | 'PROFESSIONAL' | 'ENTERPRISE';
   ADDRESS?: string;
   CITY?: string;
+  DISTANCE_KM?: number;
+  LAT?: number;
+  LNG?: number;
   IS_ACTIVE: number;
   TOTAL_QUEUES?: number;
   ACTIVE_WAITING_TOKENS?: number;
