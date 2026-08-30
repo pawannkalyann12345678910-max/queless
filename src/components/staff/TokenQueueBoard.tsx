@@ -9,12 +9,13 @@ import {
   Inbox, 
   Zap, 
   BellRing, 
-  Database, 
+  History, 
   Phone, 
   Mail, 
   User as UserIcon,
   Download,
-  Layers
+  Layers,
+  ArrowLeft
 } from 'lucide-react';
 
 interface TokenQueueBoardProps {
@@ -30,18 +31,18 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
   availableQueues,
   onRefresh
 }) => {
-  // Default to 'ACTIVE' so completed/no-show tokens are immediately cleared from the live queue!
-  const [filterTab, setFilterTab] = useState<'ACTIVE' | 'WAITING' | 'SERVING' | 'ARCHIVE_STORAGE'>('ACTIVE');
+  // Default to 'ACTIVE' so completed/no-show tokens are immediately cleared from the live queue
+  const [filterTab, setFilterTab] = useState<'ACTIVE' | 'WAITING' | 'SERVING' | 'HISTORY'>('ACTIVE');
   const [search, setSearch] = useState('');
   const [autoNotifyEnabled, setAutoNotifyEnabled] = useState(true);
   const [selectedTokenForTransfer, setSelectedTokenForTransfer] = useState<Token | null>(null);
 
-  // Split tokens into active queue vs previous completed/no-show records
+  // Split tokens into active queue vs previous customer history
   const activeTokens = tokens.filter(t => t.STATUS === 'WAITING' || t.STATUS === 'CALLED' || t.STATUS === 'SERVING');
-  const archivedTokens = tokens.filter(t => t.STATUS === 'COMPLETED' || t.STATUS === 'NO_SHOW' || t.STATUS === 'CANCELLED');
+  const historyTokens = tokens.filter(t => t.STATUS === 'COMPLETED' || t.STATUS === 'NO_SHOW' || t.STATUS === 'CANCELLED');
 
   // Filter tokens based on tab & search
-  const displayedTokens = (filterTab === 'ARCHIVE_STORAGE' ? archivedTokens : activeTokens).filter(token => {
+  const displayedTokens = (filterTab === 'HISTORY' ? historyTokens : activeTokens).filter(token => {
     if (search.trim() !== '') {
       const q = search.toLowerCase();
       const match = 
@@ -64,8 +65,8 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
 
   // Export Customer History to CSV
   const handleExportCSV = () => {
-    const headers = ['Token Number', 'Customer Name', 'Phone', 'Email', 'Status', 'Date', 'Served Time', 'Service Notes'];
-    const rows = archivedTokens.map(t => [
+    const headers = ['Token Number', 'Customer Name', 'Phone', 'Gmail / Email', 'Status', 'Date', 'Served Time', 'Service Notes'];
+    const rows = historyTokens.map(t => [
       t.TOKEN_NUMBER,
       `"${t.CUSTOMER_NAME.replace(/"/g, '""')}"`,
       t.CUSTOMER_PHONE,
@@ -80,7 +81,7 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `customer_records_${queue.NAME || 'queue'}_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `customer_history_${queue.NAME || 'queue'}_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -88,9 +89,9 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
 
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#EAE5DE] shadow-xs space-y-5">
-      {/* Board Header with Tabs, Auto-Notify Switch & Search */}
+      {/* Board Header with Tabs, Auto-Notify Switch, History Button & Search */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-[#EAE5DE]">
-        {/* Tabs: Active Queue vs Customer Archive Storage */}
+        {/* Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           <button
             onClick={() => setFilterTab('ACTIVE')}
@@ -99,7 +100,7 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
             }`}
           >
             <Layers size={13} className={filterTab === 'ACTIVE' ? 'text-amber-300' : 'text-[#9E988E]'} />
-            <span>⚡ Active Live Queue ({activeTokens.length})</span>
+            <span>⚡ Active Queue ({activeTokens.length})</span>
           </button>
           
           <button
@@ -108,7 +109,7 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
               filterTab === 'WAITING' ? 'bg-[#141312] text-white shadow-xs' : 'bg-[#FAF7F2] text-[#736E66] hover:bg-[#F5F1E9] border border-[#EAE5DE]'
             }`}
           >
-            Waiting in Line ({waitingCount})
+            Waiting ({waitingCount})
           </button>
           
           <button
@@ -117,24 +118,27 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
               filterTab === 'SERVING' ? 'bg-[#141312] text-white shadow-xs' : 'bg-[#FAF7F2] text-[#736E66] hover:bg-[#F5F1E9] border border-[#EAE5DE]'
             }`}
           >
-            Calling / Serving ({servingCount})
+            Serving ({servingCount})
           </button>
 
+          {/* Simple Keyword: HISTORY TAB BUTTON */}
           <button
-            onClick={() => setFilterTab('ARCHIVE_STORAGE')}
+            onClick={() => setFilterTab('HISTORY')}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
-              filterTab === 'ARCHIVE_STORAGE' ? 'bg-indigo-900 text-white shadow-xs' : 'bg-indigo-50/70 text-indigo-900 hover:bg-indigo-100 border border-indigo-200'
+              filterTab === 'HISTORY' 
+                ? 'bg-black text-white shadow-xs ring-2 ring-zinc-800' 
+                : 'bg-[#FAF7F2] text-[#141312] hover:bg-[#F5F1E9] border border-[#EAE5DE]'
             }`}
           >
-            <Database size={13} className={filterTab === 'ARCHIVE_STORAGE' ? 'text-indigo-200' : 'text-indigo-700'} />
-            <span>🗄️ Customer Records & Archive ({archivedTokens.length})</span>
+            <History size={14} className={filterTab === 'HISTORY' ? 'text-amber-300' : 'text-[#C28E5C]'} />
+            <span>📜 History ({historyTokens.length})</span>
           </button>
         </div>
 
         {/* Right: Auto-Notify Mode Switch, Export & Search */}
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Automatic vs Manual WhatsApp Alert Toggle */}
-          {filterTab !== 'ARCHIVE_STORAGE' && (
+          {filterTab !== 'HISTORY' && (
             <button
               onClick={() => setAutoNotifyEnabled(!autoNotifyEnabled)}
               title={autoNotifyEnabled ? "Auto-Notify ON: WhatsApp & SMS sent automatically on Call" : "Manual Notify: Click Notify button per token"}
@@ -158,8 +162,8 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
             </button>
           )}
 
-          {/* Export CSV Button (When in Archive Storage) */}
-          {filterTab === 'ARCHIVE_STORAGE' && archivedTokens.length > 0 && (
+          {/* Export CSV Button (When viewing History) */}
+          {filterTab === 'HISTORY' && historyTokens.length > 0 && (
             <Button
               variant="secondary"
               size="sm"
@@ -185,8 +189,8 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
         </div>
       </div>
 
-      {/* VIEW 1: ACTIVE LIVE QUEUE VIEW (Waiting & Serving Tokens ONLY) */}
-      {filterTab !== 'ARCHIVE_STORAGE' ? (
+      {/* VIEW 1: ACTIVE LIVE QUEUE VIEW (Waiting & Serving ONLY) */}
+      {filterTab !== 'HISTORY' ? (
         displayedTokens.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-12 h-12 rounded-2xl bg-[#FAF7F2] border border-[#EAE5DE] flex items-center justify-center mx-auto text-[#9E988E] mb-2">
@@ -196,7 +200,7 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
               {search ? 'No Tokens Matching Your Search' : 'Active Queue is All Clear!'}
             </h4>
             <p className="text-xs text-[#736E66] mt-0.5 max-w-xs mx-auto">
-              {search ? 'Try searching a different name, phone or token' : 'All waiting customers have been served. Previous completed records are stored safely in the Customer Records & Archive tab.'}
+              {search ? 'Try searching a different name, phone or token' : 'All waiting customers have been served. Click the "📜 History" button to view past completed customer records.'}
             </p>
           </div>
         ) : (
@@ -229,17 +233,17 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
           </div>
         )
       ) : (
-        /* VIEW 2: CUSTOMER RECORDS DATA STORAGE & COMPLETED ARCHIVE */
+        /* VIEW 2: SIMPLE CUSTOMER HISTORY VIEW (When History Icon / Button is clicked) */
         <div className="space-y-4">
           <div className="flex items-center justify-between bg-[#FAF7F2] p-4 rounded-2xl border border-[#EAE5DE]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-900 text-white flex items-center justify-center font-bold">
-                <Database size={18} />
+              <div className="w-10 h-10 rounded-xl bg-[#141312] text-white flex items-center justify-center font-bold">
+                <History size={18} className="text-[#C28E5C]" />
               </div>
               <div>
-                <h4 className="text-sm font-black text-[#141312]">Customer Data Storage & Previous Records</h4>
+                <h4 className="text-sm font-black text-[#141312]">Customer History & Past Records</h4>
                 <p className="text-xs text-[#736E66]">
-                  Past completed & no-show customer entries with phone numbers, Gmail IDs, timestamps, and notes.
+                  Showing previous completed and no-show customers with separated phone, Gmail ID, and served timestamps.
                 </p>
               </div>
             </div>
@@ -251,12 +255,18 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
               <span className="text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">
                 ⚠️ No-Shows: {noShowCount}
               </span>
+              <button
+                onClick={() => setFilterTab('ACTIVE')}
+                className="px-3 py-1.5 bg-white border border-[#EAE5DE] hover:bg-zinc-100 text-black rounded-lg flex items-center gap-1 cursor-pointer"
+              >
+                <ArrowLeft size={12} /> Back to Live Queue
+              </button>
             </div>
           </div>
 
           {displayedTokens.length === 0 ? (
             <div className="text-center py-16 text-xs text-[#736E66]">
-              No archived customer records match your search.
+              No previous customer history records found.
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -268,7 +278,7 @@ export const TokenQueueBoard: React.FC<TokenQueueBoardProps> = ({
                     <th className="py-3 px-4">Phone Number</th>
                     <th className="py-3 px-4">Gmail / Email ID</th>
                     <th className="py-3 px-4">Date & Served Time</th>
-                    <th className="py-3 px-4">Outcome</th>
+                    <th className="py-3 px-4">Status</th>
                     <th className="py-3 px-4 rounded-r-xl">Service Notes</th>
                   </tr>
                 </thead>

@@ -18,7 +18,7 @@
       "PHONE": "",
       "PHOTO_URL": "https://lh3.googleusercontent.com/a/ACg8ocIyqTb3SCYUCnPywpKCPXVaWkKGfuq5SMiOWuwK-tTorS3pAA=s96-c",
       "PROFILE_COMPLETE": 0,
-      "ROLE": "CUSTOMER",
+      "ROLE": "STAFF",
       "CREATED_AT": "2026-08-29T06:21:56.820Z",
       "UPDATED_AT": "2026-08-29T06:21:56.820Z"
     },
@@ -86,6 +86,22 @@
       "IS_ACTIVE": 1,
       "CREATED_AT": "2026-08-29T16:02:10.827Z",
       "UPDATED_AT": "2026-08-29T16:02:10.827Z"
+    },
+    {
+      "ORG_ID": "5e728fdd-1973-45a2-b8b3-a9ab598642e2",
+      "NAME": "kiccha",
+      "CATEGORY": "Government",
+      "DESCRIPTION": "interview",
+      "LOGO_URL": "",
+      "BANNER_URL": "",
+      "ADMIN_UID": "iMA3V0AFJbPSLnM3CPWIE862ccp2",
+      "ADMIN_EMAIL": "pawannkalyann12345678910@gmail.com",
+      "SUBSCRIPTION_TIER": "STARTER",
+      "ADDRESS": "andrahalli",
+      "CITY": "Bangalore",
+      "IS_ACTIVE": 1,
+      "CREATED_AT": "2026-08-29T17:39:36.376Z",
+      "UPDATED_AT": "2026-08-29T17:39:36.376Z"
     }
   ],
   "QUEUES": [
@@ -587,6 +603,15 @@
       "ACTOR_UID": "Completed service for: DOC-ABC123-006",
       "DETAILS": "",
       "CREATED_AT": "2026-08-29T16:44:20.800Z"
+    },
+    {
+      "LOG_ID": "adc5563f-2765-48cc-bb39-48d19422a8c4",
+      "ORG_ID": "5e728fdd-1973-45a2-b8b3-a9ab598642e2",
+      "QUEUE_ID": "jeR2tala8oXFFbKV6xRdwO9YFBe2",
+      "TOKEN_ID": "Registered org: kiccha (Government)",
+      "ACTOR_UID": "",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-29T17:39:36.377Z"
     }
   ]
 }
