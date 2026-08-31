@@ -581,11 +581,35 @@ class QueryEngine {
       persist();
       return { changes: 1 };
     }
+    if (/UPDATE TOKENS\s+SET\s+DELAY_STATUS\s*=\s*\?,\s*DELAY_MINUTES\s*=\s*\?/i.test(s) || /UPDATE TOKENS SET DELAY_STATUS = \?/i.test(s)) {
+      const [statusStr, mins, reason, tId] = params;
+      const targetId = tId || params[params.length - 1];
+      const t = data.TOKENS.find(item => item.TOKEN_ID === targetId);
+      if (t) {
+        t.DELAY_STATUS = statusStr;
+        if (mins !== undefined) t.DELAY_MINUTES = Number(mins);
+        if (reason !== undefined) t.DELAY_REASON = reason;
+        t.DELAY_REQUESTED_AT = new Date().toISOString();
+      }
+      persist();
+      return { changes: 1 };
+    }
     if (/UPDATE TOKENS SET DELAY_STATUS = 'REQUESTED_5M'/i.test(s)) {
       const t = data.TOKENS.find(item => item.TOKEN_ID === params[0]);
       if (t) {
         t.DELAY_STATUS = 'REQUESTED_5M';
+        t.DELAY_MINUTES = 5;
         t.DELAY_REQUESTED_AT = new Date().toISOString();
+      }
+      persist();
+      return { changes: 1 };
+    }
+    if (/UPDATE TOKENS\s+SET\s+DELAY_STATUS\s*=\s*\?,\s*TOKEN_SEQ\s*=\s*\?/i.test(s)) {
+      const [statusStr, seq, tId] = params;
+      const t = data.TOKENS.find(item => item.TOKEN_ID === tId);
+      if (t) {
+        t.DELAY_STATUS = statusStr;
+        t.TOKEN_SEQ = Number(seq);
       }
       persist();
       return { changes: 1 };
@@ -603,6 +627,17 @@ class QueryEngine {
     if (/UPDATE TOKENS SET DELAY_STATUS = 'REJECTED_5M'/i.test(s)) {
       const t = data.TOKENS.find(item => item.TOKEN_ID === params[0]);
       if (t) t.DELAY_STATUS = 'REJECTED_5M';
+      persist();
+      return { changes: 1 };
+    }
+    if (/UPDATE TOKENS\s+SET\s+DELAY_STATUS\s*=\s*'RESCHEDULE_OFFERED'/i.test(s)) {
+      const [reason, tId] = params;
+      const targetId = tId || params[params.length - 1];
+      const t = data.TOKENS.find(item => item.TOKEN_ID === targetId);
+      if (t) {
+        t.DELAY_STATUS = 'RESCHEDULE_OFFERED';
+        t.DELAY_REASON = reason || 'Staff suggested rescheduling for next day or week';
+      }
       persist();
       return { changes: 1 };
     }

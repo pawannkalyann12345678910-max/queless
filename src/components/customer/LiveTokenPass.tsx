@@ -15,6 +15,7 @@ import {
   XCircle,
   Volume2
 } from 'lucide-react';
+import confetti from 'canvas-confetti';
 
 interface LiveTokenPassProps {
   token: Token;
@@ -25,6 +26,7 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
   const [actionLoading, setActionLoading] = useState(false);
   const [alertDismissed, setAlertDismissed] = useState(false);
   const [isDelayModalOpen, setIsDelayModalOpen] = useState(false);
+  const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
   const [selectedDelayMins, setSelectedDelayMins] = useState<number>(5);
   const [selectedDelayReason, setSelectedDelayReason] = useState<string>('🚗 Parking / Traffic Delay');
 
@@ -70,6 +72,7 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
     try {
       await api.requestDelay(token.TOKEN_ID, selectedDelayMins, selectedDelayReason);
       setIsDelayModalOpen(false);
+      confetti({ particleCount: 40, spread: 50 });
       onRefresh();
     } catch (err: any) {
       alert(err.message || 'Could not request delay');
@@ -78,14 +81,19 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
     }
   };
 
-  const handleReschedule = async () => {
-    if (!window.confirm('Do you want to reschedule your token pass to tomorrow?')) return;
+  const handleExecuteReschedule = async (choice: 'NEXT_DAY' | 'NEXT_WEEK') => {
     setActionLoading(true);
     try {
-      await api.rescheduleToken(token.TOKEN_ID);
+      await api.rescheduleToken(token.TOKEN_ID, choice);
+      setIsRescheduleModalOpen(false);
+      confetti({
+        particleCount: 60,
+        spread: 60,
+        origin: { y: 0.6 }
+      });
       onRefresh();
     } catch (err: any) {
-      alert(err.message || 'Could not reschedule');
+      alert(err.message || 'Could not reschedule pass');
     } finally {
       setActionLoading(false);
     }
@@ -122,6 +130,9 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
     token.DELAY_STATUS === 'APPROVED_15M'
   );
 
+  const hasRescheduleOffered = token.DELAY_STATUS === 'RESCHEDULE_OFFERED';
+  const isRescheduled = token.DELAY_STATUS === 'RESCHEDULED';
+
   return (
     <div className={`bg-white rounded-3xl p-6 sm:p-8 border shadow-xs transition-all ${
       isCalled 
@@ -150,13 +161,54 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
         </div>
       )}
 
+      {/* Staff Notice: Reschedule Offered by Counter Staff */}
+      {hasRescheduleOffered && (
+        <div className="mb-5 p-5 rounded-3xl bg-blue-50 border border-blue-200 text-blue-950 text-xs shadow-xs space-y-3">
+          <div className="flex items-center gap-2 font-black text-sm text-blue-900">
+            <Calendar size={18} className="text-blue-600" />
+            <span>Staff Action: Reschedule Suggested for You</span>
+          </div>
+          <p className="leading-relaxed text-blue-800">
+            The counter staff reviewed your request. Due to today's queue schedule: <em>"{token.DELAY_REASON || 'Please select Next Day or Next Week'}"</em>. 
+            Please choose when you'd like to arrive:
+          </p>
+          <div className="flex items-center gap-2 pt-1 flex-wrap">
+            <button
+              onClick={() => handleExecuteReschedule('NEXT_DAY')}
+              disabled={actionLoading}
+              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-2xs cursor-pointer flex items-center gap-1.5"
+            >
+              <Calendar size={13} /> Tomorrow (Next Day)
+            </button>
+            <button
+              onClick={() => handleExecuteReschedule('NEXT_WEEK')}
+              disabled={actionLoading}
+              className="px-4 py-2.5 bg-[#141312] hover:bg-[#262422] text-white rounded-xl font-bold transition-all shadow-2xs cursor-pointer flex items-center gap-1.5"
+            >
+              <Calendar size={13} className="text-amber-300" /> Next Week (+7 Days)
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Rescheduled Confirmation Banner */}
+      {isRescheduled && (
+        <div className="mb-5 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs shadow-xs flex items-center gap-3">
+          <CheckCircle2 size={20} className="text-emerald-600 shrink-0" />
+          <div>
+            <span className="font-bold block text-sm">Pass Rescheduled Successfully!</span>
+            <span className="text-emerald-800">Your pass is confirmed for <strong>{token.BOOKING_DATE}</strong>. Arrive at the counter on that day to hold your turn.</span>
+          </div>
+        </div>
+      )}
+
       {/* Delay Status Notice — Staff Rejected Notification */}
       {token.DELAY_STATUS === 'REJECTED_5M' && (
         <div className="mb-5 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-start gap-3 shadow-2xs">
           <XCircle className="shrink-0 text-rose-600 mt-0.5" size={18} />
           <div>
-            <span className="font-bold block text-sm">Staff Notice: Delay Request Not Accepted</span>
-            The counter staff has not accepted your delay request at this time. Please proceed to the counter or try again later.
+            <span className="font-bold block text-sm">Staff Notice: Extra Time Not Approved</span>
+            The counter staff was unable to grant extra wait time today due to queue volume. Please proceed to the counter or reschedule for another date below.
           </div>
         </div>
       )}
@@ -164,7 +216,7 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
       {hasApprovedDelay && (
         <div className="mb-5 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center gap-2.5 shadow-2xs">
           <CheckCircle2 className="shrink-0 text-emerald-600" size={16} />
-          <span><strong>Delay Approved:</strong> Your pass was shifted down by ~{token.DELAY_MINUTES || 5} minutes.</span>
+          <span><strong>Extra Time Approved:</strong> Counter staff shifted your pass down by ~{token.DELAY_MINUTES || 5} minutes.</span>
         </div>
       )}
 
@@ -172,8 +224,8 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
         <div className="mb-5 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5 animate-pulse shadow-2xs">
           <Hourglass className="shrink-0 text-amber-600 mt-0.5" size={16} />
           <div>
-            <span className="font-bold block">Delay Request Pending (+{token.DELAY_MINUTES || 5}m):</span>
-            Waiting for staff operator approval. Reason: <em>{token.DELAY_REASON || 'Parking / Traffic'}</em>
+            <span className="font-bold block">Extra Time Request Sent to Staff (+{token.DELAY_MINUTES || 5}m):</span>
+            Waiting for staff response. Reason: <em>{token.DELAY_REASON || 'Parking / Traffic'}</em>
           </div>
         </div>
       )}
@@ -199,83 +251,74 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
         </div>
       </div>
 
-      {/* Token Hero Display */}
-      <div className="py-6 text-center">
-        <span className="text-[11px] uppercase tracking-wider font-bold text-[#736E66] block mb-1">
-          Your Digital Token Pass
-        </span>
-        
-        <div className="inline-block relative">
-          <div className="text-5xl sm:text-6xl font-black font-mono tracking-tight text-[#141312] px-4 py-1">
-            {token.TOKEN_NUMBER}
-          </div>
-          {isCalled && (
-            <div className="absolute -top-2 -right-2">
-              <span className="flex h-5 w-5 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-5 w-5 bg-amber-600 text-white items-center justify-center text-[10px] font-bold">
-                  <Volume2 size={11} />
-                </span>
-              </span>
-            </div>
-          )}
+      {/* Big Token Number Display */}
+      <div className="py-6 text-center space-y-1">
+        <span className="text-[11px] uppercase tracking-wider text-[#736E66] font-bold">Your Digital Token Pass</span>
+        <div className="text-5xl sm:text-6xl font-black tracking-tight text-[#141312] font-mono">
+          {token.TOKEN_NUMBER}
         </div>
-
-        {isCalled ? (
-          <div className="mt-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl max-w-sm mx-auto shadow-2xs">
-            <span className="text-sm font-black text-amber-900 block">
-              🔔 IT'S YOUR TURN!
-            </span>
-            <span className="text-xs text-amber-800 mt-0.5 block">
-              Please proceed immediately to <strong>{token.COUNTER_LABEL || 'Counter 1'}</strong>
-            </span>
-          </div>
-        ) : isServing ? (
-          <div className="mt-3 p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl max-w-sm mx-auto shadow-2xs">
-            <span className="text-xs font-bold text-emerald-800 block">
-              ▶️ Service in Progress at {token.COUNTER_LABEL}
-            </span>
-          </div>
-        ) : isCompleted ? (
-          <div className="mt-3 p-3.5 bg-[#FAF7F2] border border-[#EAE5DE] rounded-2xl max-w-sm mx-auto shadow-2xs">
-            <span className="text-xs font-bold text-[#141312] block">
-              ✅ Service Completed
-            </span>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto mt-4 bg-[#FAF7F2] p-3.5 rounded-2xl border border-[#EAE5DE]">
-            <div>
-              <span className="text-[10px] uppercase font-bold text-[#736E66] block">Position in Line</span>
-              <span className="text-lg font-black text-[#141312] flex items-center justify-center gap-1">
-                <Users size={15} className="text-[#736E66]" />
-                {position > 0 ? `${position} ahead` : 'Next!'}
-              </span>
-            </div>
-
-            <div>
-              <span className="text-[10px] uppercase font-bold text-[#736E66] block">Estimated Wait</span>
-              <span className="text-lg font-black text-[#C28E5C] flex items-center justify-center gap-1 font-mono">
-                <Clock size={15} />
-                ~{etaMins}m
-              </span>
-            </div>
-          </div>
+        {token.BOOKING_DATE && (
+          <span className="text-xs font-semibold text-[#736E66] block pt-1">
+            Scheduled for: <strong>{token.BOOKING_DATE}</strong>
+          </span>
         )}
       </div>
 
-      {/* Ticket Details */}
-      <div className="pt-4 border-t border-[#EAE5DE] grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#736E66] mb-4">
-        <div>
-          <span className="text-[#9E988E] block mb-0.5">Pass Holder:</span>
-          <span className="font-bold text-[#141312]">{token.CUSTOMER_NAME} ({token.CUSTOMER_PHONE})</span>
-        </div>
-        {token.SERVICE_NOTE && (
-          <div>
-            <span className="text-[#9E988E] block mb-0.5">Note:</span>
-            <span className="font-medium text-[#141312]">{token.SERVICE_NOTE}</span>
+      {/* Queue Progress & Timing Indicators */}
+      {token.STATUS === 'WAITING' && (
+        <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-[#FAF7F2] border border-[#EAE5DE] mb-6">
+          <div className="text-center border-r border-[#EAE5DE] pr-2">
+            <span className="text-[10px] uppercase tracking-wider font-bold text-[#736E66] block">
+              People Ahead
+            </span>
+            <span className="text-2xl font-black text-[#141312] flex items-center justify-center gap-1">
+              <Users size={18} className="text-[#C28E5C]" />
+              {position > 0 ? position - 1 : 0}
+            </span>
           </div>
-        )}
-      </div>
+
+          <div className="text-center pl-2">
+            <span className="text-[10px] uppercase tracking-wider font-bold text-[#736E66] block">
+              Est. Turn Countdown
+            </span>
+            <span className="text-2xl font-black text-[#141312] flex items-center justify-center gap-1 font-mono">
+              <Clock size={18} className="text-[#C28E5C]" />
+              ~{etaMins}m
+            </span>
+          </div>
+        </div>
+      )}
+
+      {isCalled && (
+        <div className="p-4 rounded-2xl bg-amber-500 text-white text-center mb-6 animate-pulse shadow-md">
+          <div className="flex items-center justify-center gap-2 font-black text-lg">
+            <Volume2 size={22} />
+            <span>NOW BEING CALLED!</span>
+          </div>
+          <p className="text-xs text-amber-100 mt-1">
+            Please proceed immediately to <strong>{token.COUNTER_LABEL || 'Counter 1'}</strong>.
+          </p>
+        </div>
+      )}
+
+      {isServing && (
+        <div className="p-4 rounded-2xl bg-emerald-600 text-white text-center mb-6 shadow-md">
+          <div className="flex items-center justify-center gap-2 font-black text-lg">
+            <CheckCircle2 size={22} />
+            <span>CURRENTLY AT COUNTER</span>
+          </div>
+          <p className="text-xs text-emerald-100 mt-1">
+            Service in progress at <strong>{token.COUNTER_LABEL || 'Counter 1'}</strong>.
+          </p>
+        </div>
+      )}
+
+      {isCompleted && (
+        <div className="p-4 rounded-2xl bg-zinc-100 text-[#141312] text-center mb-6 border border-[#EAE5DE]">
+          <span className="font-bold text-sm">Pass Completed</span>
+          <p className="text-xs text-[#736E66] mt-0.5">Thank you for visiting {token.ORG_NAME}!</p>
+        </div>
+      )}
 
       {/* Action Controls for Customer */}
       {token.STATUS === 'WAITING' && (
@@ -297,11 +340,11 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
             variant="secondary"
             size="sm"
             isLoading={actionLoading}
-            onClick={handleReschedule}
+            onClick={() => setIsRescheduleModalOpen(true)}
             leftIcon={<Calendar size={13} />}
-            className="text-[#141312] bg-[#FAF7F2] hover:bg-[#F5F1E9] border-[#EAE5DE] rounded-xl cursor-pointer"
+            className="text-[#141312] bg-[#FAF7F2] hover:bg-[#F5F1E9] border-[#EAE5DE] rounded-xl cursor-pointer font-bold"
           >
-            Reschedule
+            Reschedule Pass
           </Button>
 
           <Button
@@ -406,6 +449,71 @@ export const LiveTokenPass: React.FC<LiveTokenPassProps> = ({ token, onRefresh }
           </form>
         </Modal>
       )}
+
+      {/* Customer Reschedule Choice Modal (Next Day vs Next Week) */}
+      {isRescheduleModalOpen && (
+        <Modal
+          isOpen={isRescheduleModalOpen}
+          onClose={() => setIsRescheduleModalOpen(false)}
+          title="Reschedule Your Digital Pass"
+          subtitle="Choose your preferred date to hold your turn"
+          maxWidth="md"
+        >
+          <div className="space-y-4 pt-2">
+            <p className="text-xs text-[#736E66] leading-relaxed">
+              If you cannot make it today, you can hold your spot and reschedule your pass for tomorrow or next week without rebooking.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => handleExecuteReschedule('NEXT_DAY')}
+                disabled={actionLoading}
+                className="p-4 bg-[#FAF7F2] hover:bg-[#F5F1E9] border border-[#EAE5DE] hover:border-[#141312] rounded-2xl text-left transition-all cursor-pointer space-y-1.5 shadow-2xs group"
+              >
+                <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">
+                  <Calendar size={16} />
+                </div>
+                <div className="text-sm font-black text-[#141312] group-hover:text-blue-600 transition-colors">
+                  Tomorrow (Next Day)
+                </div>
+                <p className="text-[11px] text-[#736E66]">
+                  Move your pass to the next morning queue.
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleExecuteReschedule('NEXT_WEEK')}
+                disabled={actionLoading}
+                className="p-4 bg-[#FAF7F2] hover:bg-[#F5F1E9] border border-[#EAE5DE] hover:border-[#141312] rounded-2xl text-left transition-all cursor-pointer space-y-1.5 shadow-2xs group"
+              >
+                <div className="w-8 h-8 rounded-xl bg-[#141312] text-white flex items-center justify-center font-bold">
+                  <Calendar size={16} className="text-amber-300" />
+                </div>
+                <div className="text-sm font-black text-[#141312] group-hover:text-[#C28E5C] transition-colors">
+                  Next Week (+7 Days)
+                </div>
+                <p className="text-[11px] text-[#736E66]">
+                  Pick the same day next week for your turn.
+                </p>
+              </button>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => setIsRescheduleModalOpen(false)}
+                className="px-6 rounded-xl border-[#EAE5DE]"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
     </div>
   );
 };

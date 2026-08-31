@@ -446,13 +446,15 @@
       "CUSTOMER_NAME": "Pavan Kalyan N",
       "CUSTOMER_PHONE": "8310066760",
       "SERVICE_NOTE": "Consultation",
-      "STATUS": "CALLED",
+      "STATUS": "COMPLETED",
       "DELAY_STATUS": "NONE",
       "POSITION_IN_QUEUE": 0,
       "ESTIMATED_WAIT_MINS": 0,
       "BOOKING_DATE": "2026-08-30",
       "CREATED_AT": "2026-08-30T09:00:00.000Z",
-      "CALLED_AT": "2026-08-30T09:15:00.000Z"
+      "CALLED_AT": "2026-08-30T09:15:00.000Z",
+      "SERVE_STARTED_AT": "2026-08-30T16:08:27.139Z",
+      "COMPLETED_AT": "2026-08-30T16:10:50.783Z"
     },
     {
       "TOKEN_ID": "e1c2b4c7-a699-4ecd-be32-32f8762c6411",
@@ -502,6 +504,26 @@
       "ACTOR_UID": "Requested +5m delay (🚗 Parking / Traffic Delay) for: ADM-010",
       "DETAILS": "",
       "CREATED_AT": "2026-08-30T15:55:12.865Z"
+    },
+    {
+      "LOG_ID": "9aa6fe86-334d-42d9-93b0-abfcd82ad774",
+      "ORG_ID": "org-apex-clinic",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "tok-apex-waiting-1",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Serving token: DOC-104",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-30T16:08:27.140Z"
+    },
+    {
+      "LOG_ID": "28efa231-be89-414a-bd1d-64ca40a32937",
+      "ORG_ID": "org-apex-clinic",
+      "QUEUE_ID": "61d46945-7b69-466e-9df9-0b7eaab9df51",
+      "TOKEN_ID": "tok-apex-waiting-1",
+      "ACTION": "fsBTOqJovGdPi6V5xCTNcr51i3q2",
+      "ACTOR_UID": "Completed service for: DOC-104",
+      "DETAILS": "",
+      "CREATED_AT": "2026-08-30T16:10:50.785Z"
     }
   ]
 }

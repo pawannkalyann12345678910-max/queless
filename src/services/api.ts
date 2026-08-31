@@ -219,8 +219,18 @@ class ApiClient {
     return this.request(`/tokens/${tokenId}/delay-reject`, { method: 'POST' });
   }
 
-  async rescheduleToken(tokenId: string): Promise<{ message: string; token: Token }> {
-    return this.request(`/tokens/${tokenId}/reschedule`, { method: 'POST' });
+  async offerReschedule(tokenId: string, reason?: string): Promise<{ message: string; token: Token }> {
+    return this.request(`/tokens/${tokenId}/offer-reschedule`, {
+      method: 'POST',
+      body: JSON.stringify({ reason })
+    });
+  }
+
+  async rescheduleToken(tokenId: string, choice?: 'NEXT_DAY' | 'NEXT_WEEK', targetDate?: string): Promise<{ message: string; token: Token }> {
+    return this.request(`/tokens/${tokenId}/reschedule`, {
+      method: 'POST',
+      body: JSON.stringify({ choice, targetDate })
+    });
   }
 
   async transferToken(tokenId: string, targetQueueId: string): Promise<{ message: string }> {

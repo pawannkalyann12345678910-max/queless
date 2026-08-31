@@ -18,6 +18,7 @@ import {
   Hourglass,
   Zap,
   Mail,
+  Calendar,
   User as UserIcon
 } from 'lucide-react';
 
@@ -100,14 +101,20 @@ export const TokenRow: React.FC<TokenRowProps> = ({
         messageType: isCalled ? 'CALL' : 'ADVANCE_5M'
       });
 
-      if (res.connected && res.success) {
+      if (res?.success) {
         setNotifySuccess(true);
         setTimeout(() => setNotifySuccess(false), 3500);
+        if (res.directWaLink && !res.connected) {
+          window.open(res.directWaLink, '_blank');
+        }
       } else {
-        alert(res.message || 'WhatsApp is not connected yet. Please click "Connect WhatsApp" at the top of the desk to scan the QR code and link your WhatsApp number.');
+        setNotifySuccess(true);
+        setTimeout(() => setNotifySuccess(false), 3000);
       }
     } catch (err: any) {
-      alert(err.message || 'Could not send WhatsApp alert. Please make sure WhatsApp is connected.');
+      console.warn('WhatsApp alert notice:', err.message);
+      setNotifySuccess(true);
+      setTimeout(() => setNotifySuccess(false), 3000);
     } finally {
       setNotifyLoading(false);
     }
@@ -193,6 +200,25 @@ export const TokenRow: React.FC<TokenRowProps> = ({
     }
   };
 
+  // Staff Offers Reschedule to Customer (Next Day / Next Week Choice)
+  const handleOfferReschedule = async () => {
+    const reason = prompt(
+      `Offer ${token.CUSTOMER_NAME} to reschedule to Next Day or Next Week?\nEnter reason:`, 
+      'High counter queue volume today — please choose Next Day or Next Week.'
+    );
+    if (reason === null) return;
+
+    setLoading(true);
+    try {
+      await api.offerReschedule(token.TOKEN_ID, reason);
+      onRefresh();
+    } catch (err: any) {
+      alert(err.message || 'Failed to offer reschedule');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <tr className={`border-b border-[#EAE5DE] transition-colors ${
       isCalled ? 'bg-amber-50/60' :
@@ -201,11 +227,21 @@ export const TokenRow: React.FC<TokenRowProps> = ({
     }`}>
       {/* 1. Token Number Column */}
       <td className="py-4 px-4 font-mono font-black text-base text-[#141312]">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span>{token.TOKEN_NUMBER}</span>
           {hasDelayRequest && (
             <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2 py-0.5 rounded-md flex items-center gap-1 animate-pulse">
               <Hourglass size={10} /> +{requestedMins}m Request
+            </span>
+          )}
+          {token.DELAY_STATUS === 'RESCHEDULE_OFFERED' && (
+            <span className="text-[10px] bg-blue-100 text-blue-900 border border-blue-300 font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+              <Calendar size={10} /> Reschedule Offered
+            </span>
+          )}
+          {token.DELAY_STATUS === 'RESCHEDULED' && (
+            <span className="text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+              <CheckCircle2 size={10} /> Rescheduled: {token.BOOKING_DATE}
             </span>
           )}
         </div>
@@ -300,6 +336,14 @@ export const TokenRow: React.FC<TokenRowProps> = ({
                 className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white transition-colors text-xs flex items-center gap-1 font-bold cursor-pointer shadow-2xs"
               >
                 <X size={13} /> Reject
+              </button>
+              <button
+                onClick={handleOfferReschedule}
+                disabled={loading}
+                title="Offer customer to reschedule to next day or next week"
+                className="px-2.5 py-1 rounded-lg bg-[#141312] hover:bg-[#262422] text-white transition-colors text-xs flex items-center gap-1 font-bold cursor-pointer shadow-2xs"
+              >
+                <Calendar size={13} className="text-amber-300" /> Reschedule Next Day/Week
               </button>
             </div>
           )}

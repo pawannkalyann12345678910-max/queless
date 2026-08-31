@@ -89,7 +89,7 @@ export interface StaffAssignment {
 }
 
 export type TokenStatus = 'WAITING' | 'CALLED' | 'SERVING' | 'COMPLETED' | 'NO_SHOW' | 'CANCELLED';
-export type DelayStatus = 'NONE' | 'REQUESTED_5M' | 'REQUESTED_10M' | 'REQUESTED_15M' | 'APPROVED_5M' | 'APPROVED_10M' | 'APPROVED_15M' | 'REJECTED_5M' | 'RESCHEDULED';
+export type DelayStatus = 'NONE' | 'REQUESTED_5M' | 'REQUESTED_10M' | 'REQUESTED_15M' | 'APPROVED_5M' | 'APPROVED_10M' | 'APPROVED_15M' | 'REJECTED_5M' | 'RESCHEDULE_OFFERED' | 'RESCHEDULED';
 
 export interface Token {
   TOKEN_ID: string;

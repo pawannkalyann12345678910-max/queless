@@ -395,31 +395,60 @@ router.post('/:id/delay-reject', authenticate, (req, res) => {
   res.json({ message: 'Delay request rejected. Customer notified.', token: updatedToken });
 });
 
-// 12. Reschedule to Next Day (Customer)
-router.post('/:id/reschedule', authenticate, (req, res) => {
+// 11b. Offer Reschedule to Customer (Staff)
+router.post('/:id/offer-reschedule', authenticate, (req, res) => {
+  const { reason = 'High queue volume today' } = req.body;
   const token = db.prepare('SELECT * FROM TOKENS WHERE TOKEN_ID = ?').get(req.params.id);
   if (!token) return res.status(404).json({ error: 'Token not found' });
 
-  // Calculate next day's date
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowStr = tomorrow.toISOString().split('T')[0];
+  db.prepare(`
+    UPDATE TOKENS 
+    SET DELAY_STATUS = 'RESCHEDULE_OFFERED', 
+        DELAY_REASON = ? 
+    WHERE TOKEN_ID = ?
+  `).run(reason, req.params.id);
+
+  db.prepare(`
+    INSERT INTO AUDIT_LOGS (LOG_ID, ORG_ID, QUEUE_ID, TOKEN_ID, ACTION, ACTOR_UID, DETAILS)
+    VALUES (?, ?, ?, ?, 'RESCHEDULE_OFFERED', ?, ?)
+  `).run(uuidv4(), token.ORG_ID, token.QUEUE_ID, token.TOKEN_ID, req.user.USER_ID, `Staff offered reschedule for: ${token.TOKEN_NUMBER} (${reason})`);
+
+  const updatedToken = db.prepare('SELECT * FROM TOKENS WHERE TOKEN_ID = ?').get(req.params.id);
+  res.json({ message: 'Reschedule request sent to customer.', token: updatedToken });
+});
+
+// 12. Reschedule to Next Day or Next Week (Customer)
+router.post('/:id/reschedule', authenticate, (req, res) => {
+  const { choice = 'NEXT_DAY', targetDate } = req.body;
+  const token = db.prepare('SELECT * FROM TOKENS WHERE TOKEN_ID = ?').get(req.params.id);
+  if (!token) return res.status(404).json({ error: 'Token not found' });
+
+  let scheduledDateStr = targetDate;
+  if (!scheduledDateStr) {
+    const d = new Date();
+    if (choice === 'NEXT_WEEK') {
+      d.setDate(d.getDate() + 7);
+    } else {
+      d.setDate(d.getDate() + 1);
+    }
+    scheduledDateStr = d.toISOString().split('T')[0];
+  }
 
   db.prepare(`
     UPDATE TOKENS 
     SET BOOKING_DATE = ?, DELAY_STATUS = 'RESCHEDULED', STATUS = 'WAITING' 
     WHERE TOKEN_ID = ?
-  `).run(tomorrowStr, req.params.id);
+  `).run(scheduledDateStr, req.params.id);
 
   recalculateQueuePositions(token.QUEUE_ID);
 
   db.prepare(`
     INSERT INTO AUDIT_LOGS (LOG_ID, ORG_ID, QUEUE_ID, TOKEN_ID, ACTION, ACTOR_UID, DETAILS)
     VALUES (?, ?, ?, ?, 'RESCHEDULED', ?, ?)
-  `).run(uuidv4(), token.ORG_ID, token.QUEUE_ID, token.TOKEN_ID, req.user.USER_ID, `Rescheduled ${token.TOKEN_NUMBER} to ${tomorrowStr}`);
+  `).run(uuidv4(), token.ORG_ID, token.QUEUE_ID, token.TOKEN_ID, req.user.USER_ID, `Rescheduled ${token.TOKEN_NUMBER} to ${scheduledDateStr} (${choice})`);
 
   const updatedToken = db.prepare('SELECT * FROM TOKENS WHERE TOKEN_ID = ?').get(req.params.id);
-  res.json({ message: `Token rescheduled to ${tomorrowStr}`, token: updatedToken });
+  res.json({ message: `Token rescheduled to ${scheduledDateStr}`, token: updatedToken });
 });
 
 // 13. Transfer Token to Another Queue (Staff)
