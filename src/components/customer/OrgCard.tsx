@@ -1,15 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Organization } from '../../types';
-import { MapPin, ArrowRight, Layers, Users, Ticket, CheckCircle2 } from 'lucide-react';
+import { MapPin, ArrowRight, Layers, Users, Ticket, CheckCircle2, Navigation } from 'lucide-react';
 
 export const OrgCard: React.FC<{ organization: Organization; userDistance?: number }> = ({ 
   organization,
   userDistance 
 }) => {
-  const displayDist = userDistance !== undefined 
+  const dist = userDistance !== undefined 
     ? userDistance 
     : (organization.DISTANCE_KM !== undefined ? organization.DISTANCE_KM : 1.2);
+
+  let formattedDistance = '';
+  if (dist < 1) {
+    const meters = Math.max(50, Math.round(dist * 1000));
+    formattedDistance = `${meters}m away`;
+  } else {
+    formattedDistance = `${dist.toFixed(1)} km away`;
+  }
+
+  const isVeryClose = dist <= 1.5;
 
   return (
     <div className="bg-white rounded-3xl p-6 h-full flex flex-col justify-between border border-[#EAE5DE] shadow-2xs hover:border-[#141312] hover:shadow-md transition-all group relative overflow-hidden">
@@ -21,22 +31,27 @@ export const OrgCard: React.FC<{ organization: Organization; userDistance?: numb
               <img
                 src={organization.LOGO_URL}
                 alt={organization.NAME}
-                className="w-13 h-13 rounded-2xl object-cover border border-[#EAE5DE] bg-[#FAF7F2] shadow-2xs"
+                className="w-13 h-13 rounded-2xl object-cover border border-[#EAE5DE] bg-[#FAF7F2] shadow-2xs shrink-0"
               />
             ) : (
-              <div className="w-13 h-13 rounded-2xl bg-[#141312] text-white flex items-center justify-center font-black text-xl shadow-2xs">
+              <div className="w-13 h-13 rounded-2xl bg-[#141312] text-white flex items-center justify-center font-black text-xl shadow-2xs shrink-0">
                 {organization.NAME.charAt(0)}
               </div>
             )}
 
             <div>
-              <div className="flex items-center gap-1.5 mb-1">
+              <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#FAF7F2] border border-[#EAE5DE] text-[#141312]">
                   {organization.CATEGORY}
                 </span>
                 <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 flex items-center gap-0.5">
                   <CheckCircle2 size={10} /> Verified
                 </span>
+                {isVeryClose && (
+                  <span className="text-[10px] font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200 flex items-center gap-0.5">
+                    <Navigation size={9} /> Nearby
+                  </span>
+                )}
               </div>
               <h3 className="text-base font-black text-[#141312] group-hover:text-[#C28E5C] transition-colors line-clamp-1">
                 {organization.NAME}
@@ -46,15 +61,18 @@ export const OrgCard: React.FC<{ organization: Organization; userDistance?: numb
         </div>
 
         {/* Location & Distance Placard */}
-        <div className="bg-[#FAF7F2] rounded-2xl p-3 border border-[#EAE5DE] mb-3.5 flex items-center justify-between text-xs">
+        <div className="bg-[#FAF7F2] rounded-2xl p-3 border border-[#EAE5DE] mb-3.5 flex items-center justify-between text-xs gap-2">
           <div className="flex items-center gap-1.5 text-[#141312] font-semibold truncate">
             <MapPin size={13} className="text-[#C28E5C] shrink-0" />
             <span className="truncate">{organization.ADDRESS || organization.CITY || 'Bengaluru'}</span>
           </div>
 
-          <span className="text-[11px] font-bold text-emerald-900 bg-emerald-100/70 px-2 py-0.5 rounded-lg shrink-0 ml-2">
-            📍 {displayDist} km away
-          </span>
+          <div className="flex items-center gap-1.5 shrink-0 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-[11px] font-black text-emerald-900 font-mono">
+              {formattedDistance}
+            </span>
+          </div>
         </div>
 
         {/* Description */}

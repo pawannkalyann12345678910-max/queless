@@ -22,6 +22,23 @@ import {
   Navigation
 } from 'lucide-react';
 
+interface LocalityPreset {
+  id: string;
+  label: string;
+  lat: number | null;
+  lng: number | null;
+  areaName: string;
+}
+
+const LOCALITY_PRESETS: LocalityPreset[] = [
+  { id: 'LIVE_GPS', label: '🎯 Live Device GPS', lat: null, lng: null, areaName: 'Live Device GPS' },
+  { id: 'ANDRAHALLI', label: '🎓 Andrahalli (ABBS University)', lat: 12.9982, lng: 77.4921, areaName: 'Andrahalli Main Road / ABBS Campus' },
+  { id: 'INDIRANAGAR', label: '🏥 Indiranagar', lat: 12.9716, lng: 77.6412, areaName: 'Indiranagar 100ft Road' },
+  { id: 'KORAMANGALA', label: '🏢 Koramangala', lat: 12.9352, lng: 77.6245, areaName: 'Koramangala 4th Block' },
+  { id: 'MGROAD', label: '🏛️ MG Road / CBD', lat: 12.9756, lng: 77.6066, areaName: 'MG Road Financial Hub' },
+  { id: 'WHITEFIELD', label: '🛍️ Whitefield', lat: 12.9972, lng: 77.6974, areaName: 'Phoenix Marketcity, Whitefield' }
+];
+
 export const LandingPage: React.FC = () => {
   const { user, signInWithGoogle, role, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -31,11 +48,14 @@ export const LandingPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Geolocation & Location Filter State
-  const [isGpsActive, setIsGpsActive] = useState(false);
+  // Real-Time Live Geolocation & Locality State
+  const [selectedPresetId, setSelectedPresetId] = useState<string>('LIVE_GPS');
+  const [deviceCoords, setDeviceCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [detectedAreaName, setDetectedAreaName] = useState<string>('Live GPS Active (Locating...)');
+  const [isGpsActive, setIsGpsActive] = useState(true);
   const [gpsLoading, setGpsLoading] = useState(false);
-  const [currentLocality, setCurrentLocality] = useState<string>('All Locations');
 
+  // 1. Fetch Organizations on Mount
   useEffect(() => {
     const fetchOrgs = async () => {
       try {
@@ -51,6 +71,45 @@ export const LandingPage: React.FC = () => {
     fetchOrgs();
   }, []);
 
+  // 2. Automatically activate live device GPS on page open
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      setGpsLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          setDeviceCoords(coords);
+          setDetectedAreaName(`Live GPS (${coords.lat.toFixed(3)}° N, ${coords.lng.toFixed(3)}° E)`);
+          setIsGpsActive(true);
+          setGpsLoading(false);
+        },
+        () => {
+          // Graceful fallback for mock / permission denied: default to University / Central area
+          setDeviceCoords({ lat: 12.9982, lng: 77.4921 });
+          setDetectedAreaName('Andrahalli / ABBS Campus Area');
+          setIsGpsActive(true);
+          setGpsLoading(false);
+        },
+        { enableHighAccuracy: true, timeout: 4000 }
+      );
+
+      const watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          setDeviceCoords(coords);
+          setDetectedAreaName(`Live GPS (${coords.lat.toFixed(3)}° N, ${coords.lng.toFixed(3)}° E)`);
+        },
+        null,
+        { enableHighAccuracy: true }
+      );
+
+      return () => navigator.geolocation.clearWatch(watchId);
+    } else {
+      setDeviceCoords({ lat: 12.9982, lng: 77.4921 });
+      setDetectedAreaName('Andrahalli / ABBS Campus Area');
+    }
+  }, []);
+
   const handleSignIn = async () => {
     await signInWithGoogle();
     if (role === 'STAFF') {
@@ -60,60 +119,85 @@ export const LandingPage: React.FC = () => {
     }
   };
 
-  // Turn ON / OFF Geolocation Detection
+  // Turn ON / Refresh Geolocation
   const handleToggleLocation = () => {
-    if (isGpsActive) {
-      setIsGpsActive(false);
-      setCurrentLocality('All Locations');
-      return;
-    }
-
     setGpsLoading(true);
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
-        () => {
+        (pos) => {
+          const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          setDeviceCoords(coords);
+          setSelectedPresetId('LIVE_GPS');
+          setDetectedAreaName(`Live GPS (${coords.lat.toFixed(3)}° N, ${coords.lng.toFixed(3)}° E)`);
           setIsGpsActive(true);
-          setCurrentLocality('Indiranagar, Bengaluru');
           setGpsLoading(false);
         },
         () => {
-          // Graceful fallback for mock / permission denied
+          setDeviceCoords({ lat: 12.9982, lng: 77.4921 });
+          setSelectedPresetId('ANDRAHALLI');
           setIsGpsActive(true);
-          setCurrentLocality('Bengaluru Central');
           setGpsLoading(false);
         },
-        { timeout: 4000 }
+        { enableHighAccuracy: true, timeout: 4000 }
       );
     } else {
       setIsGpsActive(true);
-      setCurrentLocality('Bengaluru Central');
       setGpsLoading(false);
     }
   };
 
   const categories = ['All', 'Clinic', 'Hospital', 'Bank', 'University', 'Government', 'Salon', 'Restaurant', 'Retail', 'Service Center'];
-  const localities = ['All Locations', 'Indiranagar', 'Koramangala', 'MG Road', 'Whitefield', 'Andrahalli'];
 
-  // Filter and sort by distance
-  const filteredOrgs = organizations
+  // Haversine Distance Formula (km)
+  const calculateDistanceKm = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371; // Earth radius in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return Number((R * c).toFixed(2));
+  };
+
+  // Effective coordinates for current filter
+  const activePreset = LOCALITY_PRESETS.find(p => p.id === selectedPresetId);
+  const effectiveCoords = (selectedPresetId === 'LIVE_GPS' && deviceCoords)
+    ? deviceCoords
+    : (activePreset?.lat && activePreset?.lng) 
+      ? { lat: activePreset.lat, lng: activePreset.lng }
+      : deviceCoords || { lat: 12.9982, lng: 77.4921 };
+
+  const activeAreaLabel = selectedPresetId === 'LIVE_GPS'
+    ? detectedAreaName
+    : activePreset?.areaName || 'Bengaluru';
+
+  // Compute live distances for all organizations
+  const orgsWithDistances = organizations.map(org => {
+    let dist = org.DISTANCE_KM || 1.2;
+    if (isGpsActive && effectiveCoords && org.LAT && org.LNG) {
+      dist = calculateDistanceKm(effectiveCoords.lat, effectiveCoords.lng, org.LAT, org.LNG);
+    }
+    return { ...org, computedDistance: dist };
+  });
+
+  // Filter and sort by live nearest distance
+  const filteredOrgs = orgsWithDistances
     .filter(org => {
       const matchesCategory = selectedCategory === 'All' || org.CATEGORY.toLowerCase() === selectedCategory.toLowerCase();
       
-      const matchesLocality = currentLocality === 'All Locations' || 
-        (org.ADDRESS && org.ADDRESS.toLowerCase().includes(currentLocality.toLowerCase().split(',')[0].trim())) ||
-        (org.CITY && org.CITY.toLowerCase().includes(currentLocality.toLowerCase().split(',')[0].trim()));
-
       const matchesSearch = 
         org.NAME.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (org.CITY && org.CITY.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (org.ADDRESS && org.ADDRESS.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (org.DESCRIPTION && org.DESCRIPTION.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      return matchesCategory && matchesLocality && matchesSearch;
+      return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
       if (isGpsActive) {
-        return (a.DISTANCE_KM || 99) - (b.DISTANCE_KM || 99);
+        return (a.computedDistance || 99) - (b.computedDistance || 99);
       }
       return 0;
     });
@@ -365,59 +449,57 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* LOCATION-BASED GPS PLACARD BAR */}
-            <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EAE5DE] flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-white shadow-2xs ${
-                  isGpsActive ? 'bg-emerald-600' : 'bg-[#141312]'
-                }`}>
-                  <Navigation size={15} />
+            <div className="p-4.5 bg-[#FAF7F2] rounded-3xl border border-[#EAE5DE] space-y-3 shadow-2xs">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-2xl flex items-center justify-center font-bold text-white shadow-2xs bg-emerald-600">
+                    <Navigation size={17} className="animate-pulse" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black text-[#141312]">
+                        📍 {activeAreaLabel}
+                      </span>
+                      <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-ping"></span>
+                        Live Proximity Active
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-[#736E66]">
+                      Automatically sorting clinics, banks, salons & universities by live calculated distance.
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-xs font-bold text-[#141312] block">
-                    {isGpsActive ? `📍 Nearest Places: ${currentLocality}` : 'Location-Based Counter Discovery'}
-                  </span>
-                  <span className="text-[11px] text-[#736E66]">
-                    {isGpsActive 
-                      ? 'GPS Active: Sorting verified clinics, salons & banks by nearest distance' 
-                      : 'Turn on location to find counters and queues around you'}
-                  </span>
-                </div>
-              </div>
 
-              {/* Geolocation Button + Localities */}
-              <div className="flex items-center gap-2 flex-wrap">
+                {/* Geolocation Refresh Button */}
                 <button
                   onClick={handleToggleLocation}
                   disabled={gpsLoading}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
-                    isGpsActive 
-                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white' 
-                      : 'bg-white hover:bg-zinc-100 border border-[#EAE5DE] text-[#141312]'
-                  }`}
+                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs bg-emerald-600 hover:bg-emerald-700 text-white"
                 >
-                  <MapPin size={13} className={isGpsActive ? "text-amber-300" : "text-[#C28E5C]"} />
-                  <span>{gpsLoading ? 'Detecting Location...' : isGpsActive ? '🟢 Location ON' : 'Turn ON Location'}</span>
+                  <MapPin size={13} className="text-amber-300" />
+                  <span>{gpsLoading ? 'Calibrating GPS...' : '📍 Calibrate GPS'}</span>
                 </button>
+              </div>
 
-                {/* Quick Area Filters */}
-                <div className="hidden md:flex items-center gap-1">
-                  {localities.map(loc => (
-                    <button
-                      key={loc}
-                      onClick={() => {
-                        setCurrentLocality(loc);
-                        setIsGpsActive(true);
-                      }}
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                        currentLocality.includes(loc.split(' ')[0])
-                          ? 'bg-[#141312] text-white shadow-2xs'
-                          : 'bg-white text-[#736E66] hover:text-[#141312] border border-[#EAE5DE]'
-                      }`}
-                    >
-                      {loc}
-                    </button>
-                  ))}
-                </div>
+              {/* Quick Area Filter Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-1 scrollbar-none">
+                <span className="text-[11px] font-bold text-[#736E66] shrink-0 mr-1">
+                  Quick Select Area:
+                </span>
+                {LOCALITY_PRESETS.map(preset => (
+                  <button
+                    key={preset.id}
+                    onClick={() => setSelectedPresetId(preset.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                      selectedPresetId === preset.id
+                        ? 'bg-[#141312] text-white shadow-xs'
+                        : 'bg-white text-[#736E66] hover:text-[#141312] hover:bg-[#F5F1E9] border border-[#EAE5DE]'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -452,7 +534,7 @@ export const LandingPage: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredOrgs.map((org) => (
-                  <OrgCard key={org.ORG_ID} organization={org} userDistance={org.DISTANCE_KM} />
+                  <OrgCard key={org.ORG_ID} organization={org} userDistance={org.computedDistance} />
                 ))}
               </div>
             )}
